@@ -9,7 +9,7 @@ in one of the physiology channels recorded by the pupillator.
 ````matlab
 import physioset.import.edfplus;
 import pupillator.block_events_generator;
-data = import(edfplus, 'myfile.edf');
+data = import(edfplus, 'pupw_0001_physiology_afternoon-sitting_1.edf');
 ev   = generate(block_events_generator, data);
 add_event(data, ev);
 ````
