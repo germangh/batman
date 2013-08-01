@@ -35,7 +35,7 @@ switch lower(get_hostname),
         regex = [regex '.+.edf$']; 
         files = regexpi_dir('~/Dropbox/suomi-data', regex);
     otherwise
-        error('Inknown location of the pupw dataset');
+        error('Unknown location of the pupw dataset');
 end
 
 run(myPipe, files{:});
