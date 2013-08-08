@@ -4,19 +4,20 @@
 %
 % Author: German Gomez-Herrero <g@germangh.com>
 
-clear all;
+%clear all;
 
 import meegpipe.node.*;
 import physioset.import.mff;
 import somsds.link2rec;
 import misc.get_hostname;
 import misc.regexpi_dir;
+import mperl.join;
 
 %% User parameters
 
 % List of subjects that need to be splitted
 
-SUBJECTS = 7;
+SUBJECTS = 6;%7:10;
 
 % Should OGE be used, if available?
 USE_OGE = false;
@@ -26,49 +27,50 @@ DO_REPORT = false;
 
 % The directory where the results will be produced
 switch lower(get_hostname),
-    
+
     case 'somerenserver',
-        OUTPUT_DIR = ['batman-split_files-' datestr(now, 'ddmmyyHHMMSS')];
+        OUTPUT_DIR = ...
+            ['/data1/projects/batman/analysis/batman-split_files_' ...
+            datestr(now, 'yymmdd-HHMMSS')];
         
     otherwise,
-        error('The location of the batman dataset is not known');
+        % do nothing
         
 end
 
 %% Build the splitting pipeline
 
-% Select the events that mark the beginning of the RSQ
-mySel = physioset.event.class_selector('Type', 'ars+');
-
 % The splitted files should contain the condition (RS or PVT) and block
 % number as a suffix
-namingPolicyRS = @(data, ev, idx) ['rs_' num2str(idx)];
-namingPolicyPVT = @(data, ev, idx) ['pvt_' num2str(idx)];
+namingPolicyRS = @(d, ev, idx) batman.naming_policy(d, ev, idx, 'rs');
+namingPolicyPVT = @(d, ev, idx) batman.naming_policy(d, ev, idx, 'pvt');
 
-% The offset and the duration of the RS condition
-offset = -5*60;
-duration = 5*60;
-
+% In some files, the ars+ event is missing (and also the stm+ events). To
+% get the RS epochs in these cases we use the first DIN4 event within a
+% block to determine the onset of a PVT block. We then use the fact that
+% the RS epoch appears 7 minutes after the PVT block onset
+offset = 7*60;
+duration = 5.60;
+mySel = batman.pvt_selector;
 rsNode = split.new('EventSelector', mySel, 'Offset', offset, ...
     'Duration', duration, 'SplitNamingPolicy', namingPolicyRS);
 
-% The offset and the duration of the PVT condition
-offset = -10*60;
-duration = 5*60;
-
+% Build a node for extracting the PVT blocks
+offset = -10;   % 10 seconds before the first PVT in the block
+duration = 7*60; % 7 minutes of PVT (at most)
+mySel = batman.pvt_selector;
 pvtNode = split.new('EventSelector', mySel, 'Offset', offset, ...
-    'Duration', duration, 'SplitNamingPolicy', namingPolicyRS);
+    'Duration', duration, 'SplitNamingPolicy', namingPolicyPVT);
+
+myFilter = @(sr) filter.bpfilt('fp', [0.5 130]/(sr/2));
 
 myPipe = pipeline.new('NodeList', ...
     { ...
-    physioset_import.new('Importer', mff), ...
-    center.new, ...
-    detrend.new, ...
-    resample.new('OutputRate', 500), ...
+    physioset_import.new('Importer', mff), ...       
     rsNode, ...
     pvtNode ...
     }, ...
-    'OGE', USE_OGE, 'GenerateReport', DO_REPORT);
+    'OGE', USE_OGE, 'GenerateReport', DO_REPORT, 'Save', false);
 
 
 %% Process all the relevant data files
@@ -76,6 +78,15 @@ switch lower(get_hostname),
     case 'somerenserver',
         files = link2rec('batman', 'file_ext', '.mff', ...
             'subject', SUBJECTS, 'folder', OUTPUT_DIR);
+        
+    case 'nin271',
+        if numel(SUBJECTS) > 1, 
+            subjList = join('|', SUBJECTS);
+        else
+            subjList = num2str(SUBJECTS);
+        end
+        regex = ['batman_0+(' subjList ')_eeg_all.*\.mff$'];
+        files = regexpi_dir('D:/data', regex);
         
     otherwise,
         error('The location of the batman dataset is not known');
