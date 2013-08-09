@@ -12,6 +12,7 @@ import misc.regexpi_dir;
 import mperl.file.spec.catdir;
 import mperl.file.find.finddepth_regex_match;
 import mperl.join;
+import misc.agg
 
 %% Analysis parameters
 
@@ -69,12 +70,14 @@ switch lower(get_hostname)
         
         files = finddepth_regex_match(OUTPUT_DIR, regex);
         
-    case 'nin271', 
-        
-        
     otherwise,
         error('The location of the batman dataset is not known');
         
 end
 
 run(myPipe, files{:});
+
+if ~USE_OGE,
+    
+end
+    

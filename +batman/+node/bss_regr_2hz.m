@@ -10,6 +10,7 @@ import misc.isnatural;
 import spt.pca.pca;
 import spt.bss.jade.jade;
 import spt.bss.multicombi.multicombi;
+import spt.bss.efica.efica;
 import pset.selector.sensor_class;
 import pset.selector.good_data;
 import pset.selector.cascade;
@@ -30,9 +31,9 @@ opt.Var             = 99.9;
 
 % High pass filter
 if isnan(sr),
-    filtObj = @(sr) filter.bpfilt('fp', [3/(sr/2) 1]);
+    filtObj = @(sr) filter.bpfilt('fp', [8/(sr/2) 1]);
 else
-    f0      = 3/(sr/2);
+    f0      = 8/(sr/2);
     filtObj = filter.bpfilt('fp', [f0 1]);
 end
 
@@ -64,7 +65,7 @@ obj = bss_regr(...
     'DataSelector',     dataSel, ...
     'Criterion',        critObj, ...
     'PCA',              pcaObj, ...
-    'BSS',              multicombi('Filter', filtObj), ...
+    'BSS',              efica, ...
     'Filter',           filtObj);
 
 obj = set_name(obj, 'bss_regression_2hz');
