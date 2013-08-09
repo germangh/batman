@@ -1,4 +1,4 @@
-% Cleaning the already splitted data files
+% cleaning - Cleaning the already splitted data files
 %
 %
 % Author: German Gomez-Herrero <g@germangh.com>
@@ -8,7 +8,7 @@
 meegpipe.initialize;
 
 import meegpipe.node.*;
-import somsds.link2dir;
+import somsds.link2files;
 import misc.get_hostname;
 import misc.regexpi_dir;
 import mperl.file.spec.catdir;
@@ -18,17 +18,17 @@ import mperl.join;
 %% Analysis parameters
 
 % List of subjects that will be analyzed
-SUBJECTS = 7;
+SUBJECTS = 1:7;
 
 CONDITIONS = {'rs'};
 
-BLOCKS = 2;
+BLOCKS = 1:14;
 
 % Should OGE be used, if available?
 USE_OGE = false;
 
 % Generate comprehensive HTML reports?
-DO_REPORT = false;
+DO_REPORT = true;
 
 % The location of the splitted data files
 switch lower(get_hostname)
@@ -55,11 +55,12 @@ OUTPUT_DIR = catdir(ROOT_DIR, ...
 eegSel = pset.selector.sensor_class('Class', 'EEG');
 
 % Bad channel selection
-myCrit = bad_channels.criterion.var.new;
+myCrit = bad_channels.criterion.var.new('Percentile', [1 99]);
 badChans1 = bad_channels.new('Criterion', myCrit);
 
-myCrit = bad_channels.criterion.xcorr.new('Percentile', [1 99]);
-badChans2 = bad_channels.new('Criterion', myCrit);
+% Not used anymore:
+% myCrit = bad_channels.criterion.xcorr.new('Percentile', [1 99]);
+% badChans2 = bad_channels.new('Criterion', myCrit);
 
 % Removing high-amplitude weird stuff using LASIP
 lasipFilter = filter.lasip('Decimation', 12, 'GetNoise', true, 'Gamma', 15, ...
@@ -68,12 +69,14 @@ lasipFilter = filter.lasip('Decimation', 12, 'GetNoise', true, 'Gamma', 15, ...
     'ExpandBoundary', 0, 'VarTh', 0.1);
 
 lasipNode = tfilter.new(...
-    'Filter',       lasipFilter, ...
-    'Name',         'lasip', ...
-    'DataSelector', eegSel);
+    'Filter',           lasipFilter, ...
+    'Name',             'lasip', ...
+    'DataSelector',     eegSel, ...
+    'ShowDiffReport',   true ...  
+    );
 
 % A rather standard band-pass filtering node
-myFilter = @(sr) filter.bpfilt('fp', [0.5 60]/(sr/2));
+myFilter = @(sr) filter.bpfilt('fp', [0.5 70]/(sr/2));
 bpFiltNode = tfilter.new('Filter', myFilter, 'DataSelector', eegSel);
 
 myPipe = pipeline.new('NodeList', ...
@@ -81,44 +84,27 @@ myPipe = pipeline.new('NodeList', ...
     physioset_import.new('Importer', physioset.import.physioset), ...
     lasipNode, ...
     badChans1, ...
-    badChans2, ...
-    bpfiltNode, ...
+    bad_samples.new, ...
     bss_regr.pwl, ...
-    batman.node.bss_regr_2hz(NaN, 'Var', 99.9), ...
-    bss_regr.ecg(NaN, 'Var', 99.9), ...
+    batman.node.bss_regr_2hz(NaN, 'Var', 99.9), ...    
     bss_regr.eog(NaN, 'Var', 99.5), ...
     batman.node.bss_regr_spiky_noise(NaN, 'Var', 99.9), ...
+    resample.new('OutputRate', 250), ...    
+    bpFiltNode ...
     }, ...
     'Save', true, 'OGE', USE_OGE, 'GenerateReport', DO_REPORT, ...
-    'Name', 'batman-main-pipeline');
+    'Name', 'batman-cleaning-pipeline');
 
 %% Process all relevant data files
 switch lower(get_hostname),
     case 'somerenserver',
-        % Create a new directory to store the analysis results
-        link2dir(INPUT_DIR, OUTPUT_DIR);
-        
-        % Match the splitted files
-        if numel(SUBJECTS) > 1, 
-            subjList = join('|', SUBJECTS);
-        else
-            subjList = num2str(SUBJECTS);
-        end
-        
-        if numel(CONDITIONS) > 1,
-            condList = join('|', CONDITIONS);
-        else
-            condList = CONDITIONS{1};
-        end
-        
-        if numel(BLOCKS) > 1,
-           blockList = join('|', BLOCKS);
-        else
-           blockList = num2str(BLOCKS); 
-        end
-        
-        regex = ['batman_0+(' subjList ')_.+_(' condList ')_(' ...
-            blockList ')\.pseth$'];
+        % Create a new directory to store the analysis results        
+        regex = batman.files_regex(SUBJECTS, CONDITIONS, BLOCKS, '', ...
+            '\.pset.?');
+        files = finddepth_regex_match(INPUT_DIR, regex);
+        link2files(files, OUTPUT_DIR);
+        regex = batman.files_regex(SUBJECTS, CONDITIONS, BLOCKS, '', ...
+            '\.pseth');
         files = finddepth_regex_match(OUTPUT_DIR, regex);
         
     case 'nin271',

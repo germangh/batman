@@ -37,8 +37,9 @@ end
 
 blockIdx = firstBlock + idx - 1;
 
-if blockIdx > lastBlock,
+if blockIdx > lastBlock || ismember(blockIdx, [5, 10])
     % This block should not be considered in this file
+    % Break blocks should be handled as out-of-range blocks
     name = NaN;
     return;
 end

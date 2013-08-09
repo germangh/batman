@@ -17,10 +17,10 @@ import mperl.join;
 
 % List of subjects that need to be splitted
 
-SUBJECTS = 6;%7:10;
+SUBJECTS = 1:7;
 
 % Should OGE be used, if available?
-USE_OGE = false;
+USE_OGE = true;
 
 % Generate comprehensive HTML reports?
 DO_REPORT = false;
@@ -50,7 +50,7 @@ namingPolicyPVT = @(d, ev, idx) batman.naming_policy(d, ev, idx, 'pvt');
 % block to determine the onset of a PVT block. We then use the fact that
 % the RS epoch appears 7 minutes after the PVT block onset
 offset = 7*60;
-duration = 5.60;
+duration = 5*60;
 mySel = batman.pvt_selector;
 rsNode = split.new('EventSelector', mySel, 'Offset', offset, ...
     'Duration', duration, 'SplitNamingPolicy', namingPolicyRS);
