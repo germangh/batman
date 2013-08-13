@@ -15,7 +15,7 @@ import mperl.join;
 SUBJECTS = 9999;
 
 % Should OGE be used, if available?
-USE_OGE = false;
+USE_OGE = true;
 
 % Generate comprehensive HTML reports?
 DO_REPORT = true;

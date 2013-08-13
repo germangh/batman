@@ -25,7 +25,7 @@ CONDITIONS = {'rs'};
 BLOCKS = 1:14;
 
 % Should OGE be used, if available?
-USE_OGE = true;
+USE_OGE = false;
 
 % Generate comprehensive HTML reports?
 DO_REPORT = true;
