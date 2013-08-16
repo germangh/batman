@@ -1,17 +1,7 @@
 % stage2.m
 %
 % Basic pre-processing
-%
-% 1) Removing very large amplitude trends and signal fluctuations
-%
-% 2) Reject bad channels
-%
-% 3) Reject bad samples
-%
-% 4) Band-pass filtering between 0.5 and 70 Hz
-%
-%
-% (c) German Gomez-Herrero, g@germangh.com
+
 
 meegpipe.initialize;
 
@@ -22,23 +12,26 @@ import misc.regexpi_dir;
 import mperl.file.spec.catdir;
 import mperl.file.find.finddepth_regex_match;
 import mperl.join;
+import pset.selector.good_data;
+import pset.selector.sensor_class;
+import pset.selector.cascade;
 
 %% Analysis parameters
 
-SUBJECTS = 1:7;
+SUBJECTS = 6;%1:7;
 
 CONDITIONS = {'rs'};
 
-BLOCKS = 1:14;
+BLOCKS = 1:5;%1:14;
 
-USE_OGE = true;
+USE_OGE = false;
 
 DO_REPORT = true;
 
 switch lower(get_hostname)
     case 'somerenserver'
         ROOT_DIR = '/data1/projects/batman/analysis';
-        INPUT_DIR = catdir(ROOT_DIR, 'batman-split_files');
+        INPUT_DIR = catdir(ROOT_DIR, 'stage1_130815-160848');
         
     case 'nin271',
         INPUT_DIR = 'D:\data';
@@ -61,6 +54,10 @@ myNode = physioset_import.new('Importer', myImporter);
 
 nodeList = [nodeList {myNode}];
 
+%%% Node: copy the physioset
+
+myNode = copy.new;
+nodeList = [nodeList {myNode}];
 
 %%% Node: remove large signal fluctuations using a LASIP filter
 
@@ -89,13 +86,18 @@ nodeList = [nodeList {myNode}];
 
 
 %%% Node: Reject bad channels
-
-myNode = bad_channels.new;
+minVal = @(x) median(x) - 20;
+maxVal = @(x) median(x) + 15;
+myCrit = bad_channels.criterion.var.new('Min', minVal, 'Max', maxVal);
+myNode = bad_channels.new('Criterion', myCrit);
 nodeList = [nodeList {myNode}];
 
 
 %%% Node: Reject bad samples
-myNode = bad_samples.new;
+myNode = bad_samples.new(...
+    'MADs',         5, ...
+    'WindowLength', @(fs) fs/4, ...
+    'MinDuration',  @(fs) round(fs/4));
 nodeList = [nodeList {myNode}];
 
 
@@ -103,7 +105,10 @@ nodeList = [nodeList {myNode}];
 
 myFilter    = @(sr) filter.bpfilt('fp', [0.5 70]/(sr/2));
 
-mySelector  = pset.selector.sensor_class('Class', 'EEG');
+mySelector  = cascade(...
+    sensor_class('Class', 'EEG'), ...
+    good_data ...
+    );
 
 myNode  = tfilter.new(...
     'Filter',       myFilter, ...
@@ -114,35 +119,31 @@ nodeList = [nodeList {myNode}];
 
 %%% The pipeline
 myPipe = pipeline.new(...
-    'NodeList',     nodeList, ...
-    'Save',         true, ...
-    'OGE',          USE_OGE, ...
+    'NodeList',         nodeList, ...
+    'Save',             true, ...
+    'OGE',              USE_OGE, ...
     'GenerateReport',   DO_REPORT, ...
-    'Name',         'stage2' ...
+    'Name',             'stage2' ...
     );
 
 
 %% Select the relevant files and start the data processing jobs
 switch lower(get_hostname),
     case 'somerenserver',
-        % Create a new directory to store the analysis results        
-        regex = batman.files_regex(SUBJECTS, CONDITIONS, BLOCKS, '', ...
-            '\.pset.?');
+        regex = '_\d\.pseth?$';
         files = finddepth_regex_match(INPUT_DIR, regex);
+        % link2files works only under Mac OS X and Linux
         link2files(files, OUTPUT_DIR);
-        regex = batman.files_regex(SUBJECTS, CONDITIONS, BLOCKS, '', ...
-            '\.pseth');
+        regex = '_\d\.pseth$';
         files = finddepth_regex_match(OUTPUT_DIR, regex);
-        
-    case 'nin271',
-        files = finddepth_regex_match(INPUT_DIR, ...
-            '_(rs|pvt)_\d+\.pseth$');
         
     otherwise,
         error('The location of the batman dataset is not known');
         
 end
 
+if isempty(files),
+    error('Files from stage1 could not be found');
+end
 run(myPipe, files{:});
 
-    
