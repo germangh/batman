@@ -24,7 +24,7 @@ CONDITIONS = {'rs'};
 
 BLOCKS = 1:5;%1:14;
 
-USE_OGE = false;
+USE_OGE = true;
 
 DO_REPORT = true;
 
@@ -130,11 +130,11 @@ myPipe = pipeline.new(...
 %% Select the relevant files and start the data processing jobs
 switch lower(get_hostname),
     case 'somerenserver',
-        regex = '_\d\.pseth?$';
+        regex = '_\d+\.pseth?$';
         files = finddepth_regex_match(INPUT_DIR, regex);
         % link2files works only under Mac OS X and Linux
         link2files(files, OUTPUT_DIR);
-        regex = '_\d\.pseth$';
+        regex = '_\d+\.pseth$';
         files = finddepth_regex_match(OUTPUT_DIR, regex);
         
     otherwise,
