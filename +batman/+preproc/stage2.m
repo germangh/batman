@@ -31,9 +31,10 @@ DO_REPORT = true;
 switch lower(get_hostname)
     case 'somerenserver'
         ROOT_DIR = '/data1/projects/batman/analysis';
-        INPUT_DIR = catdir(ROOT_DIR, 'stage1_130815-160848');
+        INPUT_DIR = catdir(ROOT_DIR, 'stage1');
         
     case 'nin271',
+        ROOT_DIR = 'D:\batman';
         INPUT_DIR = 'D:\data';
         
     otherwise,
@@ -41,7 +42,7 @@ switch lower(get_hostname)
         
 end
 
-OUTPUT_DIR = catdir(ROOT_DIR, ['stage2_' datestr(now, 'yymmdd-HHMMSS')]);
+OUTPUT_DIR = catdir(ROOT_DIR, 'stage2');
 
 
 %% Build the cleaning pipeline

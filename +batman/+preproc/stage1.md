@@ -1,10 +1,10 @@
 Preprocessing: Stage 1
 ===
 
-The first stage consisted in splitting whole-experiment `.mff` files into 
-smaller and easier to handle single-block files. The splitting operation 
+The first processing stage splits whole-experiment `.mff` files into 
+easier to handle single-block files. The splitting operation 
 was complicated by errors and unexpected breaks during the experimental
-protocol that led to missing events and other inconsistencies in the
+protocol that led to some missing events in the
  generated `.mff` files. This is why the code necessary to produce the 
 splitting is also more complex than one would expect.
 
@@ -82,6 +82,9 @@ end
 
 ## Build pipeline nodes
 
+
+### Node 1: `physioset_import`
+
 First we will need a processing node that will read the raw data from an 
 `.mff` file and create a [physioset][physioset] object out of it. A 
 [physioset][physioset] is the basic data structure used by the 
@@ -90,8 +93,6 @@ First we will need a processing node that will read the raw data from an
 [physioset]: https://github.com/germangh/matlab_physioset
 [meegpipe]: https://github.com/germangh/meegpipe
 
-
-### Node 1: `physioset_import`
 
 ````matlab
 % Initialize the list of processing nodes
