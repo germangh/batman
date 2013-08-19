@@ -82,7 +82,7 @@ end
 ```` 
 
 
-### Build the pipeline node by node
+### Build pipeline nodes
 
 First we will need a processing node that will read the raw data from an 
 `.mff` file and create a [physioset][physioset] object out of it. A 
@@ -118,6 +118,7 @@ parameters to understand how you want the splitting to be performed, and
 how the generated files should be named. The file naming policy is 
 specified with the following [function handle][function_handle]:
 
+[split]: https://github.com/germangh/meegpipe/blob/master/+meegpipe/+node/+split/README.md
 [function_handle]: http://www.mathworks.nl/help/matlab/ref/function_handle.html
 
 ````matlab
@@ -138,3 +139,22 @@ file that will contain the relevant data split. See
 [batman.preproc.naming_policy.m][naming_policy] for more details.
 
 [naming_policy]: ./naming_policy.m
+
+
+### Build the pipeline
+
+````matlab
+myPipe = pipeline.new(...
+    'NodeList',         nodeList, ...
+    'OGE',              USE_OGE, ...
+    'GenerateReport',   DO_REPORT, ...
+    'Save',             false, ...
+    'Name',             'stage1', ...
+    'Queue',            'long.q@somerenserver.herseninstituut.knaw.nl');
+````
+
+The argument `Queue` is used to indicate the grid engine that the 
+processing jobs should be sent to the `long.q` queue, which is especialized
+in processing large jobs that require lots of memory and time to finalize.
+Of course this only applies if you are running the processing at the 
+`somerengrid`.
