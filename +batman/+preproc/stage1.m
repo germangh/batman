@@ -50,8 +50,7 @@ nodeList = [nodeList {myNode}];
 %
 % 3) The index of event 2) within the array of all split events present in
 % the physioset that was imported in 1)
-namingPolicyRS = @(d, ev, idx) batman.naming_policy(d, ev, idx, 'rs');
-namingPolicyPVT = @(d, ev, idx) batman.naming_policy(d, ev, idx, 'pvt');
+namingPolicyRS = @(d, ev, idx) batman.preproc.naming_policy(d, ev, idx, 'rs');
 
 % In some files, the ars+ event is missing (and also the stm+ events). It 
 % seem that the most robust strategy to get the onsets of the RS epochs is

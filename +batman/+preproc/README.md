@@ -110,5 +110,31 @@ myNode = physioset_import.new('Importer', mff);
 nodeList = [nodeList {myNode}];
 ````
 
+__Node 2: split__
 
 
+The [split node][split] included in the `meegpipe` toolbox requires several 
+parameters to understand how you want the splitting to be performed, and 
+how the generated files should be named. The file naming policy is 
+specified with the following [function handle][function_handle]:
+
+[function_handle]: http://www.mathworks.nl/help/matlab/ref/function_handle.html
+
+````matlab
+namingPolicyRS = @(d, ev, idx) batman.preproc.naming_policy(d, ev, idx, 'rs');
+````
+
+The function handle above defines an inline function that takes three 
+argument:
+
+* `d`: the physioset object that contains the relevant data split
+* `ev`: the event from the original (non-splitted) dataset that was used 
+to produce the relevant data split
+* `idx`: the index of the event `ev` within the list of all data-splitting 
+events that were found in the raw dataset.
+
+The output of function `namingPolicyRS` is a string with the name of the 
+file that will contain the relevant data split. See 
+[batman.preproc.naming_policy.m][naming_policy] for more details.
+
+[naming_policy]: ./naming_policy.m
