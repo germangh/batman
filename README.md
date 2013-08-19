@@ -74,8 +74,8 @@ BATMAN dataset so far, in chronological order.
 
 Analysis                                    | Documentation
 ------------------------------------------- | -------------
-Pre-processing                              | [+batman/+preproc/README.md]
-Spectral analysis of resting state data     | [+batman/+rs/README.md]
+Pre-processing                              | [+batman/+preproc/README.md][preproc]
+Spectral analysis of resting state data     | [+batman/+rs/README.md][rs]
 
 [preproc]: ./+batman/+preproc/README.md
 [rs]: ./+batman/+rs/README.md    
