@@ -10,7 +10,8 @@ The first stage consisted in splitting whole-experiment `.mff` files into
 smaller and easier to handle single-block files. The splitting operation 
 was complicated by errors and unexpected breaks during the experimental
 protocol that led to missing events and other inconsistencies in the
- generated `.mff` files. 
+ generated `.mff` files. This is why the code necessary to produce the 
+splitting is also more complex than one would expect.
 
 The data splitting is implemented in script [batman.preproc.stage1][stage1].
 To reproduce stage 1 simply run in MATLAB:
@@ -22,6 +23,7 @@ batman.preproc.stage1
 Some details of what is going on inside [batman.preproc.stage1][stage1] are
 given below. 
 
+[stage1]: ./+batman/+preproc/stage1.m
 
 ### Import directives
 
@@ -64,7 +66,7 @@ SUBJECTS = 1:7;
 USE_OGE = true;
 
 % Should a data processing report (in HTML format) be generated?
-DO_REPORT = false;
+DO_REPORT = true;
 
 % This switch can be used to set the locations of the data depending on the 
 % machine that you are using to perform the data processing
@@ -79,4 +81,30 @@ switch lower(get_hostname),
 end
 ```` 
 
-[stage1]: ./+batman/+preproc/stage1.m
+
+### Build the pipeline node by node
+
+First we will need a processing node that will read the raw data from an 
+`.mff` file and create a [physioset][physioset] object out of it. A 
+[physioset][physioset] is the basic data structure used by the 
+[meegpipe][meegpipe] toolbox.
+
+[physioset]: https://github.com/germangh/matlab_physioset
+[meegpipe]: https://github.com/germangh/meegpipe
+
+````matlab
+
+% Initialize the list of processing nodes
+nodeList = {};
+
+% This object is able to create a physioset from an .mff file
+myImporter = mff('Precision', 'double');
+
+% This node uses the provided importer to read a disk file and generate an 
+% equivalent physioset object
+myNode = physioset_import.new('Importer', mff);
+
+% Add the node to the list of nodes
+nodeList = [nodeList {myNode}];
+````
+
