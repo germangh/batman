@@ -1,5 +1,5 @@
-
-## Stage 1
+Preprocessing: Stage 1
+===
 
 The first stage consisted in splitting whole-experiment `.mff` files into 
 smaller and easier to handle single-block files. The splitting operation 
@@ -20,7 +20,7 @@ given below.
 
 [stage1]: ./+batman/+preproc/stage1.m
 
-### Import directives
+## Import directives
 
 These are required in order to be able to use short names to refer to 
 some of the `meegpipe`'s components that are used within `stage1.m`:
@@ -47,7 +47,7 @@ instead of writing the more verbose:
 myNode = meegpipe.node.center.new
 ````
 
-### Analysis parameters
+## Analysis parameters
 
 The first section of `stage1.m` defines several important analysis 
 parameters
@@ -80,7 +80,7 @@ end
 ```` 
 
 
-### Build pipeline nodes
+## Build pipeline nodes
 
 First we will need a processing node that will read the raw data from an 
 `.mff` file and create a [physioset][physioset] object out of it. A 
@@ -91,7 +91,7 @@ First we will need a processing node that will read the raw data from an
 [meegpipe]: https://github.com/germangh/meegpipe
 
 
-__Node 1: physioset_import__
+### Node 1: `physioset_import`
 
 ````matlab
 % Initialize the list of processing nodes
@@ -108,7 +108,7 @@ myNode = physioset_import.new('Importer', mff);
 nodeList = [nodeList {myNode}];
 ````
 
-__Node 2: split__
+### Node 2: `split`
 
 
 The [split node][split] included in the `meegpipe` toolbox requires several 
@@ -139,7 +139,7 @@ file that will contain the relevant data split. See
 [naming_policy]: ./naming_policy.m
 
 
-### Build the pipeline
+## Build the pipeline
 
 ````matlab
 myPipe = pipeline.new(...
@@ -158,7 +158,7 @@ Of course this only applies if you are running the processing at the
 `somerengrid`.
 
 
-### Process the relevant data files
+## Process the relevant data files
 
 
 ````matlab
