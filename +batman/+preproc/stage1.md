@@ -138,6 +138,32 @@ file that will contain the relevant data split. See
 
 [naming_policy]: ./naming_policy.m
 
+We also need to specify how the events that are present in the raw data 
+file should be used to determine the onset and durations of the data splits.
+This is done using an appropriate [event selector][ev_selector], that 
+will select the first PVT stimulus event within each block. The actual 
+implementation of such an event selector is in 
+[batman.preproc.pvt_selector][pvt_selector]. Then, we are ready to define
+our `split` node as follows:
+
+````matlab
+mySel       = batman.preproc.pvt_selector;
+
+thisNode = split.new(...
+    'EventSelector',        mySel, ...
+    'Offset',               7*60, ...
+    'Duration',             5*60, ...
+    'SplitNamingPolicy',    namingPolicyRS);
+
+nodeList = [nodeList {thisNode}];
+````
+
+The `Offset` and `Duration` arguments indicate that the data split should 
+start 7 minutes after the occurrence of the first PVT stimulus, and should
+have a duration of 5 minutes.
+
+[pvt_selector]: ./pvt_selector.m
+[ev_selector]: https://github.com/germangh/matlab_physioset/blob/master/+physioset/+event
 
 ## Build the pipeline
 

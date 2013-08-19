@@ -63,7 +63,7 @@ namingPolicyRS = @(d, ev, idx) batman.preproc.naming_policy(d, ev, idx, 'rs');
 % RS epoch appears 7 minutes after the PVT block onset
 offset      = 7*60;
 duration    = 5*60;
-mySel       = batman.pvt_selector;
+mySel       = batman.preproc.pvt_selector;
 
 thisNode = split.new(...
     'EventSelector',        mySel, ...
