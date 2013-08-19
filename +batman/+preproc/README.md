@@ -158,3 +158,41 @@ processing jobs should be sent to the `long.q` queue, which is especialized
 in processing large jobs that require lots of memory and time to finalize.
 Of course this only applies if you are running the processing at the 
 `somerengrid`.
+
+
+### Process the relevant data files
+
+
+````matlab
+
+switch lower(get_hostname),
+    
+    case 'somerenserver',
+        
+        % command lin2rec will use the somsds data management system to 
+        % generate symbolic links to the relevant data files. The links 
+        % will be placed within OUTPUT_DIR. The output of this command is 
+        % a cell array with the names of all the generated symbolic links
+        files = link2rec('batman', 'file_ext', '.mff', ...
+            'subject', SUBJECTS, 'folder', OUTPUT_DIR);
+        
+    case 'nin271',
+        
+        % This applies to my windows PC. I leave it here so that you can 
+        % how you could run stage 1 without the help of somsds.
+        if numel(SUBJECTS) > 1, 
+            subjList = join('|', SUBJECTS);
+        else
+            subjList = num2str(SUBJECTS);
+        end
+        regex = ['batman_0+(' subjList ')_eeg_all.*\.mff$'];
+        files = regexpi_dir('D:/data', regex);
+        
+    otherwise,
+        error('The location of the batman dataset is not known');
+        
+end
+
+run(myPipe, files{:});
+````
+
