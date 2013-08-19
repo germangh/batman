@@ -19,13 +19,7 @@ import spt.bss.*;
 
 %% Analysis parameters
 
-SUBJECTS = 1:7;
-
 PIPE_NAME = 'stage3';
-
-CONDITIONS = {'rs'};
-
-BLOCKS = 1:14;
 
 USE_OGE = true;
 
@@ -72,8 +66,7 @@ nodeList = [nodeList {myNode}];
 
 %%% Node: remove PWL
 
-myNode = bss_regr.pwl(...
-    'IOReport', report.plotter.io, 'Filter', []);
+myNode = bss_regr.pwl('IOReport', report.plotter.io);
 
 nodeList = [nodeList {myNode}];
 

@@ -26,11 +26,11 @@ Of course, for the command above to work you should have completed
 successfully [stage 1][stage1-doc] of the pre-processing chain.
 
 [stage1-doc]: ./stage1.md
-[stage1]: ./+batman/+preproc/stage1.m
 
 Below you can find a detailed description of what is going on inside 
 [stage2.m][stage2].
 
+[stage2]: ./+batman/+preproc/stage2.m
 
 ## Import directives
 
@@ -59,8 +59,8 @@ import pset.selector.cascade;
 
 ## Analysis parameters
 
-The first section of `stage1.m` defines several important analysis 
-parameters
+The first section of `meegpipe.preproc.stage2` defines several important
+ processing parameters
 
 
 ````matlab
