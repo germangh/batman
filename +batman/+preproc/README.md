@@ -92,10 +92,10 @@ First we will need a processing node that will read the raw data from an
 [physioset]: https://github.com/germangh/matlab_physioset
 [meegpipe]: https://github.com/germangh/meegpipe
 
+
+__Node 1: physioset_import__
+
 ````matlab
-
-__physioset_import__
-
 % Initialize the list of processing nodes
 nodeList = {};
 
