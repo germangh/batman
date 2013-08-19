@@ -28,7 +28,7 @@ DO_REPORT = true;
 switch lower(get_hostname)
     case 'somerenserver'
         ROOT_DIR = '/data1/projects/batman/analysis';
-        INPUT_DIR = catdir(ROOT_DIR, 'stage2_130815-173826');
+        INPUT_DIR = catdir(ROOT_DIR, 'stage2');
         
     case 'nin271',
         ROOT_DIR = 'D:\batman';
