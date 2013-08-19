@@ -1,7 +1,7 @@
 % stage 1
 %
 % Splitting the large .mff files that contain 14 blocks into 14
-% single-block files. 
+% single-block files.
 
 import meegpipe.node.*;
 import physioset.import.mff;
@@ -19,9 +19,13 @@ USE_OGE = true;
 DO_REPORT = false;
 
 switch lower(get_hostname),
-
+    
     case 'somerenserver',
         OUTPUT_DIR = '/data1/projects/batman/analysis/stage1';
+        
+        
+    case 'nin271'
+        OUTPUT_DIR = 'D:/batman';
         
     otherwise,
         % do nothing
@@ -52,7 +56,7 @@ nodeList = [nodeList {myNode}];
 % the physioset that was imported in 1)
 namingPolicyRS = @(d, ev, idx) batman.preproc.naming_policy(d, ev, idx, 'rs');
 
-% In some files, the ars+ event is missing (and also the stm+ events). It 
+% In some files, the ars+ event is missing (and also the stm+ events). It
 % seem that the most robust strategy to get the onsets of the RS epochs is
 % to locate the first DIN4 (photodiode response) event within a block to
 % determine the onset of a PVT block. Then we can use the fact that the
@@ -74,13 +78,13 @@ nodeList = [nodeList {thisNode}];
 % offset      = -10;      % 10 seconds before the first PVT in the block
 % duration    = 7*60;     % 7 minutes of PVT (at most)
 % mySel       = batman.pvt_selector;
-% 
+%
 % thisNode     = split.new(...
 %     'EventSelector',        mySel, ...
 %     'Offset',               offset, ...
 %     'Duration',             duration, ...
 %     'SplitNamingPolicy',    namingPolicyPVT);
-% 
+%
 % nodeList = [nodeList {thisNode}];
 
 
@@ -106,7 +110,7 @@ switch lower(get_hostname),
         
     case 'nin271',
         
-        if numel(SUBJECTS) > 1, 
+        if numel(SUBJECTS) > 1,
             subjList = join('|', SUBJECTS);
         else
             subjList = num2str(SUBJECTS);
