@@ -21,9 +21,7 @@ DO_REPORT = false;
 switch lower(get_hostname),
 
     case 'somerenserver',
-        OUTPUT_DIR = ...
-            ['/data1/projects/batman/analysis/stage1_' ...
-            datestr(now, 'yymmdd-HHMMSS')];
+        OUTPUT_DIR = '/data1/projects/batman/analysis/stage1';
         
     otherwise,
         % do nothing
