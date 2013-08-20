@@ -19,7 +19,7 @@ terminal and type:
 
 ````bash
 cd /data1/projects/batman/scripts
-git clone https://github.com/germangh/batman
+git clone git://github.com/germangh/batman
 ```` 
 
 Next you need to install [meegpipe][meegpipe]. Note that you may need to 
@@ -34,7 +34,7 @@ Open a terminal and type:
 cd /data1/projects/batman/scripts
 mkdir meegpipe-root
 cd meegpipe-root
-git clone https://github.com/germangh/meegpipe
+git clone git://github.com/germangh/meegpipe
 ````
 
 Then open MATLAB and type:
