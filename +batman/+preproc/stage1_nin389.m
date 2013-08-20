@@ -14,7 +14,7 @@ import mperl.join;
 
 %% User parameters
 
-SUBJECTS = 8:100;
+SUBJECTS = 1:100;
 
 USE_OGE = true;
 
