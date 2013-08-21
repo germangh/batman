@@ -1,14 +1,8 @@
-% stage 1
+% stage 1b
 %
 % Splitting the large .mff files that contain 14 blocks into 14
 % single-block files.
 
-import meegpipe.node.*;
-import physioset.import.mff;
-import somsds.link2rec;
-import misc.get_hostname;
-import misc.regexpi_dir;
-import mperl.join;
 
 %% User parameters
 
@@ -18,20 +12,12 @@ USE_OGE = true;
 
 DO_REPORT = false;
 
-switch lower(get_hostname),
-    
-    case 'somerenserver',
-        OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1b_', ...
-            datestr(now, 'yymmdd-HHMMSS')];
-        
-        
-    case 'nin271'
-        OUTPUT_DIR = 'D:/batman';
-        
-    otherwise,
-        % do nothing
-        
-end
+OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1_', ...
+    datestr(now, 'yymmdd-HHMMSS')];
+CODE_DIR = '/data1/projects/batman/scripts/stage1';
+
+% stage1.m takes care of puting meegpipe in CODE_DIR
+addpath(genpath(CODE_DIR));
 
 %% Build the pipeline node by node
 
@@ -39,8 +25,8 @@ nodeList = {};
 
 %%% Node: import from .mff file
 
-myImporter = mff('Precision', 'double');
-myNode = physioset_import.new('Importer', mff);
+myImporter = physioset.import.mff('Precision', 'double');
+myNode = meegpipe.node.physioset_import.new('Importer', myImporter);
 
 nodeList = [nodeList {myNode}];
 
@@ -65,13 +51,13 @@ namingPolicyRS = @(d, ev, idx) batman.preproc.naming_policy(d, ev, idx, 'rs');
 %
 % Correction: this doesn't seem to work either. Damn it! See for instance
 %  batman_0001_eeg_all, which apparently has only 9 PVT blocks. What is
-%  going on with that file?? In this version of stage1 we use the beginning
-%  of PVT block events but in stage1.m we use the ars+ events.
+%  going on with that file?? In stage1.m we use the ars+ events. Then in
+%  stage1b we use the beginning of PVT block events.
 offset      = 7*60;
 duration    = 5*60;
 mySel       = batman.preproc.pvt_selector;
 
-thisNode = split.new(...
+thisNode = meegpipe.node.split.new(...
     'EventSelector',        mySel, ...
     'Offset',               offset, ...
     'Duration',             duration, ...
@@ -79,24 +65,10 @@ thisNode = split.new(...
 
 nodeList = [nodeList {thisNode}];
 
-%%% Node: Extract PVT blocks
-
-% offset      = -10;      % 10 seconds before the first PVT in the block
-% duration    = 7*60;     % 7 minutes of PVT (at most)
-% mySel       = batman.pvt_selector;
-%
-% thisNode     = split.new(...
-%     'EventSelector',        mySel, ...
-%     'Offset',               offset, ...
-%     'Duration',             duration, ...
-%     'SplitNamingPolicy',    namingPolicyPVT);
-%
-% nodeList = [nodeList {thisNode}];
-
 
 %%% The actual pipeline
 
-myPipe = pipeline.new(...
+myPipe = meegpipe.node.pipeline.new(...
     'NodeList',         nodeList, ...
     'OGE',              USE_OGE, ...
     'GenerateReport',   DO_REPORT, ...
@@ -107,22 +79,22 @@ myPipe = pipeline.new(...
 
 %% Select the relevant data files and process them with the pipeline
 
-switch lower(get_hostname),
+switch lower(misc.get_hostname),
     
     case 'somerenserver',
         
-        files = link2rec('batman', 'file_ext', '.mff', ...
+        files = somsds.link2rec('batman', 'file_ext', '.mff', ...
             'subject', SUBJECTS, 'folder', OUTPUT_DIR);
         
     case 'nin271',
         
         if numel(SUBJECTS) > 1,
-            subjList = join('|', SUBJECTS);
+            subjList = mperl.join('|', SUBJECTS);
         else
             subjList = num2str(SUBJECTS);
         end
         regex = ['batman_0+(' subjList ')_eeg_all.*\.mff$'];
-        files = regexpi_dir('D:/data', regex);
+        files = misc.regexpi_dir('D:/data', regex);
         
     otherwise,
         error('The location of the batman dataset is not known');
