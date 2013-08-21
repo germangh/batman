@@ -24,15 +24,20 @@ switch lower(get_hostname),
     case 'somerenserver',
         OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1_', ...
             datestr(now, 'yymmdd-HHMMSS')];
+        CODE_DIR = '/data1/projects/batman/scripts/stage1';
         
         
     case 'nin271'
-        OUTPUT_DIR = 'D:/batman';
+        OUTPUT_DIR = 'D:/batman/stage1';
+        CODE_DIR = 'D:/batman/code/stage1';
         
     otherwise,
         % do nothing
         
 end
+
+%% Download the latest version of meegpipe
+batman.get_meegpipe(CODE_DIR);
 
 %% Build the pipeline node by node
 

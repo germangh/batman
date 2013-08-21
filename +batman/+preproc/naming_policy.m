@@ -15,27 +15,15 @@ blockId = regexp(dataName, regex, 'names');
 
 if isempty(blockId),
     firstBlock = 1;
-    lastBlock = 12;
+    lastBlock = 14;
 else
     firstBlock = str2double(blockId.firstBlock);
     lastBlock  = str2double(blockId.lastBlock);
     
-    % Convert to range 1-12
-    if firstBlock > 10,
-        firstBlock = firstBlock - 2;
-    elseif firstBlock > 5,
-        firstBlock = firstBlock - 1;
-    end
-    
-    if lastBlock > 10,
-        lastBlock = lastBlock - 2;
-    elseif lastBlock > 5,
-        lastBlock = lastBlock - 1;
-    end
-    
 end
 
-blockIdx = firstBlock + idx - 1;
+blockIdx = firstBlock:lastBlock;
+blockIdx = blockIdx(idx);
 
 if blockIdx > lastBlock || ismember(blockIdx, [5, 10])
     % This block should not be considered in this file
@@ -51,13 +39,6 @@ if size(data, 2) < get_sample(ev)+60*5*data.SamplingRate,
         blockIdx, get_name(data));
     name = NaN;
     return;
-end
-
-% Take into account the breaks
-if blockIdx > 8,
-    blockIdx = blockIdx + 2;
-elseif blockIdx > 4,
-    blockIdx = blockIdx + 1;
 end
 
 name = [label '_' num2str(blockIdx)]; 
