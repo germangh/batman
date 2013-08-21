@@ -18,25 +18,20 @@ if isempty(blockId),
     lastBlock = 14;
 else
     firstBlock = str2double(blockId.firstBlock);
-    lastBlock  = str2double(blockId.lastBlock);
-    
+    lastBlock  = str2double(blockId.lastBlock);  
 end
 
-blockIdx = firstBlock:lastBlock;
+blockIdx = setdiff(firstBlock:lastBlock, [5, 10]);
 
-if idx > blockIdx,
+if idx > numel(blockIdx),
+    warning('naming_policy:TooManyEvents', ...
+        'Event with index %d exceeds the number of blocks (%d) in %s', ...
+        idx, numel(blockIdx), get_name(data));
     name = NaN;
     return;
 end
 
 blockIdx = blockIdx(idx);
-
-if blockIdx > lastBlock || ismember(blockIdx, [5, 10])
-    % This block should not be considered in this file
-    % Break blocks should be handled as out-of-range blocks
-    name = NaN;
-    return;
-end
 
 % Check whether the RS period is not complete, in that case do not split
 if size(data, 2) < get_sample(ev)+60*5*data.SamplingRate,
