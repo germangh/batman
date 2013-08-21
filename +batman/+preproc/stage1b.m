@@ -9,7 +9,6 @@ import somsds.link2rec;
 import misc.get_hostname;
 import misc.regexpi_dir;
 import mperl.join;
-import physioset.event.class_selector;
 
 %% User parameters
 
@@ -22,7 +21,7 @@ DO_REPORT = false;
 switch lower(get_hostname),
     
     case 'somerenserver',
-        OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1_', ...
+        OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1b_', ...
             datestr(now, 'yymmdd-HHMMSS')];
         
         
@@ -66,11 +65,11 @@ namingPolicyRS = @(d, ev, idx) batman.preproc.naming_policy(d, ev, idx, 'rs');
 %
 % Correction: this doesn't seem to work either. Damn it! See for instance
 %  batman_0001_eeg_all, which apparently has only 9 PVT blocks. What is
-%  going on with that file?? In stage1.m we use the ars+ events. Then in
-%  stage1b we use the beginning of PVT block events.
-offset      = 0;
+%  going on with that file?? In this version of stage1 we use the beginning
+%  of PVT block events but in stage1.m we use the ars+ events.
+offset      = 7*60;
 duration    = 5*60;
-mySel       = class_selector('Type', 'arsb');
+mySel       = batman.preproc.pvt_selector;
 
 thisNode = split.new(...
     'EventSelector',        mySel, ...
