@@ -1,18 +1,23 @@
 function get_meegpipe(codeDir, url)
 
-if nargin < 1 || isempty(url),
+if nargin < 2 || isempty(url),
     url = 'git://github.com/germangh/meegpipe';
 end
 
-installDir = catdir(codeDir, 'meegpipe');
+if ismember(codeDir(end), {'/','\'}),
+    codeDir(end) = [];
+end
+installDir = [codeDir filesep 'meegpipe'];
 if exist(installDir, 'dir'),
+    warning('off', 'MATLAB:RMDIR:RemovedFromPath');
     rmdir(installDir, 's');
+    warning('on', 'MATLAB:RMDIR:RemovedFromPath');
 end
 mkdir(installDir);
 currDir = pwd;
 cd(installDir);
 system(sprintf('git clone %s', url));
-cd(catdir(installDir, 'meegpipe'));
+cd([installDir filesep 'meegpipe']);
 submodule_update([], true);
 cd(currDir);
 

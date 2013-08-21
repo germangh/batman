@@ -3,13 +3,6 @@
 % Splitting the large .mff files that contain 14 blocks into 14
 % single-block files.
 
-import meegpipe.node.*;
-import physioset.import.mff;
-import somsds.link2rec;
-import misc.get_hostname;
-import misc.regexpi_dir;
-import mperl.join;
-import physioset.event.class_selector;
 
 %% User parameters
 
@@ -19,22 +12,9 @@ USE_OGE = true;
 
 DO_REPORT = false;
 
-switch lower(get_hostname),
-    
-    case 'somerenserver',
-        OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1_', ...
-            datestr(now, 'yymmdd-HHMMSS')];
-        CODE_DIR = '/data1/projects/batman/scripts/stage1';
-        
-        
-    case 'nin271'
-        OUTPUT_DIR = 'D:/batman/stage1';
-        CODE_DIR = 'D:/batman/code/stage1';
-        
-    otherwise,
-        % do nothing
-        
-end
+OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1_', ...
+    datestr(now, 'yymmdd-HHMMSS')];
+CODE_DIR = '/data1/projects/batman/scripts/stage1';
 
 %% Download the latest version of meegpipe
 batman.get_meegpipe(CODE_DIR);
@@ -45,8 +25,8 @@ nodeList = {};
 
 %%% Node: import from .mff file
 
-myImporter = mff('Precision', 'double');
-myNode = physioset_import.new('Importer', mff);
+myImporter = physioset.import.mff('Precision', 'double');
+myNode = meegpipe.node.physioset_import.new('Importer', myImporter);
 
 nodeList = [nodeList {myNode}];
 
@@ -75,9 +55,9 @@ namingPolicyRS = @(d, ev, idx) batman.preproc.naming_policy(d, ev, idx, 'rs');
 %  stage1b we use the beginning of PVT block events.
 offset      = 0;
 duration    = 5*60;
-mySel       = class_selector('Type', 'arsb');
+mySel       = physioset.event.class_selector('Type', 'arsb');
 
-thisNode = split.new(...
+thisNode = meegpipe.node.split.new(...
     'EventSelector',        mySel, ...
     'Offset',               offset, ...
     'Duration',             duration, ...
@@ -102,7 +82,7 @@ nodeList = [nodeList {thisNode}];
 
 %%% The actual pipeline
 
-myPipe = pipeline.new(...
+myPipe = meegpipe.node.pipeline.new(...
     'NodeList',         nodeList, ...
     'OGE',              USE_OGE, ...
     'GenerateReport',   DO_REPORT, ...
@@ -113,22 +93,22 @@ myPipe = pipeline.new(...
 
 %% Select the relevant data files and process them with the pipeline
 
-switch lower(get_hostname),
+switch lower(misc.get_hostname),
     
     case 'somerenserver',
         
-        files = link2rec('batman', 'file_ext', '.mff', ...
+        files = somsds.link2rec('batman', 'file_ext', '.mff', ...
             'subject', SUBJECTS, 'folder', OUTPUT_DIR);
         
     case 'nin271',
         
         if numel(SUBJECTS) > 1,
-            subjList = join('|', SUBJECTS);
+            subjList = mperl.join('|', SUBJECTS);
         else
             subjList = num2str(SUBJECTS);
         end
         regex = ['batman_0+(' subjList ')_eeg_all.*\.mff$'];
-        files = regexpi_dir('D:/data', regex);
+        files = misc.regexpi_dir('D:/data', regex);
         
     otherwise,
         error('The location of the batman dataset is not known');
