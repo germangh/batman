@@ -111,8 +111,38 @@ classdef pvt_selector < physioset.event.abstract_selector
             thisSelected = [true;dist(:) > obj.MinBlockDistance];            
          
             idxSelected = find(selected);
-            selected(idxSelected(~thisSelected)) = false;            
+            selected(idxSelected(~thisSelected)) = false;    
             
+            % Remove all those events that do not have bunch of events
+            % following them
+            idxSel = find(selected);
+            samplSelected = get_sample(evArray(selected));
+            
+            for i = 1:numel(samplSelected)
+               
+                % distance between this and all other PVT events
+                dist = sampl - samplSelected(i);
+                
+                nbFollowing = numel(find(dist > 0 & dist < obj.MinBlockDistance));
+                
+                if nbFollowing < 40,
+                    selected(idxSel(i)) = false;
+                end
+                
+            end
+            
+            % Now remove all of those that are too close to each other
+            [samplSelected, I] = sort(get_sample(evArray(selected)));
+            idxSelected = find(selected);
+            idxSelected = idxSelected(I);
+            for i = 1:numel(samplSelected)
+               if isnan(samplSelected(i)), continue; end
+               samplSelected(samplSelected < ...
+                   (samplSelected(i) + obj.MinBlockDistance) & ...
+                   samplSelected > samplSelected(i)) = NaN;
+            end
+            selected(idxSelected(isnan(samplSelected))) = false;
+ 
             if obj.Negated,
                 selected = ~selected;
             end

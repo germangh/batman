@@ -23,6 +23,12 @@ else
 end
 
 blockIdx = firstBlock:lastBlock;
+
+if idx > blockIdx,
+    name = NaN;
+    return;
+end
+
 blockIdx = blockIdx(idx);
 
 if blockIdx > lastBlock || ismember(blockIdx, [5, 10])
