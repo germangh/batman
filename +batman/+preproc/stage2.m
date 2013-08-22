@@ -58,7 +58,10 @@ eval('import spt.bss.*');
 
 % This must come after downloading and importing the various meegpipe
 % components because function catdir is part of meegpipe
-copyfile(catfile(meg_mikex.root_path, 'meegpipe.ini'), CODE_DIR); 
+userConfig = catfile(batman.root_path, 'meegpipe.ini');
+if exist(userConfig, 'file')
+    copyfile(userConfig, CODE_DIR);
+end
 
 
 %% Build the cleaning pipeline
