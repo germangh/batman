@@ -10,7 +10,7 @@ SUBJECTS = 1:100;
 
 USE_OGE = true;
 
-DO_REPORT = false;
+DO_REPORT = true;
 
 INPUT_DIR = '/data1/projects/batman/analysis/stage1_130822-002116';
 
