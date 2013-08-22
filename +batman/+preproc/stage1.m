@@ -18,6 +18,14 @@ OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1_' get_username '_'...
 CODE_DIR = '/data1/projects/batman/scripts/stage1';
 
 %% Download the latest version of meegpipe
+% Be aware that this will cause the LATEST version of meegpipe to be
+% downloaded and installed everytime you run this script. This may not be a
+% good idea if you are planning to analyze your data files in multiple runs
+% of stage1 over different batches of data files. In the latter case you
+% should comment this line after the first run of stage1 so that the stage1
+% processing is always performed using the same version of meegpipe. It is
+% OK though to use different versions of meegpipe in different processing
+% stages (e.g. stage2 may use a newer version than stage1). 
 batman.get_meegpipe(CODE_DIR);
 
 %% Build the pipeline node by node
