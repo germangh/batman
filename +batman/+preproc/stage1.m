@@ -17,6 +17,8 @@ OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1_' get_username '_'...
     datestr(now, 'yymmdd-HHMMSS')];
 CODE_DIR = '/data1/projects/batman/scripts/stage1';
 
+QUEUE = 'short.q@nin389.herseninstituut.knaw.nl';
+
 %% Download the latest version of meegpipe
 % Be aware that this will cause the LATEST version of meegpipe to be
 % downloaded and installed everytime you run this script. This may not be a
@@ -64,7 +66,7 @@ namingPolicyRS = @(d, ev, idx) batman.preproc.naming_policy(d, ev, idx, 'rs');
 %  stage1b we use the beginning of PVT block events.
 offset      = 0;
 duration    = 5*60;
-mySel       = physioset.event.class_selector('Type', 'arsb');
+mySel       = physioset.event.class_selector('Type', 'ars\+');
 
 thisNode = meegpipe.node.split.new(...
     'EventSelector',        mySel, ...
@@ -97,7 +99,7 @@ myPipe = meegpipe.node.pipeline.new(...
     'GenerateReport',   DO_REPORT, ...
     'Save',             false, ...
     'Name',             'stage1', ...
-    'Queue',            'long.q@somerenserver.herseninstituut.knaw.nl');
+    'Queue',            QUEUE);
 
 
 %% Select the relevant data files and process them with the pipeline

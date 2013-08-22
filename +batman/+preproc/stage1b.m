@@ -3,16 +3,17 @@
 % Splitting the large .mff files that contain 14 blocks into 14
 % single-block files.
 
+import batman.get_username;
 
 %% User parameters
 
-SUBJECTS = 1:100;
+SUBJECTS = 6;
 
 USE_OGE = true;
 
 DO_REPORT = false;
 
-OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1b_', ...
+OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1b_', get_username '_'...
     datestr(now, 'yymmdd-HHMMSS')];
 CODE_DIR = '/data1/projects/batman/scripts/stage1';
 
