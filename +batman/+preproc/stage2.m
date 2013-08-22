@@ -20,13 +20,18 @@ CODE_DIR = '/data1/projects/batman/scripts/stage2';
 
 %% Download the latest version of meegpipe
 % Be aware that this will cause the LATEST version of meegpipe to be
-% downloaded and installed everytime you run this script. This may not be a
+% downloaded and installed everytime you run this script. This is not a
 % good idea if you are planning to analyze your data files in multiple runs
 % of stage2 over different batches of data files. In the latter case you
 % should comment this line after the first run of stage2 so that the stage2
 % processing is always performed using the same version of meegpipe. It is
 % OK though to use different versions of meegpipe in different processing
 % stages (e.g. stage3 may use a newer version than stage2). 
+%
+% If you are planning to manually modify the default behavior of some of
+% the nodes (e.g. the set of rejected channels in the bad_channels node), 
+% then you MUST comment the line after modifying the corresponding .ini 
+% file(s) and before you re-run this script. 
 batman.get_meegpipe(CODE_DIR);
 
 %% Importing some pieces of meegpipe
