@@ -2,6 +2,7 @@
 %
 % Basic pre-processing
 
+import batman.get_username;
 
 %% User parameters
 
@@ -13,7 +14,7 @@ DO_REPORT = false;
 
 INPUT_DIR = '/data1/projects/batman/analysis/stage1_130822-002116';
 
-OUTPUT_DIR = ['/data1/projects/batman/analysis/stage2_', ...
+OUTPUT_DIR = ['/data1/projects/batman/analysis/stage2_', get_username '_' ...
     datestr(now, 'yymmdd-HHMMSS')];
 CODE_DIR = '/data1/projects/batman/scripts/stage2';
 
