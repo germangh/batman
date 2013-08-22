@@ -12,11 +12,15 @@ USE_OGE = true;
 
 DO_REPORT = true;
 
-INPUT_DIR = '/data1/projects/batman/analysis/stage1_130822-002116';
+INPUT_DIR = {...
+    '/data1/projects/batman/analysis/stage1b_130822-133350', ...
+    '/data1/projects/batman/analysis/stage1b_130822-133023'};
 
 OUTPUT_DIR = ['/data1/projects/batman/analysis/stage2_', get_username '_' ...
     datestr(now, 'yymmdd-HHMMSS')];
 CODE_DIR = '/data1/projects/batman/scripts/stage2';
+
+QUEUE = 'short.q@nin389.herseninstituut.knaw.nl';
 
 %% Download the latest version of meegpipe
 % Be aware that this will cause the LATEST version of meegpipe to be
@@ -180,7 +184,8 @@ myPipe = pipeline.new(...
     'Save',             true, ...
     'OGE',              USE_OGE, ...
     'GenerateReport',   DO_REPORT, ...
-    'Name',             'stage2' ...
+    'Name',             'stage2', ...
+    'Queue',            QUEUE ...
     );
 
 
@@ -189,10 +194,17 @@ myPipe = pipeline.new(...
 % This regular expression matches all files that end in an underscore
 % followed by one or more digits, followed by the string '.pseth' or
 % '.pset'.
-regex = '_\d+\.pseth?$';
-files = finddepth_regex_match(INPUT_DIR, regex);
+if ischar(INPUT_DIR),
+    INPUT_DIR = {INPUT_DIR};
+end
+allFiles = {};
+for i = 1:numel(INPUT_DIR)
+    regex = '_\d+\.pseth?$';
+    files = finddepth_regex_match(INPUT_DIR{i}, regex);
+    allFiles = [allFiles files(:)]; %#ok<AGROW>
+end
 
-link2files(files, OUTPUT_DIR);
+link2files(allFiles, OUTPUT_DIR);
 regex = '_\d+\.pseth$';
 files = finddepth_regex_match(OUTPUT_DIR, regex);
 
