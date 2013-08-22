@@ -13,8 +13,8 @@ USE_OGE = true;
 DO_REPORT = true;
 
 INPUT_DIR = {...
-    '/data1/projects/batman/analysis/stage1b_130822-133350', ...
-    '/data1/projects/batman/analysis/stage1b_130822-133023'};
+    '/data1/projects/batman/analysis/stage1b_gherrero_130822-133350', ...
+    '/data1/projects/batman/analysis/stage1_gherrero_130822-133023'};
 
 OUTPUT_DIR = ['/data1/projects/batman/analysis/stage2_', get_username '_' ...
     datestr(now, 'yymmdd-HHMMSS')];
@@ -201,7 +201,7 @@ allFiles = {};
 for i = 1:numel(INPUT_DIR)
     regex = '_\d+\.pseth?$';
     files = finddepth_regex_match(INPUT_DIR{i}, regex);
-    allFiles = [allFiles files(:)]; %#ok<AGROW>
+    allFiles = [allFiles;files(:)]; %#ok<AGROW>
 end
 
 link2files(allFiles, OUTPUT_DIR);
