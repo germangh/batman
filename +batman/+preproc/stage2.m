@@ -20,7 +20,9 @@ OUTPUT_DIR = ['/data1/projects/batman/analysis/stage2_', get_username '_' ...
     datestr(now, 'yymmdd-HHMMSS')];
 CODE_DIR = '/data1/projects/batman/scripts/stage2';
 
-QUEUE = 'short.q@nin389.herseninstituut.knaw.nl';
+QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
+
+UPDATE_MEEGPIPE = true;
 
 %% Download the latest version of meegpipe
 % Be aware that this will cause the LATEST version of meegpipe to be
@@ -36,7 +38,11 @@ QUEUE = 'short.q@nin389.herseninstituut.knaw.nl';
 % the nodes (e.g. the set of rejected channels in the bad_channels node), 
 % then you MUST comment the line after modifying the corresponding .ini 
 % file(s) and before you re-run this script. 
-batman.get_meegpipe(CODE_DIR);
+if UPDATE_MEEGPIPE,
+    batman.get_meegpipe(CODE_DIR);
+else
+    addpath(genpath(CODE_DIR)); %#ok<UNRCH>
+end
 
 %% Importing some pieces of meegpipe
 

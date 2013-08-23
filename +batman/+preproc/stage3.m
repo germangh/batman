@@ -2,20 +2,7 @@
 %
 % Removing artifacts
 
-
-meegpipe.initialize;
-
-import meegpipe.node.*;
-import somsds.link2files;
-import misc.get_hostname;
-import misc.regexpi_dir;
-import mperl.file.spec.catdir;
-import mperl.file.find.finddepth_regex_match;
-import mperl.join;
-import pset.selector.sensor_class;
-import pset.selector.good_data;
-import pset.selector.cascade;
-import spt.bss.*;
+import batman.get_username;
 
 %% Analysis parameters
 
@@ -25,22 +12,71 @@ USE_OGE = true;
 
 DO_REPORT = true;
 
-switch lower(get_hostname)
-    case 'somerenserver'
-        ROOT_DIR = '/data1/projects/batman/analysis';
-        INPUT_DIR = catdir(ROOT_DIR, 'stage2');
-        
-    case 'nin271',
-        ROOT_DIR = 'D:\batman';
-        INPUT_DIR = 'D:\data';
-        
-    otherwise,
-        error('The location of the batman dataset is not known');
-        
+
+INPUT_DIR = '/data1/projects/batman/analysis/stage2_gherrero_130822-235627';
+OUTPUT_DIR = ['/data1/projects/batman/analysis/stage3_', get_username '_' ...
+    datestr(now, 'yymmdd-HHMMSS')];
+CODE_DIR = '/data1/projects/batman/scripts/stage3';
+
+QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
+
+UPDATE_MEEGPIPE = true;
+
+%% Download the latest version of meegpipe
+% Be aware that this will cause the LATEST version of meegpipe to be
+% downloaded and installed everytime you run this script. This is not a
+% good idea if you are planning to analyze your data files in multiple runs
+% of stage2 over different batches of data files. In the latter case you
+% should comment this line after the first run of stage2 so that the stage2
+% processing is always performed using the same version of meegpipe. It is
+% OK though to use different versions of meegpipe in different processing
+% stages (e.g. stage3 may use a newer version than stage2). 
+%
+% If you are planning to manually modify the default behavior of some of
+% the nodes (e.g. the set of rejected channels in the bad_channels node), 
+% then you MUST comment the line after modifying the corresponding .ini 
+% file(s) and before you re-run this script. 
+
+if UPDATE_MEEGPIPE,
+    batman.get_meegpipe(CODE_DIR);
+else
+    addpath(genpath(CODE_DIR)); %#ok<UNRCH>
 end
 
-OUTPUT_DIR = catdir(ROOT_DIR, 'stage3');
+%% Importing some pieces of meegpipe
 
+% This import directives are used only for convenience so that we don't
+% need to type the fully qualified names of certain meegpipe components
+% that we use later. Note that we need to use eval because the import
+% directives need to be executed at runtime (since we are downloading and 
+% adding meegpipe to the path during runtime as well). 
+
+eval('import meegpipe.node.*');
+eval('import somsds.link2files');
+eval('import misc.regexpi_dir');
+eval('import mperl.file.spec.*');
+eval('import mperl.file.find.finddepth_regex_match');
+eval('import mperl.join');
+eval('import pset.selector.sensor_class');
+eval('import pset.selector.good_data');
+eval('import pset.selector.cascade');
+eval('import spt.bss.*');
+
+%% Copy custom meegpipe configuration
+% IMPORTANT: Since we are downloading the latest version of meegpipe
+% everytime, any change that you may have made to the contents of the code
+% directory will be lost (e.g. any modification of +meegpipe/meegpipe.ini
+% will be lost). If you want to modify the configuration of meegpipe then
+% you should instead modify +meg_mikex/meegpipe.ini. If you are performing
+% the analysis on the somerengrid then the default meegpipe configuration
+% is fine so this step is not really necessary.
+
+% This must come after downloading and importing the various meegpipe
+% components because function catdir is part of meegpipe
+userConfig = catfile(batman.root_path, 'meegpipe.ini');
+if exist(userConfig, 'file')
+    copyfile(userConfig, CODE_DIR);
+end
 
 %% Build the cleaning pipeline
 
@@ -113,7 +149,7 @@ myPipe = pipeline.new(...
 %% Select the relevant files and start the data processing jobs
 regex = '_stage2\.pseth?$';
 files = finddepth_regex_match(INPUT_DIR, regex);
-% link2files works only under Mac OS X and Linux
+
 link2files(files, OUTPUT_DIR);
 regex = '_stage2\.pseth$';
 files = finddepth_regex_match(OUTPUT_DIR, regex);
