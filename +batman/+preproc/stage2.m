@@ -4,6 +4,10 @@
 
 import batman.get_username;
 
+%% Necessary if you are planning to update meegpipe
+clear all;
+clear classes;
+
 %% User parameters
 
 SUBJECTS = 1:100;
@@ -135,7 +139,11 @@ nodeList = [nodeList {myNode}];
 % obviously bad, especially those with large variance. Otherwise, bad
 % channels with large variance may lead to suboptimal separation of noise
 % components in later stages of the processing chain. 
-minVal = @(x) median(x) - 20;
+
+% We set minVal to something much smaller than the median because of the
+% large number of high-variance channels (due to pervasive PWL artifacts)
+% that drive the median variance towards a larger-than-usual value.
+minVal = @(x) median(x) - 40;
 maxVal = @(x) median(x) + 15;
 myCrit = bad_channels.criterion.var.new('Min', minVal, 'Max', maxVal);
 myNode = bad_channels.new('Criterion', myCrit);

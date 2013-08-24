@@ -1,22 +1,22 @@
-% stage3.m
+% stage4.m
 %
-% Removing artifacts
+% Playing around with various criteria for removing ocular artifacts
 
 import batman.get_username;
 
 %% Analysis parameters
 
-PIPE_NAME = 'stage3';
+PIPE_NAME = 'stage4';
 
 USE_OGE = true;
 
 DO_REPORT = true;
 
 
-INPUT_DIR = '/data1/projects/batman/analysis/stage2_gherrero_130823-120023';
-OUTPUT_DIR = ['/data1/projects/batman/analysis/stage3_', get_username '_' ...
+INPUT_DIR = '/data1/projects/batman/analysis/stage3_gherrero_130823-175358';
+OUTPUT_DIR = ['/data1/projects/batman/analysis/stage4_', get_username '_' ...
     datestr(now, 'yymmdd-HHMMSS')];
-CODE_DIR = '/data1/projects/batman/scripts/stage3';
+CODE_DIR = '/data1/projects/batman/scripts/stage4';
 
 QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
 
@@ -40,7 +40,7 @@ UPDATE_MEEGPIPE = false;
 if UPDATE_MEEGPIPE,
     batman.get_meegpipe(CODE_DIR);
 else
-    addpath(genpath(CODE_DIR));
+    addpath(genpath(CODE_DIR)); %#ok<UNRCH>
 end
 
 %% Importing some pieces of meegpipe
@@ -61,7 +61,6 @@ eval('import pset.selector.sensor_class');
 eval('import pset.selector.good_data');
 eval('import pset.selector.cascade');
 eval('import spt.bss.*');
-eval('import misc.copyfile');
 
 %% Copy custom meegpipe configuration
 % IMPORTANT: Since we are downloading the latest version of meegpipe
@@ -101,47 +100,40 @@ nodeList = [nodeList {myNode}];
 myNode = resample.new('OutputRate', 250);
 nodeList = [nodeList {myNode}];
 
-%%% Node: remove PWL
-
-myNode = bss_regr.pwl('IOReport', report.plotter.io);
-
-nodeList = [nodeList {myNode}];
-
-
-%%% Node: remove MUX noise
-
-% MUX noise seems to appear only very rarely. Seems the purpose of this
-% node is to reject only that type of noise, we set the Max threshold to a
-% very large value to try to remove only true MUX-related components.
-mySel = cascade(sensor_class('Class', 'EEG'), good_data);
-myCrit = spt.criterion.psd_ratio.new(...
-    'Band1',    [12 16;49 51;17 19], ...
-    'Band2',    [7 10], ...
-    'MaxCard',  2, ...
-    'Max',      @(x) min(median(x) + 10*mad(x), 100));
-
-myPCA  = spt.pca.new(...
-    'Var',          .995, ...
-    'MinDimOut',    15, ...
-    'MaxDimOut',    35);
-myNode = bss_regr.new(...
-    'DataSelector',     mySel, ...
-    'Criterion',        myCrit, ...
-    'PCA',              myPCA, ...
-    'BSS',              efica.new, ...
-    'Name',             'mux-noise', ...
-    'IOReport',         report.plotter.io);
-
-nodeList = [nodeList {myNode}];
 
 %%% Node: EOG
-% EOG turned out to be tricker than we originally thought so we move this
-% into a separate stage.
 
 %myNode = bss_regr.eog('IOReport', report.plotter.io);
 %nodeList = [nodeList {myNode}];
 
-% Try 
+% EOG is tricky in this dataset, so we try multiple things but don't reject
+% anything quite yet. We only want to rank the components to see (1) what
+% criterion ranks them best, and (2) how many components should we remove
+% most of the times.
+
+% Try 1: use tfd
+myCrit = spt.criterion.tfd.eog('MaxCard', 0, 'MinCard', 0);
+myNode = bss_regr.eog('Criterion', myCrit);
+nodeList = [nodeList {myNode}];
+
+% Try 2: use default eog criterion
+myCrit = spt.criterion.psd_ratio.eog('MaxCard', 0, 'MinCard', 0);
+myNode = bss_regr.eog('Criterion', myCrit);
+nodeList = [nodeList {myNode}];
+
+% Try 3: use a combination of tfd and psd_ratio criteria
+myCrit = spt.criterion.mrank.eog(...
+    'MaxCard',  0, ...
+    'MinCard',  0);
+myNode = bss_regr.eog('Criterion', myCrit);
+nodeList = [nodeList {myNode}];
+
+% Try 4: tgini index
+myCrit = spt.criterion.tgini.new(...
+    'MaxCard',  0, ...
+    'MinCard',  0);
+myNode = bss_regr.eog('Criterion', myCrit);
+nodeList = [nodeList {myNode}];
 
 %%% The pipeline
 myPipe = pipeline.new(...
@@ -152,18 +144,12 @@ myPipe = pipeline.new(...
     'Name',             PIPE_NAME ...
     );
 
-
 %% Select the relevant files and start the data processing jobs
-
-% Halt execution until there are no jobs running from stage2. Otherwise
-% there will be no files there to link to.
-oge.wait_for_grid('stage2');
-
-regex = '_stage2\.pseth?$';
+regex = '_stage3\.pseth?$';
 files = finddepth_regex_match(INPUT_DIR, regex);
 
 link2files(files, OUTPUT_DIR);
-regex = '_stage2\.pseth$';
+regex = '_stage3\.pseth$';
 files = finddepth_regex_match(OUTPUT_DIR, regex);
 
 run(myPipe, files{:});
