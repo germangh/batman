@@ -1,12 +1,31 @@
 % stage4.m
 %
-% Playing around with various criteria for removing ocular artifacts
-
-% close all;
-% clear all;
-% clear classes;
+% Stage description:
+%
+% - Removal of cardiac artifacts
+% - Removal of obvious EOG artifacts using their topography
+% - Removal of less obvious EOG and other noise components with low-freq
+%   characteristics.
+%
+% Pre-requisites:
+%
+% - stage3 have been successfully completed
+% - batman.setup has been run just before running this script
+%
+%
+% See also: batman
 
 import batman.get_username;
+import meegpipe.node.*;
+import somsds.link2files;
+import misc.regexpi_dir;
+import mperl.file.spec.*;
+import mperl.file.find.finddepth_regex_match;
+import mperl.join;
+import pset.selector.sensor_class;
+import pset.selector.good_data;
+import pset.selector.cascade;
+import spt.bss.*;
 
 %% Analysis parameters
 
@@ -21,24 +40,6 @@ OUTPUT_DIR = ['/data1/projects/batman/analysis/stage4_', get_username '_' ...
     datestr(now, 'yymmdd-HHMMSS')];
 
 QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
-
-
-%% Importing some pieces of meegpipe
-
-% This import directives are used only for convenience so that we don't
-% need to type the fully qualified names of certain meegpipe components
-% that we use later. 
-
-import meegpipe.node.*;
-import somsds.link2files;
-import misc.regexpi_dir;
-import mperl.file.spec.*;
-import mperl.file.find.finddepth_regex_match;
-import mperl.join;
-import pset.selector.sensor_class;
-import pset.selector.good_data;
-import pset.selector.cascade;
-import spt.bss.*;
 
 
 %% Build the cleaning pipeline
