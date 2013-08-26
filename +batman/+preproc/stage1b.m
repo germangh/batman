@@ -15,10 +15,6 @@ DO_REPORT = false;
 
 OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1b_', get_username '_'...
     datestr(now, 'yymmdd-HHMMSS')];
-CODE_DIR = '/data1/projects/batman/scripts/stage1';
-
-% stage1.m takes care of puting meegpipe in CODE_DIR
-addpath(genpath(CODE_DIR));
 
 %% Build the pipeline node by node
 

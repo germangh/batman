@@ -2,9 +2,9 @@
 %
 % Playing around with various criteria for removing ocular artifacts
 
-close all;
-clear all;
-clear classes;
+% close all;
+% clear all;
+% clear classes;
 
 import batman.get_username;
 
@@ -12,9 +12,9 @@ import batman.get_username;
 
 PIPE_NAME = 'stage4';
 
-USE_OGE = true;
+USE_OGE = false;
 
-DO_REPORT = true;
+DO_REPORT = false;
 
 INPUT_DIR = '/data1/projects/batman/analysis/stage3_gherrero_130823-175358';
 OUTPUT_DIR = ['/data1/projects/batman/analysis/stage4_', get_username '_' ...
@@ -57,32 +57,32 @@ myNode = copy.new;
 
 nodeList = [nodeList {myNode}];
 
-%%% Node: EOG
-
-%myNode = bss_regr.eog('IOReport', report.plotter.io);
-%nodeList = [nodeList {myNode}];
-
-% EOG is tricky in this dataset, so we try multiple things but don't reject
-% anything quite yet. We only want to rank the components to see (1) what
-% criterion ranks them best, and (2) how many components should we remove
-% most of the times.
-
-% Try 1: use tfd
-myCrit = spt.criterion.tfd.eog('MaxCard', 0, 'MinCard', 0);
-myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'tfd');
-nodeList = [nodeList {myNode}];
-
-% Try 2: use default eog criterion
-myCrit = spt.criterion.psd_ratio.eog('MaxCard', 0, 'MinCard', 0);
-myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'default');
-nodeList = [nodeList {myNode}];
-
-% Try 3: use a combination of tfd and psd_ratio criteria
-myCrit = spt.criterion.mrank.eog(...
-    'MaxCard',  0, ...
-    'MinCard',  0);
-myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'mrank');
-nodeList = [nodeList {myNode}];
+% %%% Node: EOG
+% 
+% %myNode = bss_regr.eog('IOReport', report.plotter.io);
+% %nodeList = [nodeList {myNode}];
+% 
+% % EOG is tricky in this dataset, so we try multiple things but don't reject
+% % anything quite yet. We only want to rank the components to see (1) what
+% % criterion ranks them best, and (2) how many components should we remove
+% % most of the times.
+% 
+% % Try 1: use tfd
+% myCrit = spt.criterion.tfd.eog('MaxCard', 0, 'MinCard', 0);
+% myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'tfd');
+% nodeList = [nodeList {myNode}];
+% 
+% % Try 2: use default eog criterion
+% myCrit = spt.criterion.psd_ratio.eog('MaxCard', 0, 'MinCard', 0);
+% myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'default');
+% nodeList = [nodeList {myNode}];
+% 
+% % Try 3: use a combination of tfd and psd_ratio criteria
+% myCrit = spt.criterion.mrank.eog(...
+%     'MaxCard',  0, ...
+%     'MinCard',  0);
+% myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'mrank');
+% nodeList = [nodeList {myNode}];
 
 % Try 4: topography ratio
 myCrit = spt.criterion.topo_ratio.new(...
