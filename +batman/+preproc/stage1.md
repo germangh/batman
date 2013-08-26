@@ -12,6 +12,7 @@ The data splitting is implemented in script [batman.preproc.stage1][stage1].
 To reproduce stage 1 simply run in MATLAB:
 
 ````matlab
+batman.setup
 batman.preproc.stage1
 ````
 
@@ -20,32 +21,6 @@ given below.
 
 [stage1]: ./+batman/+preproc/stage1.m
 
-## Import directives
-
-These are required in order to be able to use short names to refer to 
-some of the `meegpipe`'s components that are used within `stage1.m`:
-
-````matlab
-import meegpipe.node.*;
-import physioset.import.mff;
-import somsds.link2rec;
-import misc.get_hostname;
-import misc.regexpi_dir;
-import mperl.join;
-````
-
-For instance, the first directive above will allow us write:
-
-````matlab
-% Create a processing node that removes the data mean
-myNode = center.new
-````
-
-instead of writing the more verbose:
-
-````matlab
-myNode = meegpipe.node.center.new
-````
 
 ## Analysis parameters
 
@@ -54,6 +29,8 @@ parameters
 
 
 ````matlab
+import batman.*;
+
 % The set of subjects to be processed
 SUBJECTS = 1:7;
 
@@ -63,20 +40,10 @@ USE_OGE = true;
 % Should a data processing report (in HTML format) be generated?
 DO_REPORT = true;
 
-% This switch can be used to set the locations of the data depending on the 
-% machine that you are using to perform the data processing
-switch lower(get_hostname),
-
-    case 'somerenserver',
-        OUTPUT_DIR = '/data1/projects/batman/analysis/stage1';
-
-    case 'nin271'
-        OUTPUT_DIR = 'D:/batman';
-        
-    otherwise,
-        % do nothing
-        
-end
+% The directory where the pipeline will store the splitted files (and the
+% associated processing reports)
+OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1_' get_username '_'...
+    datestr(now, 'yymmdd-HHMMSS')];
 ```` 
 
 
@@ -189,36 +156,17 @@ Of course this only applies if you are running the processing at the
 
 
 ````matlab
-
-switch lower(get_hostname),
-    
-    case 'somerenserver',
-        
-        % command lin2rec will use the somsds data management system to 
-        % generate symbolic links to the relevant data files. The links 
-        % will be placed within OUTPUT_DIR. The output of this command is 
-        % a cell array with the names of all the generated symbolic links
-        files = link2rec('batman', 'file_ext', '.mff', ...
-            'subject', SUBJECTS, 'folder', OUTPUT_DIR);
-        
-    case 'nin271',
-        
-        % This applies to my windows PC. I leave it here so that you can 
-        % see how you would run stage 1 without the help of somsds.  This 
-        % assumes that the raw data files are under D:/data
-        if numel(SUBJECTS) > 1, 
-            subjList = join('|', SUBJECTS);
-        else
-            subjList = num2str(SUBJECTS);
-        end
-        regex = ['batman_0+(' subjList ')_eeg_all.*\.mff$'];
-        files = regexpi_dir('D:/data', regex);
-        
-    otherwise,
-        error('The location of the batman dataset is not known');
-        
-end
-
+files = somsds.link2rec('batman', 'file_ext', '.mff', ...
+    'subject', SUBJECTS, 'folder', OUTPUT_DIR);
+  
 run(myPipe, files{:});
 ````
+
+Command `somsds.lin2rec` is a MATLAB wrapper over the [somsds][somsds] data
+management system. It is used generate symbolic links to the relevant data
+files. The links will be placed within `OUTPUT_DIR`. The output of the
+`somsds.link2rec` command is a cell array with the names of all the
+generated symbolic links.
+
+[somsds]: http://germangh.com/somsds
 

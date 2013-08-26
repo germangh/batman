@@ -1,6 +1,15 @@
 % stage3.m
 %
-% Removing artifacts
+% Stage description:
+%
+% - Removal or PWL and MUX-related artifacts
+%
+% Pre-requisites
+%
+% - preproc.stage2 has been successfully completed.
+% - batman.setup has been run inmediately before running this script
+%
+% See also: batman
 
 import batman.get_username;
 

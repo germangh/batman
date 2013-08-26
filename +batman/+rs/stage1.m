@@ -1,4 +1,4 @@
-% stage5.m
+% stage1.m
 %
 % Stage description:
 %
@@ -6,7 +6,7 @@
 %
 % Pre-requisites:
 %
-% - stage4 has been successfully completed
+% - The data has been succesfully pre-processed
 % - batman.setup has been run just before running this script
 %
 %
@@ -24,7 +24,7 @@ import mperl.join;
 
 %% Analysis parameters
 
-PIPE_NAME = 'stage5';
+PIPE_NAME = 'rs-stage1';
 
 USE_OGE = true;
 

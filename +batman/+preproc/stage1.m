@@ -64,20 +64,6 @@ thisNode = meegpipe.node.split.new(...
 
 nodeList = [nodeList {thisNode}];
 
-%%% Node: Extract PVT blocks
-
-% offset      = -10;      % 10 seconds before the first PVT in the block
-% duration    = 7*60;     % 7 minutes of PVT (at most)
-% mySel       = batman.pvt_selector;
-%
-% thisNode     = split.new(...
-%     'EventSelector',        mySel, ...
-%     'Offset',               offset, ...
-%     'Duration',             duration, ...
-%     'SplitNamingPolicy',    namingPolicyPVT);
-%
-% nodeList = [nodeList {thisNode}];
-
 
 %%% The actual pipeline
 
@@ -92,27 +78,8 @@ myPipe = meegpipe.node.pipeline.new(...
 
 %% Select the relevant data files and process them with the pipeline
 
-switch lower(misc.get_hostname),
-    
-    case 'somerenserver',
-        
-        files = somsds.link2rec('batman', 'file_ext', '.mff', ...
-            'subject', SUBJECTS, 'folder', OUTPUT_DIR);
-        
-    case 'nin271',
-        
-        if numel(SUBJECTS) > 1,
-            subjList = mperl.join('|', SUBJECTS);
-        else
-            subjList = num2str(SUBJECTS);
-        end
-        regex = ['batman_0+(' subjList ')_eeg_all.*\.mff$'];
-        files = misc.regexpi_dir('D:/data', regex);
-        
-    otherwise,
-        error('The location of the batman dataset is not known');
-        
-end
+files = somsds.link2rec('batman', 'file_ext', '.mff', ...
+    'subject', SUBJECTS, 'folder', OUTPUT_DIR);
 
 run(myPipe, files{:});
 
