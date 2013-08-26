@@ -14,6 +14,7 @@
 
 meegpipe.initialize;
 
+import batman.*;
 import meegpipe.node.*;
 import somsds.link2files;
 import misc.get_hostname;
@@ -26,11 +27,11 @@ import mperl.join;
 
 PIPE_NAME = 'rs-stage1';
 
-USE_OGE = true;
+USE_OGE = false;
 
 DO_REPORT = true;
 
-INPUT_DIR = '/data1/projects/batman/analysis/stage4_gherrero_130826-163240';
+INPUT_DIR = '/data1/projects/batman/analysis/stage4_gherrero_130826-230806';
 OUTPUT_DIR = ['/data1/projects/batman/analysis/' PIPE_NAME '_', ...
     get_username '_' datestr(now, 'yymmdd-HHMMSS')];
 
@@ -52,7 +53,14 @@ nodeList = [nodeList {myNode}];
 
 %%% Node: get the spectral features
 
-myNode = spectra.new;
+myNode = spectra.new(...
+    'Channels2Plot', ...
+    {...
+    '^EEG 69$',  '^EEG 202$', '^EEG 95$', ... % T3, T4, T5
+    '^EEG 124$', '^EEG 149$', '^EEG 137$', ... % O1, O2, Oz
+    '^EEG 41$',  '^EEG 214$', '^EEG 47$', ... % F3, F4, Fz
+    '.+' ...
+    });
 
 nodeList = [nodeList {myNode}];
 
