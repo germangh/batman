@@ -19,7 +19,8 @@ reproduce stage 2 simply run in MATLAB:
 [stage2]: ./stage2.m
 
 ````matlab
-batman.preproc.stage2
+batman.setup;
+batman.preproc.stage2;
 ````
 
 Of course, for the command above to work you should have completed 
@@ -32,61 +33,50 @@ Below you can find a detailed description of what is going on inside
 
 [stage2]: ./+batman/+preproc/stage2.m
 
-## Import directives
-
-These are required in order to be able to use short names to refer to 
-some of the `meegpipe`'s components that are used within `stage1.m`:
-
-````matlab
-meegpipe.initialize; % required only once per MATLAB session
-
-import meegpipe.node.*;
-
-% Some basic file and string manipulation utilities
-import somsds.link2files;
-import misc.get_hostname;
-import misc.regexpi_dir;
-import mperl.file.spec.catdir;
-import mperl.file.find.finddepth_regex_match;
-import mperl.join;
-
-% Some data selectors that we will use later
-import pset.selector.good_data;
-import pset.selector.sensor_class;
-import pset.selector.cascade;
-````
-
 
 ## Analysis parameters
 
 The first section of `meegpipe.preproc.stage2` defines several important
- processing parameters
+ processing parameters. Note that you may have to update the paths to the 
+results produced at [stage 1][stage1-doc].
 
 
 ````matlab
-SUBJECTS = 6;%1:7;
-
-CONDITIONS = {'rs'};
-
-BLOCKS = 1:5;%1:14;
+SUBJECTS = 1:100;
 
 USE_OGE = true;
 
 DO_REPORT = true;
 
-switch lower(get_hostname)
-    case 'somerenserver'
-        ROOT_DIR = '/data1/projects/batman/analysis';
-        INPUT_DIR = catdir(ROOT_DIR, 'stage1');
- 
-    otherwise,
-        error('The location of the batman dataset is not known');
-        
-end
+INPUT_DIR = {...
+    '/data1/projects/batman/analysis/stage1b_gherrero_130822-133350', ...
+    '/data1/projects/batman/analysis/stage1_gherrero_130822-133023'};
 
-OUTPUT_DIR = catdir(ROOT_DIR, 'stage2');
+OUTPUT_DIR = ['/data1/projects/batman/analysis/stage2_', get_username '_' ...
+    datestr(now, 'yymmdd-HHMMSS')];
+
+QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
 ```` 
 
+## Import directives
+
+For convenience, we import the names of some components of 
+[meegpipe][meegpipe] that we will use later.
+
+[meegpipe]: http://germangh.com/meegpipe
+
+````matlab
+import meegpipe.node.*;
+import somsds.link2files;
+import misc.regexpi_dir;
+import mperl.file.spec.*;
+import mperl.file.find.finddepth_regex_match;
+import mperl.join;
+import pset.selector.sensor_class;
+import pset.selector.good_data;
+import pset.selector.cascade;
+import spt.bss.*;
+````
 
 ## Build pipeline nodes
 
@@ -188,7 +178,7 @@ a vector with the channel variances (in logarithmic scale).
 [function_handle]: http://www.mathworks.nl/help/matlab/ref/function_handle.html
 
 ````matlab
-minVal = @(x) median(x) - 20;
+minVal = @(x) median(x) - 40;
 maxVal = @(x) median(x) + 15;
 myCrit = bad_channels.criterion.var.new('Min', minVal, 'Max', maxVal);
 myNode = bad_channels.new('Criterion', myCrit);
@@ -206,6 +196,8 @@ nodeList = [nodeList {myNode}];
 ````
 
 ### Node 6: band-pass `tfilter`
+
+This node filters the data between 0.5 and 70 Hz.
 
 ````matlab
 myFilter    = @(sr) filter.bpfilt('fp', [0.5 70]/(sr/2));
@@ -230,7 +222,7 @@ nodeList = [nodeList {myNode}];
 myPipe = pipeline.new(...
     'NodeList',         nodeList, ...
     'Save',             true, ...
-    'OGE',              USE_OGE, ...
+    'Parallelize',      USE_OGE, ...
     'GenerateReport',   DO_REPORT, ...
     'Name',             'stage2' ...
     );
@@ -239,32 +231,28 @@ myPipe = pipeline.new(...
 
 ## Process the relevant data files
 
+We build a cell array with the names of the relevant files by matching 
+the file names within the output of [stage 1][stage-1] with a regular 
+expression. The latter will mactch any file name that end in an underscore
+followed by one or more digits, followed by the string '.pseth' or '.pset'.
 
 ````matlab
+if ischar(INPUT_DIR),
+    INPUT_DIR = {INPUT_DIR};
+end
+allFiles = {};
+for i = 1:numel(INPUT_DIR)
+    regex = '_\d+\.pseth?$';
+    files = finddepth_regex_match(INPUT_DIR{i}, regex);
+    allFiles = [allFiles;files(:)]; %#ok<AGROW>
+end
 
-switch lower(get_hostname),
-    case 'somerenserver',
-        % A regular expression that matches any file that ends with an 
-        % underscore and one ore more digits, and has an extension equal to
-        % .pset/.pseth
-        regex = '_\d+\.pseth?$';
+link2files(allFiles, OUTPUT_DIR);
+regex = '_\d+\.pseth$';
+files = finddepth_regex_match(OUTPUT_DIR, regex);
 
-        % files is a cell array with the full path names of all the files
-        % generated during stage 1
-        files = finddepth_regex_match(INPUT_DIR, regex);
-
-        % Create symbolic links to files generated in stage 1
-        link2files(files, OUTPUT_DIR);
-
-        % Now create a cell array with the full path names of all the 
-        % pseth files, as those are what the physioset_import node is 
-        % expecting
-        regex = '_\d+\.pseth$';
-        files = finddepth_regex_match(OUTPUT_DIR, regex);
-        
-    otherwise,
-        error('The location of the batman dataset is not known');
-        
+if isempty(files),
+    error('Files from stage1 could not be found');
 end
 
 run(myPipe, files{:});
