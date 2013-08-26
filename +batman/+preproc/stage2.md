@@ -237,6 +237,11 @@ expression. The latter will mactch any file name that end in an underscore
 followed by one or more digits, followed by the string '.pseth' or '.pset'.
 
 ````matlab
+
+% Halt execution until there are no jobs running from stage1. Otherwise
+% there will be no files there to link to.
+oge.wait_for_grid('stage1');
+
 if ischar(INPUT_DIR),
     INPUT_DIR = {INPUT_DIR};
 end
