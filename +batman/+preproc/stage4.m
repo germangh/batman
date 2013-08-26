@@ -12,9 +12,9 @@ import batman.get_username;
 
 PIPE_NAME = 'stage4';
 
-USE_OGE = false;
+USE_OGE = true;
 
-DO_REPORT = false;
+DO_REPORT = true;
 
 INPUT_DIR = '/data1/projects/batman/analysis/stage3_gherrero_130823-175358';
 OUTPUT_DIR = ['/data1/projects/batman/analysis/stage4_', get_username '_' ...
@@ -57,46 +57,31 @@ myNode = copy.new;
 
 nodeList = [nodeList {myNode}];
 
-% %%% Node: EOG
-% 
-% %myNode = bss_regr.eog('IOReport', report.plotter.io);
-% %nodeList = [nodeList {myNode}];
-% 
-% % EOG is tricky in this dataset, so we try multiple things but don't reject
-% % anything quite yet. We only want to rank the components to see (1) what
-% % criterion ranks them best, and (2) how many components should we remove
-% % most of the times.
-% 
-% % Try 1: use tfd
-% myCrit = spt.criterion.tfd.eog('MaxCard', 0, 'MinCard', 0);
-% myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'tfd');
-% nodeList = [nodeList {myNode}];
-% 
-% % Try 2: use default eog criterion
-% myCrit = spt.criterion.psd_ratio.eog('MaxCard', 0, 'MinCard', 0);
-% myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'default');
-% nodeList = [nodeList {myNode}];
-% 
-% % Try 3: use a combination of tfd and psd_ratio criteria
-% myCrit = spt.criterion.mrank.eog(...
-%     'MaxCard',  0, ...
-%     'MinCard',  0);
-% myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'mrank');
-% nodeList = [nodeList {myNode}];
 
-% Try 4: topography ratio
+%%% Node: ECG
+myNode = bss_regr.ecg;
+nodeList = [nodeList {myNode}];
+
+%%% Node: Reject obvious EOG components using their topography
 myCrit = spt.criterion.topo_ratio.new(...
     'SensorsDen',  {'EEG 124', 'EEG 149', 'EEG 137', 'EEG 69', 'EEG 202', ...
     'EEG 95', 'EEG 178'}, ...
     'SensorsNum',  {'EEG 54', 'EEG 46', 'EEG 10', 'EEG 1'}, ...
-    'MaxCard',  0, ...
-    'MinCard',  0);
-
-myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'topo_ratio');
+    'MaxCard',  2, ...
+    'MinCard',  5, ...
+    'Max',      100);
+myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'eog-topo');
 nodeList = [nodeList {myNode}];
 
-% Node: ECG
-myNode = bss_regr.ecg;
+
+% Node: Reject less obvious EOG components and other noise components. For
+% this we use a combination of spectral ratios and fractal dimensions.
+myCrit = spt.criterion.mrank.eog(...
+    'MaxCard', 4, ...
+    'MinCard', 1, ...
+    'Max',     0.9, ...
+    'Percentile', 90);
+myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'low-freq-noise');
 nodeList = [nodeList {myNode}];
 
 %%% The pipeline
