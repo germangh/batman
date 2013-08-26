@@ -2,6 +2,10 @@
 %
 % Install meegpipe
 
+clear all;
+clear classes;
+
+
 CODE_DIR = '/data1/projects/batman/scripts/meegpipe';
 
 if ~exist(CODE_DIR, 'dir') || numel(dir(CODE_DIR)) < 3,
