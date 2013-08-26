@@ -68,6 +68,11 @@ myPipe = pipeline.new(...
 
 
 %% Select the relevant files and start the data processing jobs
+
+% Halt execution until there are no jobs running from stage4 of the 
+% pre-processing chain. Otherwise there will be no files there to link to.
+oge.wait_for_grid('stage4');
+
 regex = '_stage4\.pseth?$';
 files = finddepth_regex_match(INPUT_DIR, regex);
 
