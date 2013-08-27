@@ -64,11 +64,11 @@ myNode = bss_regr.ecg;
 nodeList = [nodeList {myNode}];
 
 %%% Node: Reject obvious EOG components using their topography
-myNode = bss_regr.eog_egi256_hcgsn1('MinCard', 2, 'MaxCard', 4);
+myNode = bss_regr.eog_egi256_hcgsn1('MinCard', 2, 'MaxCard', 5);
 nodeList = [nodeList {myNode}];
 
 
-% Node: Reject less obvious EOG components and other noise components. For
+%%% Node: Reject less obvious EOG components and other noise components. For
 % this we use a combination of spectral ratios and fractal dimensions.
 myCrit = spt.criterion.mrank.eog(...
     'MaxCard', 5, ...
@@ -76,6 +76,10 @@ myCrit = spt.criterion.mrank.eog(...
     'Max',     0.9, ...
     'Percentile', 90);
 myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'low-freq-noise');
+nodeList = [nodeList {myNode}];
+
+%%% Node: interpolate bad channels
+myNode = chan_interp.new;
 nodeList = [nodeList {myNode}];
 
 %%% The pipeline
