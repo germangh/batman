@@ -27,7 +27,7 @@ import mperl.join;
 
 PIPE_NAME = 'rs-stage1';
 
-USE_OGE = false;
+USE_OGE = true;
 
 DO_REPORT = true;
 
