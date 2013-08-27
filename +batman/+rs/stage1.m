@@ -31,7 +31,7 @@ USE_OGE = true;
 
 DO_REPORT = true;
 
-INPUT_DIR = '/data1/projects/batman/analysis/stage4_gherrero_130826-230806';
+INPUT_DIR = '/data1/projects/batman/analysis/stage4_gherrero_130827-151810';
 OUTPUT_DIR = ['/data1/projects/batman/analysis/' PIPE_NAME '_', ...
     get_username '_' datestr(now, 'yymmdd-HHMMSS')];
 
