@@ -15,6 +15,8 @@
 %
 % See also: batman
 
+meegpipe.initialize;
+
 import batman.get_username;
 import meegpipe.node.*;
 import somsds.link2files;
@@ -92,6 +94,8 @@ myPipe = pipeline.new(...
     );
 
 %% Select the relevant files and start the data processing jobs
+oge.wait_for_grid('stage3');
+
 regex = '_stage3\.pseth?$';
 files = finddepth_regex_match(INPUT_DIR, regex);
 

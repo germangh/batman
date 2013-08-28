@@ -41,12 +41,12 @@ files = finddepth_regex_match(INPUT_DIR, regex);
 
 % First aggregate the features produced by node 2, which computed power
 % ratios in various classical EEG bands
-[fName, aggrFiles] = aggregate(files, ...
-    'node-02-spectra.+features.txt$', OUTPUT_FILE{1}, FILENAME_TRANS);
+aggregate(files, 'node-02-spectra.+features.txt$', OUTPUT_FILE{1}, ...
+    FILENAME_TRANS);
 
 % Now aggregate the features produced by node 3, which computed raw power
 % values in various classical EEG bands
-[fName, aggrFiles] = aggregate(files, ...
-    'node-03-spectra.+features.txt$', OUTPUT_FILE{2}, FILENAME_TRANS);
+aggregate(files, 'node-03-spectra.+features.txt$', OUTPUT_FILE{2}, ...
+    FILENAME_TRANS);
 
 

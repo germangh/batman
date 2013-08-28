@@ -1,7 +1,7 @@
 Preprocessing: Stage 3
 ===
 
-The last pre-processing stage consisted in the following steps:
+The third pre-processing stage consisted in the following steps:
 
 * Downsampling to 250 Hz.
 
@@ -16,7 +16,7 @@ reproduce stage 3 simply run in MATLAB:
 
 ````matlab
 batman.setup;
-batman.preproc.stage3';
+batman.preproc.stage3;
 ````
 
 For the command above to work you should have completed 
