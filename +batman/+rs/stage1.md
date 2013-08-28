@@ -189,75 +189,11 @@ myNode = spectra.new(...
     }, ...
     'ROI', myROIs, 'Name', 'raw-power' ...
     );
-````
 
-### Node 4: `bss_regr.eog`
-
-We use the `eog` configuration of the `bss_regr` node to identify and 
-reject ocular components. However, the default `eog` configuration uses 
-a criterion based on the spectra of the estimated spatial components to 
-identify ocular components. Such a criterion works generally well and is 
-independent of the spatial arrangement of the EEG sensors. But if
-we know the coordinates of each sensor and we know in which sensors ocular
-activity is most prominent then it is usually a good idea to try to reject
-the most obvious ocular components using such a-priori knowledge regarding
-their topographies. 
-
-Criterion `topo_ratio` implements this rationale and lets you define a set
- of sensors where you expect ocular activity to be most prominent, and an
-alternative set of sensors where ocular activity is expected to be much 
-weaker. For the EGI's HCGSN v1.0 net with 256 sensors, there is a 
-pre-defined configuration that uses a `topo_ratio` criterion with suitable 
-selections for these two sets of channels:
-
-````matlab
-myNode = bss_regr.eog_egi256_hcgsn1('MinCard', 2, 'MaxCard', 5);
 nodeList = [nodeList {myNode}];
 ````
 
-If you want to learn the specifics of how this node is defined, type in 
-MATLAB:
 
-````matlab
-edit bss_regr.eog_egi256_hcgsn1
-````
-
-
-### Node 5: `bss_regr.eog`
-
-The BATMAN dataset contains a large number of noisy components with 
-low-frequency characteristics, but without characteristic topographies. 
-Some of these, but definitely not all, are of ocular origin. To minimize
-the effects of these noisy sources we reject components that have 
-spectral characteristics similar to those of EOG sources:
-
-````matlab
-myCrit = spt.criterion.mrank.eog(...
-    'MaxCard', 5, ...
-    'MinCard', 1, ...
-    'Max',     0.9, ...
-    'Percentile', 90);
-myNode = bss_regr.eog('Criterion', myCrit, 'Name', 'low-freq-noise');
-nodeList = [nodeList {myNode}];
-````
-
-Criterion `spt.criterion.mrank.eog` combines two criteria that are 
-directly or indirectly related with the spectral properties of the 
-time-series under assessment. Slowly-varying components with 
-abnormally "simple" temporal activations tend to be ranked highly by this
-criterion.
-
-
-###  Node 6: `chan_interp`
-
-We interpolate the activity patters of channels that were marked as bad 
-in order to ensure that spectral features can be extracted reliably from
-any channel, and not only from the good channels.
-
-````matlab
-myNode = chan_interp.new;
-nodeList = [nodeList {myNode}];
-````
 
 ### Build the pipeline
 
@@ -275,16 +211,11 @@ myPipe = pipeline.new(...
 
 
 ````matlab
-
-% Halt execution until there are no jobs running from stage3. Otherwise
-% we may miss some links in the output directory of stage4.
-oge.wait_for_grid('stage3');
-
-regex = '_stage3\.pseth?$';
+regex = '_stage4\.pseth?$';
 files = finddepth_regex_match(INPUT_DIR, regex);
 
 link2files(files, OUTPUT_DIR);
-regex = '_stage3\.pseth$';
+regex = '_stage4\.pseth$';
 files = finddepth_regex_match(OUTPUT_DIR, regex);
 
 run(myPipe, files{:});
