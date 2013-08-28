@@ -200,14 +200,15 @@ myPipe = pipeline.new(...
 
 ````matlab
 
-% Halt execution until there are no jobs running from stage2. Otherwise
-% there will be no files there to link to.
-oge.wait_for_grid('stage2');
+% Halt execution until there are no jobs running from stage3. Otherwise
+% we may miss some links in the output directory of stage4.
+oge.wait_for_grid('stage3');
 
-regex = '_stage2\.pseth?$';
+regex = '_stage3\.pseth?$';
 files = finddepth_regex_match(INPUT_DIR, regex);
+
 link2files(files, OUTPUT_DIR);
-regex = '_stage2\.pseth$';
+regex = '_stage3\.pseth$';
 files = finddepth_regex_match(OUTPUT_DIR, regex);
 
 run(myPipe, files{:});
