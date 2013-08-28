@@ -50,7 +50,8 @@ nodeList = [nodeList {myNode}];
 
 % We don't need to copy the data because we are not going to modify it.
 
-%%% Node: get the spectral features
+%%% Node: get the spectral features (power ratios)
+
 
 myNode = spectra.new(...
     'Channels2Plot', ...
@@ -59,7 +60,38 @@ myNode = spectra.new(...
     '^EEG 124$', '^EEG 149$', '^EEG 137$', ... % O1, O2, Oz
     '^EEG 41$',  '^EEG 214$', '^EEG 47$', ... % F3, F4, Fz
     '.+' ...
-    });
+    } ...
+    );
+
+nodeList = [nodeList {myNode}];
+
+%%% Node: get the spectral features (raw power values, not ratios)
+
+% The default spectral features: power ratios in various classical EEG
+% bands
+myROIs = spectra.eeg_bands;
+
+% We modify the default spectral features so that they become raw power
+% values instead of power ratios
+bandNames = keys(myROIs);
+for bandItr = 1:numel(bandNames)
+    % The current feature specfication: {targetBand;refBand}
+    this = myROIs(bandNames{bandItr});
+    % Make the refBand empty, which means: return raw power in targetBand
+    this{2} = [];
+    myROIs(bandNames{bandItr}) = this;
+end
+
+myNode = spectra.new(...
+    'Channels2Plot', ...
+    {...
+    '^EEG 69$',  '^EEG 202$', '^EEG 95$', ... % T3, T4, T5
+    '^EEG 124$', '^EEG 149$', '^EEG 137$', ... % O1, O2, Oz
+    '^EEG 41$',  '^EEG 214$', '^EEG 47$', ... % F3, F4, Fz
+    '.+' ...
+    }, ...
+    'ROI', myROIs ...
+    );
 
 nodeList = [nodeList {myNode}];
 
