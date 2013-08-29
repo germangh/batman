@@ -7,7 +7,7 @@ end
 if ismember(codeDir(end), {'/','\'}),
     codeDir(end) = [];
 end
-installDir = [codeDir filesep 'meegpipe'];
+installDir = [codeDir filesep 'installdir'];
 if exist(installDir, 'dir'),
     warning('off', 'MATLAB:RMDIR:RemovedFromPath');
     rmdir(installDir, 's');

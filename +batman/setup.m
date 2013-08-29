@@ -20,7 +20,7 @@ end
 % Fieldtrip and EEGLAB in this system
 
 % catdir is part of meegpipe
-userConfig = mperl.file.spec.catfile(batman.root_path, 'meegpipe.ini');
+userConfig = [batman.root_path, filesep, 'meegpipe.ini'];
 if exist(userConfig, 'file')
     copyfile(userConfig, CODE_DIR);
 end

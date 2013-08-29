@@ -33,6 +33,10 @@ import spt.bss.*;
 
 PIPE_NAME = 'stage4';
 
+SUBJECTS = 1:20;
+
+BLOCKS = 1:14;
+
 USE_OGE = true;
 
 DO_REPORT = true;
@@ -60,13 +64,13 @@ myNode = copy.new;
 
 nodeList = [nodeList {myNode}];
 
+%%% Node: Reject obvious EOG components using their topography
+myNode = bss_regr.eog_egi256_hcgsn1('MinCard', 2, 'MaxCard', 5);
+nodeList = [nodeList {myNode}];
+
 
 %%% Node: ECG
 myNode = bss_regr.ecg;
-nodeList = [nodeList {myNode}];
-
-%%% Node: Reject obvious EOG components using their topography
-myNode = bss_regr.eog_egi256_hcgsn1('MinCard', 2, 'MaxCard', 5);
 nodeList = [nodeList {myNode}];
 
 
@@ -94,9 +98,13 @@ myPipe = pipeline.new(...
     );
 
 %% Select the relevant files and start the data processing jobs
+<<<<<<< HEAD
+regex = ['0+(' join('|', SUBJECTS) ').+rs_(' join('|', BLOCKS), ')_stage3\.pseth?$'];
+=======
 oge.wait_for_grid('stage3');
 
 regex = '_stage3\.pseth?$';
+>>>>>>> 20c75589998bd13bb95a3792e58fd0fb17311270
 files = finddepth_regex_match(INPUT_DIR, regex);
 
 link2files(files, OUTPUT_DIR);
