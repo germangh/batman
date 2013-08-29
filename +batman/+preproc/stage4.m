@@ -98,13 +98,11 @@ myPipe = pipeline.new(...
     );
 
 %% Select the relevant files and start the data processing jobs
-<<<<<<< HEAD
+
 regex = ['0+(' join('|', SUBJECTS) ').+rs_(' join('|', BLOCKS), ')_stage3\.pseth?$'];
-=======
+
 oge.wait_for_grid('stage3');
 
-regex = '_stage3\.pseth?$';
->>>>>>> 20c75589998bd13bb95a3792e58fd0fb17311270
 files = finddepth_regex_match(INPUT_DIR, regex);
 
 link2files(files, OUTPUT_DIR);
