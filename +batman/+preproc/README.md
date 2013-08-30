@@ -9,7 +9,7 @@ Stage                                             | Script
 [Splitting data files][stage1]                    | [+batman/+preproc/stage1.m][stage1]
 [Basic pre-processing][stage2]                    | [+batman/+preproc/stage2.m][stage2]
 [PWL and MUX-related artifact correction][stage3] | [+batman/+preproc/stage3.m][stage3]
-[Removal of cardiac and ocular artifacts][stage4] | [+batman/+preproc/stage3.m][stage4]
+[Removal of cardiac and ocular artifacts][stage4] | [+batman/+preproc/stage4.m][stage4]
 
 After the main parameters of the pre-processing pipeline were fixed, these
 four stages were then grouped into just two:
