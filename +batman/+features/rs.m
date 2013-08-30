@@ -28,7 +28,7 @@ DO_REPORT = true;
 INPUT_DIR = ['/data1/projects/batman/analysis/stage2_4_' get_username];
 %INPUT_DIR = ['/data1/projects/batman/analysis/cleaning_' get_username];
 
-OUTPUT_DIR = ['/data1/projects/batman/analysis/rs_features_' get_username];
+OUTPUT_DIR = ['/data1/projects/batman/analysis/rs_features_avg_' get_username];
 
 QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
 
@@ -44,6 +44,13 @@ myNode = physioset_import.new('Importer', myImporter);
 nodeList = [nodeList {myNode}];
 
 % We don't need to copy the data because we are not going to modify it.
+
+myNode = copy.new;
+nodeList = [nodeList {myNode}];
+
+%% Node: average ref (remove if you want to use original ref)
+myNode = reref.avg; % reref.linked('EEG 190', 'EEG 94');
+nodeList = [nodeList {myNode}];
 
 %% Node: get the spectral features (power ratios)
 myNode = spectra.new(...
