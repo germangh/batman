@@ -2,10 +2,10 @@
 %
 % Performs stages 2 to 4 of the pre-processing chain
 %
-% 
+%
 
 import batman.get_username;
-
+import batman.pending_files;
 
 %% User parameters
 
@@ -15,11 +15,20 @@ USE_OGE = true;
 
 DO_REPORT = true;
 
-INPUT_DIR = ['/data1/projects/batman/analysis/splitting_' get_username];
+INPUT_DIR = '/data1/projects/batman/analysis/splitting';
+if ~strcmp(get_username, 'meegpipe')
+    INPUT_DIR = [INPUT_DIR '_' get_username];
+end
 
-OUTPUT_DIR = ['/data1/projects/batman/analysis/cleaning_' get_username];
+OUTPUT_DIR = '/data1/projects/batman/analysis/cleaning';
+
+if ~strcmp(get_username, 'meegpipe')
+    OUTPUT_DIR = [OUTPUT_DIR '_' get_username];
+end
 
 QUEUE = 'long.q@somerenserver.herseninstituut.knaw.nl';
+
+PAUSE_PERIOD = 60; % Check for new input files every PAUSE_PERIOD seconds
 
 %% Importing some bits and pieces of meegpipe
 import meegpipe.node.*;
@@ -87,7 +96,7 @@ nodeList = [nodeList {myNode}];
 % dBs). It is important that this node rejects ALL channels that are
 % obviously bad, especially those with large variance. Otherwise, bad
 % channels with large variance may lead to suboptimal separation of noise
-% components in later stages of the processing chain. 
+% components in later stages of the processing chain.
 
 % We set minVal to something much smaller than the median because of the
 % large number of high-variance channels (due to pervasive PWL artifacts)
@@ -110,7 +119,7 @@ nodeList = [nodeList {myNode}];
 
 % We comment this node becase it may not be necessary...
 % myCrit = bad_channels.criterion.xcorr.new(...
-%     'NN',   10, ... 
+%     'NN',   10, ...
 %     'Min',  @(corrVal) median(corrVal) - 10 ...
 %     );
 % myNode = bad_channels.new('Criterion', myCrit);
@@ -217,28 +226,24 @@ myPipe = pipeline.new(...
 
 %% Select the relevant files and start the data processing jobs
 
-% Halt execution until there are no jobs running from the splitting stage.
-oge.wait_for_grid('splitting');
-
-if ischar(INPUT_DIR),
-    INPUT_DIR = {INPUT_DIR};
-end
-allFiles = {};
-for i = 1:numel(INPUT_DIR)
+fprintf('(splitting) Continuously checking for input files ...\n\n');
+while true
+     
     regex = '_\d+\.pseth?$';
-    files = finddepth_regex_match(INPUT_DIR{i}, regex);
-    allFiles = [allFiles;files(:)]; %#ok<AGROW>
+    files = finddepth_regex_match(INPUT_DIR, regex);
+    
+    link2files(files, OUTPUT_DIR);
+    regex = '_\d+\.pseth$';
+    files = finddepth_regex_match(OUTPUT_DIR, regex);
+    
+    pending = pending_files(files);
+    
+    if ~isempty(pending),
+        run(myPipe, pending{:});
+    else
+        fprintf('(splitting) Continuously checking for input files ...\n\n');
+    end
+    
+    pause(PAUSE_PERIOD);
+    
 end
-
-link2files(allFiles, OUTPUT_DIR);
-regex = '_\d+\.pseth$';
-files = finddepth_regex_match(OUTPUT_DIR, regex);
-
-if isempty(files),
-    error('Files from stage1 could not be found');
-end
-
-% We actually process only the files that have not been processed yet
-
-run(myPipe, files{:});
-
