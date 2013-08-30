@@ -24,8 +24,8 @@ need to execute in MATLAB:
 
 ````matlab
 batman.setup; % Installs meegpipe and/or adds it to the path
-batman.splitting;
-batman.cleaning;
+batman.preproc.splitting;
+batman.preproc.cleaning;
 ````
 
 The whole process can cake a long time depending on the number of data
