@@ -14,7 +14,7 @@ Stage                                             | Script
 
 ## Splitting
 
-The splitting stage consisted in splitting the large `.mff` files produced
+The splitting stage consists in splitting the large `.mff` files produced
 by the BATMAN experimental protocol into single-epoch files. By epoch 
 we mean a chunk of the data file that corresponds to a single 
 experimental condition. At this point only the resting state (RS) epochs 
