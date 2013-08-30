@@ -6,7 +6,7 @@ The pre-processing chain consisted of two stages:
 Stage                                             | Script
 ------------------------------------------------- | -------------
 [Splitting data files][splitting]                 | [+batman/+preproc/splitting.m][splitting]
-[Data cleaning][cleaning]                         | [+batman/+preproc/stage2.m][cleaning]
+[Data cleaning][cleaning]                         | [+batman/+preproc/cleaning.m][cleaning]
 
 
 [splitting]: ./splitting.m
