@@ -90,3 +90,15 @@ files that you want to be splitted in that directory.
 [me]: mailto:g@germangh.com
 
 
+## Cleaning
+
+As the splitting pipeline, the cleaning pipeline also works as a service.
+It automatically cleans any data split that can be found within the 
+`OUTPUT_DIR` of the splitting pipeline. If for whatever reason you want 
+the cleaning pipeline to be re-applied on certain file then you just need
+ to delete the corresponding `.meegpipe` directory from the output
+directory of the cleaning pipeline, which is:
+
+````
+/data1/projects/batman/analysis/cleaning
+````
