@@ -41,9 +41,8 @@ USE_OGE = true;
 
 DO_REPORT = true;
 
-INPUT_DIR = '/data1/projects/batman/analysis/stage3_gherrero_130823-175358';
-OUTPUT_DIR = ['/data1/projects/batman/analysis/stage4_', get_username '_' ...
-    datestr(now, 'yymmdd-HHMMSS')];
+INPUT_DIR = '/data1/projects/batman/analysis/stage3_gherrero_130826-230806';
+OUTPUT_DIR = ['/data1/projects/batman/analysis/stage4_', get_username];
 
 QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
 
@@ -98,10 +97,9 @@ myPipe = pipeline.new(...
     );
 
 %% Select the relevant files and start the data processing jobs
+oge.wait_for_grid('stage3');
 
 regex = ['0+(' join('|', SUBJECTS) ').+rs_(' join('|', BLOCKS), ')_stage3\.pseth?$'];
-
-oge.wait_for_grid('stage3');
 
 files = finddepth_regex_match(INPUT_DIR, regex);
 

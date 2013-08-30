@@ -7,7 +7,9 @@ import batman.get_username;
 
 %% User parameters
 
-SUBJECTS = 1:100;
+% Subject 6 is special because the ars+ events are missing in that subject.
+% Thus subject 6 must be split using stage1b.m
+SUBJECTS = setdiff(1:100, 6);
 
 USE_OGE = true;
 
@@ -22,14 +24,14 @@ QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
 
 nodeList = {};
 
-%%% Node: import from .mff file
+%% Node: import from .mff file
 
 myImporter = physioset.import.mff('Precision', 'double');
 myNode = meegpipe.node.physioset_import.new('Importer', myImporter);
 
 nodeList = [nodeList {myNode}];
 
-%%% Node: Extract resting state blocks
+%% Node: Extract resting state blocks
 
 % These two function handles are used to decode the suffix that will be
 % attached to each splitted file from three pieces of information:
@@ -65,7 +67,7 @@ thisNode = meegpipe.node.split.new(...
 nodeList = [nodeList {thisNode}];
 
 
-%%% The actual pipeline
+%% The actual pipeline
 
 myPipe = meegpipe.node.pipeline.new(...
     'NodeList',         nodeList, ...

@@ -20,14 +20,14 @@ OUTPUT_DIR = ['/data1/projects/batman/analysis/stage1b_', get_username '_'...
 
 nodeList = {};
 
-%%% Node: import from .mff file
+%% Node: import from .mff file
 
 myImporter = physioset.import.mff('Precision', 'double');
 myNode = meegpipe.node.physioset_import.new('Importer', myImporter);
 
 nodeList = [nodeList {myNode}];
 
-%%% Node: Extract resting state blocks
+%% Node: Extract resting state blocks
 
 % These two function handles are used to decode the suffix that will be
 % attached to each splitted file from three pieces of information:
@@ -63,7 +63,7 @@ thisNode = meegpipe.node.split.new(...
 nodeList = [nodeList {thisNode}];
 
 
-%%% The actual pipeline
+%% The actual pipeline
 
 myPipe = meegpipe.node.pipeline.new(...
     'NodeList',         nodeList, ...

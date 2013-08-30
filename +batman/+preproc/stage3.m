@@ -21,8 +21,11 @@ USE_OGE = true;
 
 DO_REPORT = true;
 
+SUBJECTS = 1:20;
 
-INPUT_DIR = '/data1/projects/batman/analysis/stage2_gherrero_130823-120023';
+BLOCKS = 1:14;
+
+INPUT_DIR = '/data1/projects/batman/analysis/stage2_btlindert_130829-133749';
 
 OUTPUT_DIR = ['/data1/projects/batman/analysis/stage3_', get_username '_' ...
     datestr(now, 'yymmdd-HHMMSS')];
@@ -117,7 +120,8 @@ myPipe = pipeline.new(...
 % there will be no files there to link to.
 oge.wait_for_grid('stage2');
 
-regex = '_stage2\.pseth?$';
+regex = ['0+(' join('|', SUBJECTS) ').+rs_(' join('|', BLOCKS), ')_copy_stage2\.pseth?$'];
+
 files = finddepth_regex_match(INPUT_DIR, regex);
 
 link2files(files, OUTPUT_DIR);
