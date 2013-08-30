@@ -1,41 +1,92 @@
 Preprocessing the BATMAN dataset
 ======
 
-During development and optimization of the pre-processing chain, the 
-pre-processing of the BATMAN dataset was organized into four stages: 
-
-Stage                                             | Script
-------------------------------------------------- | -------------
-[Splitting data files][stage1]                    | [+batman/+preproc/stage1.m][stage1]
-[Basic pre-processing][stage2]                    | [+batman/+preproc/stage2.m][stage2]
-[PWL and MUX-related artifact correction][stage3] | [+batman/+preproc/stage3.m][stage3]
-[Removal of cardiac and ocular artifacts][stage4] | [+batman/+preproc/stage4.m][stage4]
-
-After the main parameters of the pre-processing pipeline were fixed, these
-four stages were then grouped into just two:
+The pre-processing chain consisted of two stages:
 
 Stage                                             | Script
 ------------------------------------------------- | -------------
 [Splitting data files][splitting]                 | [+batman/+preproc/splitting.m][splitting]
 [Data cleaning][cleaning]                         | [+batman/+preproc/stage2.m][cleaning]
 
-Thus, to reproduce the whole pre-processing chain from the raw data you 
-need to execute in MATLAB:
 
-````matlab
-batman.setup; % Installs meegpipe and/or adds it to the path
-batman.preproc.splitting;
-batman.preproc.cleaning;
-````
-
-The whole process can cake a long time depending on the number of data
- files to be splitted and cleaned. 
-
-[stage1]: ./stage1.md
-[stage2]: ./stage2.md
-[stage3]: ./stage3.md
-[stage4]: ./stage4.md
 [splitting]: ./splitting.m
 [cleaning]: ./cleaning.m
+
+## Splitting
+
+The splitting stage consisted in splitting the large `.mff` files produced
+by the BATMAN experimental protocol into single-epoch files. By epoch 
+we mean a chunk of the data file that corresponds to a single 
+experimental condition. At this point only the resting state (RS) epochs 
+are splitted in this stage. The results of this stage are stored in  
+directory:
+
+````
+/data1/projects/batman/analysis/splitting
+````
+
+To split a set of files, type the following in a terminal:
+
+````
+newgrp meegpipe
+````
+
+__NOTE:__ You need to be a member of the group `meegpipe` for the command
+above to succeed. If you are not already a member, ask [me][me] to add you.
+
+Then simply place the `.mff` files to be splitted (or symbolic links to 
+those  files) within `OUTPUT_DIR` and they will be automatically processed 
+with the splitting pipeline after a few seconds. 
+
+You can test whether the splitting jobs were submitted to the grid by
+running in a terminal at `somerengrid`:
+
+```
+qstat -u meegpipe
+````
+
+To output produced by a given splitting job is stored in the text file:
+
+````
+/home/meegpipe/[jobname].o[jobid]
+````
+
+where `[jobid]` is the ID of the job as displayed by `qstat`. You can get
+the full name of a job running in a terminal:
+
+````
+qstat -j [jobid]
+````
+
+If `qstat -u meegpipe` does not display your splitting jobs a couple of 
+minutes after you placed the files in `OUTPUT_DIR` then there can be 
+two reasons for this:
+
+* There is already a `.meegpipe` directory within `OUTPUT_DIR` that 
+corresponds to the `.mff` file(s) that you want to be processed. These 
+directories are probably leftovers from a previous splitting operation 
+that you are now attempting to re-do. The solution is to delete the
+ ofending `.meegpipe` directories. 
+
+
+* The splitting service is not running. Ask [me][me] to restart it. If I 
+am not available you can also create your own instance of the splitting 
+service under your account, by running in MATLAB:
+
+````
+batman.preproc.splitting;
+````
+
+But be aware that the service instance that you just create will scan for 
+new files (and will store the splitting results) in directory:
+
+````
+/data1/projects/batman/analysis/splitting_[username]
+````
+
+where `[username]` is __your user name__. Thus you will need to place the
+files that you want to be splitted in that directory.
+
+[me]: mailto:g@germangh.com
 
 

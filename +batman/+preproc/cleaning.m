@@ -238,5 +238,7 @@ if isempty(files),
     error('Files from stage1 could not be found');
 end
 
+% We actually process only the files that have not been processed yet
+
 run(myPipe, files{:});
 

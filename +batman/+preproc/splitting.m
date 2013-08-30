@@ -8,12 +8,13 @@
 % single-block files.
 
 import batman.get_username;
+import batman.pending_files;
 
 %% User parameters
 
 % Subject 6 is special because the ars+ events are missing in that subject.
 % Thus subject 6 must be split using stage1b.m
-SUBJECTS_ARS = setdiff(1:100, 6);
+SUBJECTS_ARS = setdiff(1:10, 6);
 
 % Group of subjects that will be split using the PVT events instead of the
 % ars+ events
@@ -23,11 +24,16 @@ USE_OGE = true;
 
 DO_REPORT = true;
 
-OUTPUT_DIR = ['/data1/projects/batman/analysis/splitting_' get_username];
+OUTPUT_DIR = '/data1/projects/batman/analysis/splitting';
+if ~strcmp(get_username, 'meegpipe')
+    OUTPUT_DIR = [OUTPUT_DIR '_' get_username];
+end
 
 % Use long.q to not overload the server for a too long time
 % The long.q has a lower load threshold than other queues
 QUEUE = 'long.q@somerenserver.herseninstituut.knaw.nl';
+
+PAUSE_PERIOD = 60; % Check for new input files every PAUSE_PERIOD seconds
 
 %% Build the pipelines node by node
 
@@ -95,12 +101,33 @@ myPipe2 = meegpipe.node.pipeline.new(...
 %% Select relevant data files and process them with the corresp. pipeline
 
 files1 = somsds.link2rec('batman', 'file_ext', '.mff', ...
-    'subject', SUBJECTS_ARS, 'folder', OUTPUT_DIR);
-
-run(myPipe1, files1{:});
+    'subject', SUBJECTS_ARS, 'folder', OUTPUT_DIR, '--linknames');
 
 files2 = somsds.link2rec('batman', 'file_ext', '.mff', ...
-    'subject', SUBJECTS_PVT, 'folder', OUTPUT_DIR);
+    'subject', SUBJECTS_PVT, 'folder', OUTPUT_DIR, '--linknames');
 
-run(myPipe1, files2{:});
-
+% keep waiting for files to be processed continuously
+fprintf('(splitting) Continuously checking for input files ...\n\n');
+while true
+    % Process only those files that have been splitted yet
+    % If you want to re-split an already splitted file then you will have to
+    % manually delete the corresponding .meegpipe dir in the output directory
+    
+    pending1 = pending_files(files1);
+    
+    if ~isempty(pending1),
+        run(myPipe1, pending1{:});
+    end
+    
+    pending2 = pending_files(files2);
+    
+    if ~isempty(pending2),
+        run(myPipe2, pending2{:});
+    end
+    
+    if ~isempty(pending1) || ~isempty(pending2),
+        fprintf('(splitting) Continuously checking for input files ...\n\n');
+    end
+    
+    pause(PAUSE_PERIOD);
+end
