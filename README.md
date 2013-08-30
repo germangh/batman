@@ -31,5 +31,5 @@ Pre-processing                              | [+batman/+preproc/README.md][prepr
 Extraction of various EEG features          | [+batman/+features/README.md][features]
 
 [preproc]: ./+batman/+preproc/README.md
-[rs]: ./+batman/+features/README.md    
+[features]: ./+batman/+features/README.md    
 
