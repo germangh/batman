@@ -180,7 +180,7 @@ myNode = bss_regr.new(...
 nodeList = [nodeList {myNode}];
 
 %% Node: Reject obvious EOG components using their topography
-myNode = bss_regr.eog_egi256_hcgsn1('MinCard', 2, 'MaxCard', 5);
+myNode = bss_regr.eog_egi256_hcgsn1('MinCard', 2, 'MaxCard', 5, 'Max', 10);
 nodeList = [nodeList {myNode}];
 
 
