@@ -18,8 +18,7 @@ The splitting stage consists in splitting the large `.mff` files produced
 by the BATMAN experimental protocol into single-epoch files. By epoch 
 we mean a chunk of the data file that corresponds to a single 
 experimental condition. At this point only the resting state (RS) epochs 
-are splitted in this stage. The results of this stage are stored in  
-directory:
+are splitted in this stage. The results of this stage are stored in directory:
 
 ````
 /data1/projects/batman/analysis/splitting
