@@ -25,6 +25,18 @@ Note that in order to be able to write to the `splitting` directory you
 need to be a member of the `meegpipe` group. If you are not already a
 member, ask [me][me] to add you.
 
+If you are working at `somerengrid` or at any other system where the 
+raw input files are managed by [somsds][somsds] then you should always 
+use `somsds_link2rec` to add new symbolic links to the `splitting` 
+directory. For instance, if you just acquired data from subjects 15 to 20
+then you should run in a terminal:
+
+````
+cd /data1/projects/batman/analysis/splitting
+somsds_link2rec batman --subjects 15..20 --modality eeg
+````
+
+[somsds]: http://germangh.com/somsds
 
 
 ## Assessing processing progress
