@@ -12,13 +12,11 @@ import mperl.join;
 
 %% Aggregation parameters
 
-INPUT_DIR = ['/data1/projects/batman/analysis/rs_features_' get_username];
+INPUT_DIR = '/data1/projects/batman/analysis/rs';
 
 OUTPUT_FILE = {...
-    ['/data1/projects/batman/analysis/rs_features_power_ratios_' ...
-    get_username '.csv'], ...
-    ['/data1/projects/batman/analysis/rs-features_raw_power_' ...
-    get_username '.csv'] ...
+    '/data1/projects/batman/analysis/rs/features_power_ratios', ...
+    '/data1/projects/batman/analysis/rs/features_power' ...
     };
 
 % How to translate the file names into info tags
@@ -35,17 +33,24 @@ BLOCKS = 1:14;
 % Match the list of files that were the input to the feature extraction
 % pipeline. Consider only those files that match our SUBJECTS and BLOCKS
 % Change this later to _cleaning.pseth
-regex = ['0+(' join('|', SUBJECTS) ').+rs_(' join('|', BLOCKS) ')_stage2-4.pseth$'];
+regex = ['0+(' join('|', SUBJECTS) ').+rs_(' join('|', BLOCKS) ')_cleaning.pseth$'];
 files = finddepth_regex_match(INPUT_DIR, regex);
 
-% First aggregate the features produced by node 2, which computed power
-% ratios in various classical EEG bands
-aggregate(files, 'node-02-power-ratios.+features.txt$', OUTPUT_FILE{1}, ...
-    FILENAME_TRANS);
 
-% Now aggregate the features produced by node 3, which computed raw power
-% values in various classical EEG bands
-aggregate(files, 'node-03-raw-power.+features.txt$', OUTPUT_FILE{2}, ...
-    FILENAME_TRANS);
+spectraPipes = {'absref', 'avgref', 'linkedref'};
 
-
+for i = 1:numel(spectraPipes)
+    
+    % First aggregate the features produced by node 2, which computed power
+    % ratios in various classical EEG bands
+    aggregate(files, [spectraPipes{i} '.+node-02-power-ratios.+features.txt$'], ...
+        [OUTPUT_FILE{1} '_' spectraPipes{i} '.csv'], ...
+        FILENAME_TRANS);
+    
+    % Now aggregate the features produced by node 3, which computed raw power
+    % values in various classical EEG bands
+    aggregate(files, [spectraPipes{i} '.+node-03-raw-power.+features.txt$', ...
+        [OUTPUT_FILE{2} '_' spectraPipes{i} '.csv'], ...
+        FILENAME_TRANS);
+    
+end

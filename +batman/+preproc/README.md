@@ -119,6 +119,11 @@ group) by typing in a terminal:
 /home/meegpipe/start_batman_splitting.sh
 ````
 
+## The pre-processing chain
+
+Here will come a description of the steps that the pre-processing chain 
+involves.
+
 
 [me]: mailto:g@germangh.com
 

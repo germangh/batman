@@ -13,9 +13,9 @@ import mperl.file.spec.catfile;
 
 %% Aggregation parameters
 
-INPUT_DIR = ['/data1/projects/batman/analysis/rs_features_' get_username];
+INPUT_DIR = '/data1/projects/batman/analysis/rs';
 
-OUTPUT_DIR = '/data1/projects/batman/analysis';
+OUTPUT_DIR = '/data1/projects/batman/analysis/rs';
 
 % List of subjects to be aggregated
 SUBJECTS = 1:10;
