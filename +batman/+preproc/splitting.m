@@ -33,7 +33,7 @@ end
 % The long.q has a lower load threshold than other queues
 QUEUE = 'long.q@somerenserver.herseninstituut.knaw.nl';
 
-PAUSE_PERIOD = 60; % Check for new input files every PAUSE_PERIOD seconds
+PAUSE_PERIOD = 3*60; % Check for new input files every PAUSE_PERIOD seconds
 
 %% Build the pipelines node by node
 
