@@ -150,11 +150,11 @@ while true
     fprintf('(features-rs) Checked for new input files on %s ...\n\n', ...
         datestr(now));
     
-    regex = '_\d+\.pseth?$';
+    regex = '_cleaning\.pseth?$';
     files = finddepth_regex_match(INPUT_DIR, regex);
     
     link2files(files, OUTPUT_DIR);
-    regex = '_\d+\.pseth$';
+    regex = '_cleaning\.pseth$';
     files = finddepth_regex_match(OUTPUT_DIR, regex);
     
     pending = pending_files(myPipe, files);
