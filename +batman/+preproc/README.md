@@ -12,30 +12,22 @@ Stage                                             | Script
 [splitting]: ./splitting.m
 [cleaning]: ./cleaning.m
 
-## Splitting
+## Usage synopsis
 
-The splitting stage consists in splitting the large `.mff` files produced
-by the BATMAN experimental protocol into single-epoch files. By epoch 
-we mean a chunk of the data file that corresponds to a single 
-experimental condition. At this point only the resting state (RS) epochs 
-are splitted in this stage. The results of this stage are stored in directory:
+To process newly acquired data files through the BATMAN pre-processing 
+chain simply place the files (or symbolic links to the files) under:
 
 ````
 /data1/projects/batman/analysis/splitting
 ````
 
-To split a set of files, type the following in a terminal:
+Note that in order to be able to write to the `splitting` directory you 
+need to be a member of the `meegpipe` group. If you are not already a
+member, ask [me][me] to add you.
 
-````
-newgrp meegpipe
-````
 
-__NOTE:__ You need to be a member of the group `meegpipe` for the command
-above to succeed. If you are not already a member, ask [me][me] to add you.
 
-Then simply place the `.mff` files to be splitted (or symbolic links to 
-those  files) within `OUTPUT_DIR` and they will be automatically processed 
-with the splitting pipeline after a few seconds. 
+## Assessing processing progress
 
 You can test whether the splitting jobs were submitted to the grid by
 running in a terminal at `somerengrid`:
@@ -57,47 +49,61 @@ the full name of a job running in a terminal:
 qstat -j [jobid]
 ````
 
-If `qstat -u meegpipe` does not display your splitting jobs a couple of 
-minutes after you placed the files in `OUTPUT_DIR` then there can be 
-two reasons for this:
-
-* There is already a `.meegpipe` directory within `OUTPUT_DIR` that 
-corresponds to the `.mff` file(s) that you want to be processed. These 
-directories are probably leftovers from a previous splitting operation 
-that you are now attempting to re-do. The solution is to delete the
- ofending `.meegpipe` directories. 
+If `qstat -u meegpipe` does not display your splitting jobs a few 
+minutes after you placed the files in `OUTPUT_DIR` then there is something
+wrong. In the troubleshooting section at the end of this document you 
+may find the solution to the problem. 
 
 
-* The splitting service is not running. Ask [me][me] to restart it. If I 
-am not available you can also create your own instance of the splitting 
-service under your account, by running in MATLAB:
+## Processing results
+
+The splitting results are stored under:
 
 ````
-batman.preproc.splitting;
-````
+/data1/projects/batman/analysis/splitting
+```
 
-But be aware that the service instance that you just create will scan for 
-new files (and will store the splitting results) in directory:
-
-````
-/data1/projects/batman/analysis/splitting_[username]
-````
-
-where `[username]` is __your user name__. Thus you will need to place the
-files that you want to be splitted in that directory.
-
-[me]: mailto:g@germangh.com
-
-
-## Cleaning
-
-As the splitting pipeline, the cleaning pipeline also works as a service.
-It automatically cleans any data split that can be found within the 
-`OUTPUT_DIR` of the splitting pipeline. If for whatever reason you want 
-the cleaning pipeline to be re-applied on certain file then you just need
- to delete the corresponding `.meegpipe` directory from the output
-directory of the cleaning pipeline, which is:
+The cleaning results are stored under:
 
 ````
 /data1/projects/batman/analysis/cleaning
 ````
+
+
+## Troubleshooting
+
+There are two major reasons for new data files to not be successfully 
+submitted to the grid for processing:
+
+* There is already a `.meegpipe` directory within `OUTPUT_DIR` that 
+corresponds to the `.mff` file(s) that you want to be pre-processed. If 
+you are trying to re-do the pre-processing of a given file then you must
+delete the corresponding `.meegpipe` directory from `OUTPUT_DIR`. 
+
+
+* The splitting or the cleaning service is not running. You can test 
+whether this is the case by running in a terminal:
+
+````
+ps aux | grep start_batman
+````
+
+which should display something like this:
+
+````
+meegpipe 17689  0.4  0.1 1131388 164172 pts/8  Sl   11:37   0:09 /usr/local/MATLAB/R2012b/bin/glnxa64/MATLAB -nodisplay -r run('~/start_batman_splitting')
+meegpipe 17825 33.8  0.1 1256924 227956 pts/8  Sl   11:37  11:28 /usr/local/MATLAB/R2012b/bin/glnxa64/MATLAB -nodisplay -r run('~/start_batman_cleaning')
+````
+
+If either the splitting or cleaning MATLAB sessions are not running then 
+you can re-start them yourself (provided you are a member of the `meegpipe`
+group) by typing in a terminal:
+
+````
+/home/meegpipe/start_batman_cleaning.sh
+/home/meegpipe/start_batman_splitting.sh
+````
+
+
+[me]: mailto:g@germangh.com
+
