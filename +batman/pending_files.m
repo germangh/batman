@@ -26,7 +26,26 @@ for i = 1:numel(files)
    inQueue = isempty(strfind(resp, 'jobs do not exist'));
 end
 
+% List of files (symbolic links) which are newer than the corresponding 
+% .meegpipe dir. This indicates that a user has manually deleted the link
+% and by that he wants us to re-process that file. This is usually because
+% the user has modified the runtime configuration (.ini files) within the
+% .meegpipe directory.
 
-files = files(fileExists & ~alreadyDone & ~inQueue);
+% Is the link newer than the .meegpipe dir?
+newFile = false(size(files));
+for i = 1:numel(files)
+    tmp = dir(files{i});
+    if isempty(tmp), continue; end
+    dateFile = tmp.datenum;
+    tmp = dir(meegpipeDirs{i});
+    if isempty(tmp), continue; end
+    newFile(i) = tmp(1).datenum < dateFile;
+end
+
+files = files(...
+    (fileExists & ~alreadyDone & ~inQueue) | ... % A new file
+    (newFile & alreadyDone & ~inQueue) ...      % User has modified .ini files 
+    );
 
 end
