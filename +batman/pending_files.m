@@ -9,7 +9,7 @@ fileExists = cellfun(@(x) exist(x, 'file')>0, files);
 
 inQueue = false(size(files));
 for i = 1:numel(files)
-   jobName = fileparts(files{i});
+   [~, jobName] = fileparts(files{i});
    [~, resp] = system(['qstat -j ' jobName]);
    inQueue = isempty(strfind(resp, 'jobs do not exist'));
 end
