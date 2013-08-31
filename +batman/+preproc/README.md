@@ -78,7 +78,10 @@ submitted to the grid for processing:
 * There is already a `.meegpipe` directory within `OUTPUT_DIR` that 
 corresponds to the `.mff` file(s) that you want to be pre-processed. If 
 you are trying to re-do the pre-processing of a given file then you must
-delete the corresponding `.meegpipe` directory from `OUTPUT_DIR`. 
+delete the corresponding `.meegpipe` directory from `OUTPUT_DIR`. Note that
+`OUTPUT_DIR` refers to `analysis/splitting` or `analysis/cleaning` 
+depending on whether you want to re-do the splitting or the cleaning
+stages (or both) for a given file.
 
 
 * The splitting or the cleaning service is not running. You can test 
