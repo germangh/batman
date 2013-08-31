@@ -32,8 +32,8 @@ directory. For instance, if you just acquired data from subjects 15 to 20
 then you should run in a terminal:
 
 ````
-cd /data1/projects/batman/analysis/splitting
-somsds_link2rec batman --subjects 15..20 --modality eeg
+cd /data1/projects/batman/analysis
+somsds_link2rec batman --subjects 15..20 --modality eeg --folder splitting
 ````
 
 [somsds]: http://germangh.com/somsds
