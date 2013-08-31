@@ -1,5 +1,10 @@
 function files = pending_files(pipe, files)
 
+if isempty(files),
+    files = {};
+    return;
+end
+
 meegpipeDirs = cellfun(@(x) regexprep(x, '\.[^.]+$', '.meegpipe'), files, ...
     'UniformOutput', false);
 
