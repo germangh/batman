@@ -1,8 +1,10 @@
 % Cleans the splitted data files
 %
-% Performs stages 2 to 4 of the pre-processing chain
+% Performs all the pre-processing steps, except the splitting which is done
+% by batman.preproc.splitting
 %
 %
+% See also: batman
 
 import batman.get_username;
 import batman.pending_files;
@@ -226,9 +228,11 @@ myPipe = pipeline.new(...
 
 %% Select the relevant files and start the data processing jobs
 
-fprintf('(splitting) Continuously checking for input files ...\n\n');
 while true
      
+    fprintf('(splitting) Checked for new input files on %s ...\n\n', ...
+        datestr(now));
+    
     regex = '_\d+\.pseth?$';
     files = finddepth_regex_match(INPUT_DIR, regex);
     
@@ -240,8 +244,6 @@ while true
     
     if ~isempty(pending),
         run(myPipe, pending{:});
-    else
-        fprintf('(splitting) Continuously checking for input files ...\n\n');
     end
     
     pause(PAUSE_PERIOD);
