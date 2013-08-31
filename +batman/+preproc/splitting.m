@@ -113,13 +113,13 @@ while true
     % If you want to re-split an already splitted file then you will have to
     % manually delete the corresponding .meegpipe dir in the output directory
     
-    pending1 = pending_files(files1);
+    pending1 = pending_files(myPipe1, files1);
     
     if ~isempty(pending1),
         run(myPipe1, pending1{:});
     end
     
-    pending2 = pending_files(files2);
+    pending2 = pending_files(myPipe2, files2);
     
     if ~isempty(pending2),
         run(myPipe2, pending2{:});

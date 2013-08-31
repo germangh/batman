@@ -236,7 +236,7 @@ while true
     regex = '_\d+\.pseth$';
     files = finddepth_regex_match(OUTPUT_DIR, regex);
     
-    pending = pending_files(files);
+    pending = pending_files(myPipe, files);
     
     if ~isempty(pending),
         run(myPipe, pending{:});
