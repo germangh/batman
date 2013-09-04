@@ -29,4 +29,7 @@ function ftripStruct = ft_freqanalysis_aggregate(DIR)
 % 
 % See also: batman.block2condition
 
+
+
+
 end

@@ -7,8 +7,8 @@ function [cond, condIDout] = block2condition(subj, blockID)
 % ## Usage synopsis
 %
 % ````matlab
-% cond = block2condition(5, 10)
-% assert(strcmp(cond, 'dark-supine-warm'));
+% cond = batman.block2condition(6, 10)
+% assert(strcmp(cond, 'light1_posture1_dpg0'));
 % ````
 % 
 % See also: batman.ft_freqanalysis_aggregate
@@ -47,7 +47,8 @@ prot = prot(:, 3:end);
 [~, rowIdx] = ismember(subj, subjID); 
 
 if any(rowIdx < 1),
-    warning('The following are not valid subject IDs: %s', ...
+    warning('block2condition:InvalidSubjectID', ...
+        'The following are not valid subject IDs: %s', ...
         join(', ', subj(rowIdx < 1)));
 end
 
