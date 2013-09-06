@@ -1,4 +1,4 @@
-function [cond, condIDout] = block2condition(subj, blockID)
+function [condIDout, cond] = block2condition(subj, blockID)
 % block2condition
 % ===
 %
@@ -22,20 +22,13 @@ if nargin < 2 || numel(blockID) ~= 1,
     error('blockID must be a single block index');
 end
 
-fName = catfile(root_path, 'data', 'conditions.csv');
-[condSpecs, varNames, condID] = dlmread(fName, ',', 0, 1);
-varNames = varNames(2:end);
-
-% Create some nice condition names
-condNames = cell(size(condID));
-for i = 1:numel(condNames)
-    condNames{i} = '';
-    for j = 1:numel(varNames)
-        condNames{i} = [condNames{i} ...
-            varNames{j} num2str(condSpecs(i,j)) '_'];
-    end
-    condNames{i}(end) = [];
+if blockID > 9,
+    blockID = blockID -2 ;
+elseif blockID > 4,
+    blockID = blockID - 1;
 end
+
+[condID, condNames] = conditions;
 
 fName = catfile(root_path, 'data', 'protocol.csv');
 [prot, condID2] = dlmread(fName, ',');
