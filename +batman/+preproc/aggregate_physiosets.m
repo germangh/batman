@@ -45,13 +45,6 @@ opt.DataPath   = '/data1/projects/batman/analysis/cleaning';
 
 [~, opt] = process_arguments(opt, varargin);
 
-if ~isempty(opt.SaveToFile),
-    filePath = fileparts(opt.SaveToFile);
-    if isempty(filePath),
-        opt.SaveToFile = catfile(opt.DataPath, opt.SaveToFile);
-    end
-end
-
 if isempty(opt.Subjects),
     subjRegex = '';
 else
