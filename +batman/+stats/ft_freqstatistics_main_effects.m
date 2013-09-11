@@ -13,9 +13,57 @@ function [out, effect] = ft_freqstatistics_main_effects(varargin)
 % ````
 %
 % Where `out` is a 1x6 cell array with the information related to the
-% statistics related to one set of interaction effects. The latter are
+% statistics related to a given main effects. The latter are
 % listed in the output variable `effect`.
 %
+% ## Optional arguments
+%
+% Optional arguments can be provided as key/value pairs.
+%
+% ### `SaveToFile`
+%
+% __Default:__
+% `/data1/projects/batman/analysis/cluster_stats_main_effects.mat`
+%
+% __Class:__ 'char array'
+%
+% The full path to the `.mat` file where the structures produced by
+% Fieldtrip's [ft_freqstatistics][ft_freqstatistics] and related
+% meta-information will be stored. This file contains everything that 
+% [batman.stats.ft_cluterplot][ft_clusterplot] needs to plot the
+% topographies of significant clusters of EEG sensors. 
+%
+% [ft_freqstatistics]: http://fieldtrip.fcdonders.nl/reference/ft_freqstatistics
+% [ft_clusterplot]: ./ft_clusterplot.md
+%
+%
+% ### `Bands`
+%
+% __Default:__ `batman.eeg_bands`
+%
+% __Class:__ `mjava.hash`
+%
+% An [associative array][wiki-aarray] array that maps spectral band names
+% to their actual definition in terms of spectral boundaries (in Hz). To
+% retrieve the default definition fo the alpha band:
+%
+% ````matlab
+% myBands = batman.eeg_bands;
+% myBands('alpha')
+% ````
+% 
+% which will display `[8 13]` as being the start and end frequencies of the
+% `alpha` band. To run `ft_freqstatistics_main_effects` with an alternative
+% definition of `alpha` (and to run it __only__ for the alpha band) you
+% could do:
+%
+% ````matlab
+% myBands = mjava.hash;
+% myBands('alpha') = [9 12];
+% batman.stats.ft_freqstatistics_main_effects('Bands', myBands);
+% ````
+%
+% [wiki-aarray]: http://en.wikipedia.org/wiki/Associative_array
 %
 % See also: batman.preproc.ft_freqstatistics_main_effects
 
@@ -49,8 +97,6 @@ out       = cell(1, numel(bandNames));
 % structure passed to ft_freqstatistics
 [neighbours, layout] = sensor_geometry(data{1}{1});
 
-% Number of observations
-nbUO = numel(data{1})*4;
 count = 0;
 
 for bandItr = 1:numel(bandNames)
@@ -62,7 +108,7 @@ for bandItr = 1:numel(bandNames)
     % Configuration for ft_freqanalysis
     cfgF = freqanalysis_cfg('foilim', opt.Bands(bandNames{bandItr}));    
 
-    cfgS = freqstatistics_cfg(nbUO, ...
+    cfgS = freqstatistics_cfg(...
         'frequency',  opt.Bands(bandNames{bandItr}), ...
         'layout',     layout, ...
         'neighbours', neighbours); 
@@ -72,8 +118,12 @@ for bandItr = 1:numel(bandNames)
         mainFirst  = [mainEffectItr setdiff(1:numel(effect), mainEffectItr)];
         thisData    = permute(data, mainFirst);
         
-        fa1 = freq_analysis(cfgF, thisData(1,:,:)); %#ok<*NASGU>
-        fa2 = freq_analysis(cfgF, thisData(2,:,:));   
+        [fa1, uo1]  = freq_analysis(cfgF, thisData(1,:,:)); %#ok<*NASGU>
+        [fa2, uo2]  = freq_analysis(cfgF, thisData(2,:,:));   
+        cfgS.design = [ ...
+            ones(1, numel(uo1)) ones(1, numel(uo2)); ...
+            uo1, uo2 ...
+            ];
         
         [~, ftripStats{mainEffectItr}] = ...
             evalc('ft_freqstatistics(cfgS, fa1, fa2);');
@@ -105,7 +155,7 @@ end
 
 end
 
-function cfg = freqstatistics_cfg(nbUO, varargin)
+function cfg = freqstatistics_cfg(varargin)
 
 import misc.process_arguments;
 
@@ -117,10 +167,7 @@ cfg.correctm   = 'cluster';
 cfg.frequency  = [8 12];
 cfg.alpha      = 0.05;
 
-cfg.design = [ ...
-    ones(1, nbUO) ones(1, nbUO)*2; ...
-    1:nbUO 1:nbUO ...
-    ];
+cfg.design = []; % To be filled later!
 cfg.ivar = 1;
 cfg.uvar = 2;
 cfg.avgoverfreq    = 'yes';
@@ -162,7 +209,7 @@ cfgN.feedback = 'no';
 
 end
 
-function data = freq_analysis(cfg, fileArray)  %#ok<INUSL>
+function [data, uo] = freq_analysis(cfg, fileArray)  %#ok<INUSL>
 
 myImporter = physioset.import.physioset;
 mySel      = pset.selector.sensor_class('Class', 'EEG');
@@ -177,13 +224,17 @@ for i = 1:numel(fileArray),
     end
 end
 
+uo = nan(1, numel(fileList));
 data = cell(size(fileList));
-for subjItr = 1:numel(fileList)
-    data{subjItr} = import(myImporter, fileList{subjItr});
-    select(mySel, data{subjItr});
-    data{subjItr} = fieldtrip(data{subjItr}, 'BadData', 'donothing');
+for fileItr = 1:numel(fileList)
+    data{fileItr} = import(myImporter, fileList{fileItr});
+    dataName = get_name(data{fileItr});
+    tmp = regexp(dataName, '.+_0+(?<subj>\d+)_.+', 'names');
+    uo(fileItr) = str2double(tmp.subj);
+    select(mySel, data{fileItr});
+    data{fileItr} = fieldtrip(data{fileItr}, 'BadData', 'donothing');
     
-    [~, data{subjItr}] = evalc('ft_freqanalysis(cfg, data{subjItr});');
+    [~, data{fileItr}] = evalc('ft_freqanalysis(cfg, data{fileItr});');
 end
 
 [~, data] = evalc('ft_freqgrandaverage(cfg, data{:});');

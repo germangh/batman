@@ -2,11 +2,11 @@ batman
 ======
 
 This repository contains the code and instructions necessary to reproduce
-the data analyses of the [STW][stw]-funded project [BATMAN][batman]. 
+the data analyses of the [STW][stw]-funded project [BATMAN][batman].
 
-In the documentation that follows we will assume a Linux-like OS, and that 
-the BATMAN dataset is managed by [somsds][somsds] data management system. 
-This is the case if you are trying to reproduce the data analyses at 
+In the documentation that follows we will assume a Linux-like OS, and that
+the BATMAN dataset is managed by [somsds][somsds] data management system.
+This is the case if you are trying to reproduce the data analyses at
 the `somerengrid` (our lab's private computing grid).
 
 [somsds]: https://germangh.com/somsds
@@ -25,11 +25,12 @@ A description of the experimental protocol will be here at some point.
 The table below lists all the analyses and processing tasks that have been
  perfomed on the BATMAN dataset so far, roughtly in chronological order.
 
-What?                                       | Documentation
-------------------------------------------- | -------------
-Pre-processing                              | [+batman/+preproc/README.md][preproc]
-Extraction of various EEG features          | [+batman/+features/README.md][features]
+What?                                                 | Documentation
+----------------------------------------------------- | -------------
+Pre-processing                                        | [+batman/+preproc/README.md][preproc]
+Extraction of resting state EEG power features        | [+batman/+features/README.md][features]
+Statistical analysis of effects on EEG power features | [+batman/+stats/README.md][stats]
 
 [preproc]: ./+batman/+preproc/README.md
-[features]: ./+batman/+features/README.md    
-
+[features]: ./+batman/+features/README.md
+[stats]: ./+batman/+stats/README.md
