@@ -30,7 +30,7 @@ Optional arguments can be provided as key/value pairs.
 ### `SaveToFile`
 
 __Default:__
-`/data1/projects/batman/analysis/cluster_stats_main_effects.mat`
+`/data1/projects/batman/analysis/cluster_stats_interaction_effects.mat`
 
 __Class:__ 'char array'
 
