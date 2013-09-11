@@ -72,4 +72,9 @@ batman.stats.ft_freqstatistics_main_effects('Bands', myBands);
 
 [wiki-aarray]: http://en.wikipedia.org/wiki/Associative_array
 
-See also: batman.preproc.ft_freqstatistics_main_effects
+
+## More information
+
+See the [source code][source] for more information.
+
+[source]: ./ft_freqstatistics_main_effects.m

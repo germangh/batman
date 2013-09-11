@@ -49,3 +49,38 @@ details.
 [ft_freqstatistics_main_effects]: ./ft_freqstatistics_main_effects.md
 [ft_statistics_montecarlo]: http://fieldtrip.fcdonders.nl/reference/ft_statistics_montecarlo
 
+
+### Interaction effects
+
+Interaction effects between two independent variables (say, light and
+temperature) were assesed by:
+
+1. Computing the average effect of light across postures for the first.
+   temperature level.
+
+2. Computing the average effect of light across postures for the second
+   temperature level.
+
+3. Assessing the difference between 1. and 2 using a dependent samples T test.
+
+
+Interaction effects between three independent variables were assesed by
+assessing differences in two-way interactions across level of the third
+variable. That is, to assess the interaction effect of light, posture and
+temperature:
+
+1. We computed the difference in the effect of posture across light levels for
+   the first temperature level.
+
+2. We computed the difference in the effect of posture across light levels for
+   the second temperature level.
+
+3. We assessed the difference between 1. and 2. using a dependent samples
+   T test.
+
+
+See the code of [ft_freqstatistics_interaction_effects][inteff] for more
+details.
+
+[inteff]: ./ft_freqstatistics_interaction_effects.md
+
