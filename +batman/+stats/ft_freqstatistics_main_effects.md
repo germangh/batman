@@ -44,7 +44,7 @@ __Class:__ `mjava.hash`
 
 An [associative array][wiki-aarray] array that maps spectral band names
 to their actual definition in terms of spectral boundaries (in Hz). To
-retrieve the default definition fo the alpha band:
+retrieve the default definition for the alpha band:
 
 ````matlab
 myBands = batman.eeg_bands;
