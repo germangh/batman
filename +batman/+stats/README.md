@@ -43,6 +43,6 @@ used as _unit of observation_ variable. See the code
 [ft_freqstatistics_main_effects][ft_freqstatistics_main_effects] for more
 details.
 
-[ft_freqstatistics_main_effects][./ft_freqstatistics_main_effects.md]
+[ft_freqstatistics_main_effects]: ./ft_freqstatistics_main_effects.md
 [ft_statistics_montecarlo]: http://fieldtrip.fcdonders.nl/reference/ft_statistics_montecarlo
 
