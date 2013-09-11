@@ -1,24 +1,8 @@
 function [out, effect] = ft_freqstatistics_interaction_effects(varargin)
-% ft_freqstatistics_interaction
-% ====
+% ft_freqstatistics_interaction_effects - Interaction effects on resting state EEG power
 %
-% Fieldtrip-based spectral power statistics
-%
-% ## Usage synopsis:
-%
-% ````matlab
-% [out, effect] = batman.stats.ft_freqstatistics;
-% [out, effect] = batman.stats.ft_freqstatistics('key', value, ...)
-% ````
-%
-% Where `out` is a 1x6 cell array with the information related to the
-% statistics related to one set of interaction effects. The latter are
-% listed in the output variable `effect`.
-%
-% 
-%
-%
-% See also: batman.preproc.ft_freqstatistics_main_effects
+% See: <a href="matlab:misc.md_help('batman.stats.ft_freqstatistics_interaction_effects')">misc.md_help(''batman.stats.ft_freqstatistics_interaction_effects'')</a>
+
 
 import misc.process_arguments;
 import misc.eta;

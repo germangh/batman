@@ -1,27 +1,27 @@
-ft_freqstatistics_main_effects
+ft_freqstatistics_interaction_effects
 ====
 
-Fieldtrip-based spectral power statistics, main effects
+Fieldtrip-based spectral power statistics, interaction effects
 
 ## Usage synopsis:
 
 ````matlab
-import batman.stats.ft_freqstatistics_main_effects;
-[out, effect] = ft_freqstatistics_main_effects;
-[out, effect] = ft_freqstatistics_main_effects('key', value, ...)
+import batman.stats.ft_freqstatistics_interaction_effects;
+[out, effect] = ft_freqstatistics_interaction_effects;
+[out, effect] = ft_freqstatistics_interaction_effects('key', value, ...)
 ````
 
 Where `out` is a 1x6 cell array with the information related to the
-statistics related to a given main effects. The latter are
+statistics related to a given set of interaction effects. The latter are
 listed in the output variable `effect`:
 
 ````matlab
-effect = {'L', 'P', 'T'};
+effect = {'PxT_L', 'LxT_P', 'LxP_T', 'LxP', 'PxL', 'TxL'}
 ````
 
-where `L`, `P` and `T` denote, respectively, the main effect of light,
+where `PxT_L` denotes the effect of light on the interaction between 
+posture and temperature, and `PxL` denotes the interaction effect of
 posture and temperature.
-
 
 ## Optional arguments
 
