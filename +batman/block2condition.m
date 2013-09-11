@@ -37,6 +37,10 @@ condID2 = condID2(3:end);
 subjID = prot(:,1);
 prot = prot(:, 3:end);
 
+validCondIDs = batman.conditions;
+prot(:, ~ismember(condID2, validCondIDs)) = [];
+condID2(~ismember(condID2, validCondIDs)) = [];
+
 [~, rowIdx] = ismember(subj, subjID); 
 
 if any(rowIdx < 1),
@@ -52,8 +56,13 @@ cond = cell(size(subj));
 condIDout = cell(size(subj));
 
 for i = 1:numel(subj)
-   condIDout{i} = condID2{prot(rowIdx(1), :) == blockID};
-   cond{i} = condNames{ismember(condID, condIDout{i})};
+    if ~any(prot(rowIdx(1), :) == blockID), 
+        condIDout{i} = '';
+        cond{i} = '';
+        continue; 
+    end
+    condIDout{i} = condID2{prot(rowIdx(1), :) == blockID};    
+    cond{i} = condNames{ismember(condID, condIDout{i})};    
 end
 
 

@@ -40,7 +40,7 @@ import misc.process_arguments;
 import mperl.file.spec.catfile;
 
 opt.Verbose  = true;
-opt.Subjects = [];
+opt.Subjects = [1,2,3,4,7,9,10];
 opt.DataPath   = '/data1/projects/batman/analysis/cleaning';
 
 [~, opt] = process_arguments(opt, varargin);
@@ -71,6 +71,7 @@ for fileItr = 1:numel(files)
     thisSubj  = str2double(match.subj);
     thisCondID = block2condition(thisSubj, thisBlock);
     idx = ismember(condID, thisCondID);
+    if ~any(idx), continue; end
     data{idx} = [data{idx} files(fileItr)];
     if opt.Verbose,
         misc.eta(tinit, numel(files), fileItr, 'remaintime', true);
