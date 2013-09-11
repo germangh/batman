@@ -55,7 +55,7 @@ details.
 Interaction effects between two independent variables (say, light and
 temperature) were assesed by:
 
-1. Computing the average effect of light across postures for the first.
+1. Computing the average effect of light across postures for the first
    temperature level.
 
 2. Computing the average effect of light across postures for the second
