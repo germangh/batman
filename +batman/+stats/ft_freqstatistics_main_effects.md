@@ -72,6 +72,15 @@ batman.stats.ft_freqstatistics_main_effects('Bands', myBands);
 
 [wiki-aarray]: http://en.wikipedia.org/wiki/Associative_array
 
+### `RerefMatrix`
+
+__Default:__ `meegpipe.node.reref.avg_matrix`
+
+__Class:__ `numeric` matrix or `function_handle` or `[]`
+
+The re-referencing matrix. Leave empty if no re-referencing should be 
+performed.
+
 
 ## More information
 

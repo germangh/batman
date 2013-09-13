@@ -2,17 +2,23 @@ function [out, effect] = ft_freqstatistics_main_effects(varargin)
 % ft_freqstatistics_main_effects - Main effects on resting state EEG power
 %
 % See: <a href="matlab:misc.md_help('batman.stats.ft_freqstatistics_main_effects')">misc.md_help(''batman.stats.ft_freqstatistics_main_effects'')</a>
+%
+% See also: batman.preproc.aggregate_physiosets
 
 
 import misc.process_arguments;
 import misc.eta;
 import batman.preproc.aggregate_physiosets;
 import mperl.file.spec.catfile;
+import meegpipe.node.*;
 
 opt.Verbose         = true;
 opt.SaveToFile      = ...
     '/data1/projects/batman/analysis/cluster_stats_main_effects.mat';
 opt.Bands           = batman.eeg_bands;
+% This is just the average re-referencing operator where x is the
+% physioset object to be re-rerefenced
+opt.RerefMatrix     = meegpipe.node.reref.avg_matrix;
 [~, opt] = process_arguments(opt, varargin);
 
 verboseLabel = '(ft_freqstatistics_main_effects) ';
@@ -23,6 +29,7 @@ verboseLabel = '(ft_freqstatistics_main_effects) ';
 if opt.Verbose,
     fprintf([verboseLabel 'Computing statistics ...']);
     tinit = tic;
+    clear +misc/eta;
 end
 
 bandNames = keys(opt.Bands);
@@ -55,10 +62,10 @@ for bandItr = 1:numel(bandNames)
         mainFirst  = [mainEffectItr setdiff(1:numel(effect), mainEffectItr)];
         thisData    = permute(data, mainFirst);
         
-        [fa1, uo1]  = freq_analysis(cfgF, thisData(1,:,:)); %#ok<*NASGU>
-        [fa2, uo2]  = freq_analysis(cfgF, thisData(2,:,:));
+        [fa1, uo1]  = freq_analysis(cfgF, thisData(1,:,:), opt.RerefMatrix); %#ok<*NASGU>
+        [fa2, uo2]  = freq_analysis(cfgF, thisData(2,:,:), opt.RerefMatrix);
         cfgS.design = [ ...
-            ones(1, numel(uo1)) ones(1, numel(uo2)); ...
+            ones(1, numel(uo1)) 2*ones(1, numel(uo2)); ...
             uo1, uo2 ...
             ];
         
@@ -90,6 +97,8 @@ for bandItr = 1:numel(bandNames)
     
 end
 
+clear +misc/eta;
+
 end
 
 function cfg = freqstatistics_cfg(varargin)
@@ -103,6 +112,7 @@ cfg.numrandomization = 100;
 cfg.correctm   = 'cluster';
 cfg.frequency  = [8 12];
 cfg.alpha      = 0.05;
+cfg.clusteralpha = 0.05;
 
 cfg.design = []; % To be filled later!
 cfg.ivar = 1;
@@ -146,7 +156,9 @@ cfgN.feedback = 'no';
 
 end
 
-function [data, uo] = freq_analysis(cfg, fileArray)  %#ok<INUSL>
+function [data, uo] = freq_analysis(cfg, fileArray, rerefMatrix)  %#ok<INUSL>
+
+if nargin < 3, rerefMatrix = []; end
 
 myImporter = physioset.import.physioset;
 mySel      = pset.selector.sensor_class('Class', 'EEG');
@@ -165,15 +177,29 @@ uo = nan(1, numel(fileList));
 data = cell(size(fileList));
 for fileItr = 1:numel(fileList)
     data{fileItr} = import(myImporter, fileList{fileItr});
+    
     dataName = get_name(data{fileItr});
     tmp = regexp(dataName, '.+_0+(?<subj>\d+)_.+', 'names');
     uo(fileItr) = str2double(tmp.subj);
     select(mySel, data{fileItr});
+    
+    if ~isempty(rerefMatrix),
+        if isa(rerefMatrix, 'function_handle'),
+            thisRerefMatrix = rerefMatrix(data{fileItr});
+        else
+            thisRerefMatrix = rerefMatrix;
+        end
+        set_verbose(data{fileItr}, false);
+        data{fileItr} = copy(data{fileItr});
+        reref(data{fileItr}, thisRerefMatrix);
+    end    
+    
     data{fileItr} = fieldtrip(data{fileItr}, 'BadData', 'donothing');
     
     [~, data{fileItr}] = evalc('ft_freqanalysis(cfg, data{fileItr});');
 end
 
 [~, data] = evalc('ft_freqgrandaverage(cfg, data{:});');
+
 
 end

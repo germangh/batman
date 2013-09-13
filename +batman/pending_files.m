@@ -34,13 +34,24 @@ end
 
 % Is the link newer than the .meegpipe dir?
 newFile = false(size(files));
-for i = 1:numel(files)
-    tmp = dir(files{i});
-    if isempty(tmp), continue; end
-    dateFile = tmp.datenum;
-    tmp = dir(meegpipeDirs{i});
-    if isempty(tmp), continue; end
-    newFile(i) = tmp(1).datenum < dateFile;
+for i = 1:numel(files)    
+    dirList = dir(meegpipeDirs{i});
+    if isempty(dirList), continue; end
+    
+    if ~exist(files{i}, 'file'), continue; end
+    
+    [stat, ~] = system('stat');
+    if ispc || stat > 1,
+        tmp = dir(files{i});
+        if isempty(tmp), continue; end
+        dateFile = tmp.datenum;
+    else
+        cmd = sprintf('stat %s', files{i});
+        [~, res] = system(cmd);
+        tmp = regexp(res, 'Modify:\s+(?<date>[^.]+)', 'names');
+        dateFile = datenum(tmp.date);
+    end
+    newFile(i) = dirList(1).datenum < dateFile;
 end
 
 files = files(...

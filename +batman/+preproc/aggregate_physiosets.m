@@ -1,34 +1,9 @@
 function [data, condID, condNames] = ...
     aggregate_physiosets(varargin)
-% aggregate_physiosets
-% ====
+% aggregate_physiosets - Aggregate .pseth files by condition
 %
-% Aggregates physiosets according to experimental conditions
+% See: <a href="matlab:misc.md_help('batman.preproc.aggregate_physiosets')">misc.md_help(''batman.preproc.aggregate_physiosets'')</a>
 %
-% ## Usage synopsis
-%
-% ````matlab
-% rDir = '/data1/projects/batman/analysis/cleaning';
-% subj = [1, 3:5, 10];
-% [physArray, condID, condNames] = ...
-%       ft_aggregate('DataPath', rDir, 'Subjects', subj)
-% ````
-%
-% Where
-%
-% `rDir` is the root directory where the .meegpipe results are stored.
-%
-% `subj` is a numeric array of subject IDs. Only these subjects will be
-% considered in the aggregation.
-%
-% `physArray` is a 2x2x2 cell array. Each cell corresponds to a given 
-% experimental condition and contains all physioset objects that are 
-% associated with that condition.
-%
-% `cond` is a 2x2x2 cell array with condition IDs as described by 
-% `batman.block2condition`.
-%
-% 
 % See also: batman
 
 import mperl.file.find.finddepth_regex_match;

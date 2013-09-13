@@ -13,6 +13,9 @@ opt.Verbose         = true;
 opt.SaveToFile      = ...
     '/data1/projects/batman/analysis/cluster_stats_interaction_effects.mat';
 opt.Bands           = batman.eeg_bands;
+% This is just the average re-referencing operator where x is the
+% physioset object to be re-rerefenced
+opt.RerefMatrix     = meegpipe.node.reref.avg_matrix;
 [~, opt] = process_arguments(opt, varargin);
 
 verboseLabel = '(ft_freqstatistics_interaction_effects) ';
@@ -73,7 +76,8 @@ for bandItr = 1:numel(bandNames)
                 
                 parcData{parcValue} = ...
                     subsitem_analysis(cfgF, thisData(:,:,parcValue), ...
-                    signs{interEffectItr}, subs{interEffectItr}, 1);
+                    signs{interEffectItr}, subs{interEffectItr}, 1, ...
+                    opt.RerefMatrix);
                 
                 mat = parcData{parcValue}.powspctrm;
                 count = count + 1;
@@ -83,7 +87,7 @@ for bandItr = 1:numel(bandNames)
                     thisParcData = subsitem_analysis(cfgF, ...
                         thisData(:,:,parcValue), ...
                         signs{interEffectItr}, subs{interEffectItr}, ...
-                        subsItr);
+                        subsItr, opt.RerefMatrix);
                     
                     mat = mat + thisParcData.powspctrm;
                     count = count + 1;
@@ -134,6 +138,7 @@ cfg.numrandomization = 100;
 cfg.correctm   = 'cluster';
 cfg.frequency  = [8 12];
 cfg.alpha      = 0.05;
+cfg.clusteralpha = 0.05;
 
 nbSubj = numel(data{1});
 cfg.design = [ ...
@@ -209,16 +214,18 @@ signs = [-1 1 -1 1];
 
 end
 
-function [data, cfg] = subsitem_analysis(cfg, data, signs, subs, itr)
+function [data, cfg] = subsitem_analysis(cfg, data, signs, subs, itr, rerefMatrix)
 
 data = data(subs(itr,1),subs(itr,2));
-data = single_subject_freqanalysis(cfg, data{1});   %#ok<NASGU>
+data = single_subject_freqanalysis(cfg, data{1}, rerefMatrix);   %#ok<NASGU>
 [~, data] = evalc('ft_freqgrandaverage(cfg, data{:});');
 data.powspctrm  = signs(itr)*data.powspctrm;
 
 end
 
-function data = single_subject_freqanalysis(cfg, fileList)  %#ok<INUSL>
+function data = single_subject_freqanalysis(cfg, fileList, rerefMatrix)  %#ok<INUSL>
+
+if nargin < 3, rerefMatrix = []; end
 
 myImporter = physioset.import.physioset;
 mySel      = pset.selector.sensor_class('Class', 'EEG');
@@ -227,6 +234,18 @@ data = cell(size(fileList));
 for subjItr = 1:numel(fileList)
     data{subjItr} = import(myImporter, fileList{subjItr});
     select(mySel, data{subjItr});
+    
+    if ~isempty(rerefMatrix),
+        if isa(rerefMatrix, 'function_handle'),
+            thisRerefMatrix = rerefMatrix(data{subjItr});
+        else
+            thisRerefMatrix = rerefMatrix;
+        end
+        set_verbose(data{subjItr}, false);
+        data{subjItr} = copy(data{subjItr});
+        reref(data{subjItr}, thisRerefMatrix);
+    end    
+
     data{subjItr} = fieldtrip(data{subjItr}, 'BadData', 'donothing');
     
     [~, data{subjItr}] = evalc('ft_freqanalysis(cfg, data{subjItr});');
