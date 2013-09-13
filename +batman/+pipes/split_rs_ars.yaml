@@ -1,0 +1,11 @@
+--- # split_rs_ars pipeline
+author:     German Gomez-Herrero
+date:       11-09-2013
+modified:   11-09-2013
+
+meegpipe-config: /data1/projects/batman/scripts/batman/+batman/meegpipe.ini
+pipeline:        /data1/projects/batman/scripts/batman/+batman/+pipes/split_rs_ars
+
+input-dir:      /data1/projects/batman/analysis/pipes/split_rs_ars/input
+output-dir:     /data1/projects/batman/analysis/pipes/split_rs_ars/output
+

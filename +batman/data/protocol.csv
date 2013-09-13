@@ -1,4 +1,4 @@
-subjectid,protocolid,cond1,cond2,cond3,cond4,cond5,cond6,cond7,cond8,cond9,cond10,cond11,cond12
+subjectid,protocolid,block1,block2,block3,block4,block5,block6,block7,block8,block9,block10,block11,block12
 1,1,1,2,4,3,5,6,12,7,11,8,10,9
 2,2,2,3,1,4,6,7,5,8,12,9,11,10
 3,3,3,4,2,1,7,8,6,9,5,10,12,11

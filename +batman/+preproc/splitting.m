@@ -33,7 +33,6 @@ end
 % The long.q has a lower load threshold than other queues
 QUEUE = 'long.q@somerenserver.herseninstituut.knaw.nl';
 
-PAUSE_PERIOD = 3*60; % Check for new input files every PAUSE_PERIOD seconds
 
 %% Build the pipelines node by node
 
@@ -99,35 +98,31 @@ myPipe2 = meegpipe.node.pipeline.new(...
     'Queue',            QUEUE);
 
 %% Select relevant data files and process them with the corresp. pipeline
-
 files1 = somsds.link2rec('batman', 'file_ext', '.mff', ...
     'subject', SUBJECTS_ARS, 'folder', OUTPUT_DIR, '--linknames');
 
 files2 = somsds.link2rec('batman', 'file_ext', '.mff', ...
     'subject', SUBJECTS_PVT, 'folder', OUTPUT_DIR, '--linknames');
 
-% keep waiting for files to be processed continuously
-fprintf('(splitting) Continuously checking for input files ...\n\n');
-while true
-    % Process only those files that have been splitted yet
-    % If you want to re-split an already splitted file then you will have to
-    % manually delete the corresponding .meegpipe dir in the output directory
-    
-    pending1 = pending_files(myPipe1, files1);
-    
-    if ~isempty(pending1),
-        run(myPipe1, pending1{:});
-    end
-    
-    pending2 = pending_files(myPipe2, files2);
-    
-    if ~isempty(pending2),
-        run(myPipe2, pending2{:});
-    end
-    
-    if ~isempty(pending1) || ~isempty(pending2),
-        fprintf('(splitting) Continuously checking for input files ...\n\n');
-    end
-    
-    pause(PAUSE_PERIOD);
+
+% Process only those files that have been splitted yet
+% If you want to re-split an already splitted file then you will have to
+% manually delete the corresponding .meegpipe dir in the output directory
+
+pending1 = pending_files(myPipe1, files1);
+
+if ~isempty(pending1),
+    run(myPipe1, pending1{:});
 end
+
+pending2 = pending_files(myPipe2, files2);
+
+if ~isempty(pending2),
+    run(myPipe2, pending2{:});
+end
+
+if ~isempty(pending1) || ~isempty(pending2),
+    fprintf('(splitting) Continuously checking for input files ...\n\n');
+end
+
+

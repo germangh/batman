@@ -1,6 +1,6 @@
-% rs
+% rs_power
 %
-% Extraction of power ratio features from RS epochs
+% Extraction of EEG power features from RS epochs
 %
 %
 % See also: batman
@@ -27,7 +27,7 @@ end
 
 QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
 
-PAUSE_PERIOD = 3*60; % Check for new input files every PAUSE_PERIOD seconds
+%PAUSE_PERIOD = 3*60; % Check for new input files every PAUSE_PERIOD seconds
 
 %% Importing bits and pieces from meegpipe
 import meegpipe.node.*;
@@ -56,7 +56,7 @@ nodeList        = [nodeList {myNode}];
 nodeListAvg     = [nodeListAvg {clone(myNode)}];
 nodeListLinked  = [nodeListLinked {clone(myNode)}];
 
-%% Node: copy the data (if we are planning to re-reference it later) 
+%% Node: copy the data (if we are planning to re-reference it later)
 
 myNode = copy.new;
 
@@ -65,7 +65,7 @@ nodeListAvg     = [nodeListAvg {clone(myNode)}];
 nodeListLinked  = [nodeListLinked {clone(myNode)}];
 
 %% Node: average ref (remove if you want to use original ref)
-myNodeAvg    = reref.avg; 
+myNodeAvg    = reref.avg;
 myNodeLinked = reref.linked('EEG 190', 'EEG 94');
 nodeListAvg     = [nodeListAvg {clone(myNodeAvg)}];
 nodeListLinked  = [nodeListLinked {clone(myNodeLinked)}];
@@ -144,37 +144,31 @@ myPipeLinked = pipeline.new(...
 
 
 %% Wait for files and start the data processing jobs
+fprintf('(features-rs) Checked for new input files on %s ...\n\n', ...
+    datestr(now));
 
-while true
-     
-    fprintf('(features-rs) Checked for new input files on %s ...\n\n', ...
-        datestr(now));
-    
-    regex = '_cleaning\.pseth?$';
-    files = finddepth_regex_match(INPUT_DIR, regex);
-    
-    link2files(files, OUTPUT_DIR);
-    regex = '_cleaning\.pseth$';
-    files = finddepth_regex_match(OUTPUT_DIR, regex);
-    
-    pending = pending_files(myPipe, files);
-    
-    if ~isempty(pending),
-        run(myPipe, pending{:});
-    end
-    
-    pendingAvg = pending_files(myPipeAvg, files);
-    
-    if ~isempty(pendingAvg),
-        run(myPipeAvg, pendingAvg{:});
-    end
-    
-    pendingLinked = pending_files(myPipeLinked, files);
-    
-    if ~isempty(pendingLinked),
-        run(myPipeLinked, pendingLinked{:});
-    end
-    
-    pause(PAUSE_PERIOD);
-    
+regex = '_cleaning\.pseth?$';
+files = finddepth_regex_match(INPUT_DIR, regex);
+
+link2files(files, OUTPUT_DIR);
+regex = '_cleaning\.pseth$';
+files = finddepth_regex_match(OUTPUT_DIR, regex);
+
+pending = pending_files(myPipe, files);
+
+if ~isempty(pending),
+    run(myPipe, pending{:});
 end
+
+pendingAvg = pending_files(myPipeAvg, files);
+
+if ~isempty(pendingAvg),
+    run(myPipeAvg, pendingAvg{:});
+end
+
+pendingLinked = pending_files(myPipeLinked, files);
+
+if ~isempty(pendingLinked),
+    run(myPipeLinked, pendingLinked{:});
+end
+

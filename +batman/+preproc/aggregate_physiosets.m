@@ -69,9 +69,14 @@ for fileItr = 1:numel(files)
     match = regexp(files{fileItr}, regex, 'names');
     thisBlock = str2double(match.block);
     thisSubj  = str2double(match.subj);
-    thisCondID = block2condition(thisSubj, thisBlock);
+    warning('off', 'block2condition:InvalidBlockID');
+    thisCondID = block2condition(thisSubj, thisBlock);   
+    warning('on', 'block2condition:InvalidBlockID');
+    
+    if isempty(thisCondID), continue; end
+    
     idx = ismember(condID, thisCondID);
-    if ~any(idx), continue; end
+    
     data{idx} = [data{idx} files(fileItr)];
     if opt.Verbose,
         misc.eta(tinit, numel(files), fileItr, 'remaintime', true);

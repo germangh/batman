@@ -30,8 +30,6 @@ end
 
 QUEUE = 'long.q@somerenserver.herseninstituut.knaw.nl';
 
-PAUSE_PERIOD = 3*60; % Check for new input files every PAUSE_PERIOD seconds
-
 %% Importing some bits and pieces of meegpipe
 import meegpipe.node.*;
 import somsds.link2files;
@@ -228,24 +226,17 @@ myPipe = pipeline.new(...
 
 %% Select the relevant files and start the data processing jobs
 
-while true
-     
-    fprintf('(splitting) Checked for new input files on %s ...\n\n', ...
-        datestr(now));
-    
-    regex = '_\d+\.pseth?$';
-    files = finddepth_regex_match(INPUT_DIR, regex);
-    
-    link2files(files, OUTPUT_DIR);
-    regex = '_\d+\.pseth$';
-    files = finddepth_regex_match(OUTPUT_DIR, regex);
-    
-    pending = pending_files(myPipe, files);
-    
-    if ~isempty(pending),
-        run(myPipe, pending{:});
-    end
-    
-    pause(PAUSE_PERIOD);
-    
+oge.wait_for_grid('splitting');
+
+regex = '_\d+\.pseth?$';
+files = finddepth_regex_match(INPUT_DIR, regex);
+
+link2files(files, OUTPUT_DIR);
+regex = '_\d+\.pseth$';
+files = finddepth_regex_match(OUTPUT_DIR, regex);
+
+pending = pending_files(myPipe, files);
+
+if ~isempty(pending),
+    run(myPipe, pending{:});
 end

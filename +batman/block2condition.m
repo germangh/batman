@@ -1,4 +1,4 @@
-function [condIDout, cond] = block2condition(subj, blockID)
+function [condID, condName] = block2condition(subj, blockID)
 % block2condition
 % ===
 %
@@ -22,50 +22,49 @@ if nargin < 2 || numel(blockID) ~= 1,
     error('blockID must be a single block index');
 end
 
+% In /data/protocol the block IDs are encoded as 1..12, i.e. the two break
+% blocks are not considered
 if blockID > 9,
     blockID = blockID -2 ;
 elseif blockID > 4,
     blockID = blockID - 1;
 end
 
-[condID, condNames] = conditions;
+[condIDList, condNameList] = conditions;
 
-fName = catfile(root_path, 'data', 'protocol.csv');
-[prot, condID2] = dlmread(fName, ',');
+[blockIDList, condIDMap, subjID] = protocol(subj);
 
-condID2 = condID2(3:end);
-subjID = prot(:,1);
-prot = prot(:, 3:end);
-
-validCondIDs = batman.conditions;
-prot(:, ~ismember(condID2, validCondIDs)) = [];
-condID2(~ismember(condID2, validCondIDs)) = [];
-
-[~, rowIdx] = ismember(subj, subjID); 
-
-if any(rowIdx < 1),
+if isempty(subjID),
     warning('block2condition:InvalidSubjectID', ...
-        'The following are not valid subject IDs: %s', ...
-        join(', ', subj(rowIdx < 1)));
+        'Invalid subject ID: %d', subj);
+    condID   = [];
+    condName = [];
+    return;
 end
 
-subj(rowIdx < 1)   = [];
-rowIdx(rowIdx < 1) = [];
+[isMember, loc] = ismember(['block' num2str(blockID)], blockIDList);
 
-cond = cell(size(subj));
-condIDout = cell(size(subj));
-
-for i = 1:numel(subj)
-    if ~any(prot(rowIdx(1), :) == blockID), 
-        condIDout{i} = '';
-        cond{i} = '';
-        continue; 
-    end
-    condIDout{i} = condID2{prot(rowIdx(1), :) == blockID};    
-    cond{i} = condNames{ismember(condID, condIDout{i})};    
+if ~isMember,
+    warning('block2condition:InvalidBlockID', ...
+        'Invalid block ID: %d', blockID);
+    condID   = [];
+    condName = [];
+    return;
 end
 
+condID     = condIDMap(loc);
+condName   = condNameList(ismember(condIDList, condID));
 
+if isempty(condName),
+    warning('block2condition:InvalidBlockID', ...
+        'Block %d corresponds to invalid condition ID ''%s''', ...
+        blockID, condID{1});
+    condID   = [];
+    condName = [];
+    return;
+end
 
+condName = condName{1};
+condID   = condID{1};
 
 end
