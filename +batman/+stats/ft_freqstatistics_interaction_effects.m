@@ -8,6 +8,11 @@ import misc.process_arguments;
 import misc.eta;
 import batman.preproc.aggregate_physiosets;
 import mperl.file.spec.catfile;
+import misc.split_arguments;
+import misc.any2str;
+import mperl.join;
+import oge.qsub;
+import batman.stats.private.*;
 
 opt.Verbose         = true;
 opt.SaveToFile      = ...
@@ -16,12 +21,52 @@ opt.Bands           = batman.eeg_bands;
 % This is just the average re-referencing operator where x is the
 % physioset object to be re-rerefenced
 opt.RerefMatrix     = meegpipe.node.reref.avg_matrix;
+opt.Regex           = '_meegpipe_.+_cleaning.pseth$';
+opt.Subjects        = [1 2 3 4 7 9 10];
+opt.UserName        = 'meegpipe';
+opt.HashPipe        = '979af1';
+opt.UseOGE          = true;
 [~, opt] = process_arguments(opt, varargin);
+
+bandNames = keys(opt.Bands);
+
+if numel(bandNames) > 1 && opt.UseOGE && oge.has_oge,
+    % Run using the grid engine
+    [~, varargin] = split_arguments('Bands', varargin);
+    varargin = cellfun(@(x) any2str(x, Inf), varargin);
+    varargin = join(',', varargin);
+    for i = 1:numel(bandNames),
+       jobName = ['ieff-' bandNames{i}];       
+       cmd = sprintf([...
+           'meegpipe.initialize;' ...
+           'batman.stats.ft_freqstatistics_interaction_effects( ' ...
+           '''Bands'', mjava.hash(''%s'', %s)' ...
+           ], bandNames{i}, any2str(opt.Bands(bandNames{i})));
+       
+       if ~isempty(varargin)
+           cmd = [cmd ',' varargin]; %#ok<*AGROW>
+       end
+       cmd = [cmd ');']; 
+       qsub(cmd, 'Name', jobName, 'Queue', 'short.q');
+    end
+    return;
+end
 
 verboseLabel = '(ft_freqstatistics_interaction_effects) ';
 
+if isempty(opt.Subjects),
+    subjRegex = '';
+else
+    subjRegex = ['_0+(' join('|', opt.Subjects) ')_'];
+end
+
+regex = sprintf('%s_%s_.+%s.+_cleaning.pseth$', ...
+    opt.HashPipe, opt.UserName, subjRegex);
+
 % Aggregate conditions' data files
-[data, condID, condNames] = aggregate_physiosets(varargin); %#ok<*ASGLU>
+[data, condID, condNames] = aggregate_physiosets(regex, ...
+    'Verbose', opt.Verbose);
+
 
 if opt.Verbose,
     fprintf([verboseLabel 'Computing statistics ...']);
@@ -57,10 +102,16 @@ for bandItr = 1:numel(bandNames)
     % Configuration for ft_freqanalysis
     cfgF = freqanalysis_cfg('foilim', opt.Bands(bandNames{bandItr}));
     
-    cfgS = freqstatistics_cfg(data, ...
+    cfgS = freqstatistics_cfg(...
         'frequency',  opt.Bands(bandNames{bandItr}), ...
         'layout',     layout, ...
-        'neighbours', neighbours); %#ok<NASGU>
+        'neighbours', neighbours); 
+    
+    nbSubj = numel(data{1});
+    cfgS.design = [ ...
+        ones(1, nbSubj) ones(1, nbSubj)*2; ...
+        1:7 1:7 ...
+        ];
     
     for interEffectItr = 1:2
         
@@ -74,10 +125,12 @@ for bandItr = 1:numel(bandNames)
             % The 2 levels of the variable we partialize against
             for parcValue = 1:2
                 
+                warning('off', 'session:NewSession');
                 parcData{parcValue} = ...
                     subsitem_analysis(cfgF, thisData(:,:,parcValue), ...
                     signs{interEffectItr}, subs{interEffectItr}, 1, ...
                     opt.RerefMatrix);
+                warning('on', 'session:NewSession');
                 
                 mat = parcData{parcValue}.powspctrm;
                 count = count + 1;
@@ -119,7 +172,8 @@ for bandItr = 1:numel(bandNames)
     out{bandItr} = freq_stats;
     if ~isempty(opt.SaveToFile),
         thisSaveFile = catfile(filePath, ...
-            [fileName '_' bandNames{bandItr} fileExt]);       
+            [fileName '_' bandNames{bandItr} '_' ...
+            datestr(now, 'yymmdd-HHMMSS') fileExt]);
         save(thisSaveFile, 'freq_stats');
     end
     
@@ -127,128 +181,4 @@ end
 
 end
 
-function cfg = freqstatistics_cfg(data, varargin)
 
-import misc.process_arguments;
-
-% config for ft_freqstatistics
-cfg.method     = 'montecarlo';
-cfg.statistic  = 'depsamplesT';
-cfg.numrandomization = 100;
-cfg.correctm   = 'cluster';
-cfg.frequency  = [8 12];
-cfg.alpha      = 0.05;
-cfg.clusteralpha = 0.05;
-
-nbSubj = numel(data{1});
-cfg.design = [ ...
-    ones(1, nbSubj) ones(1, nbSubj)*2; ...
-    1:7 1:7 ...
-    ];
-cfg.ivar = 1;
-cfg.uvar = 2;
-cfg.avgoverfreq    = 'yes';
-cfg.keepindividual = 'yes';
-cfg.neighbours = [];
-cfg.layout = [];
-
-[~, cfg] = process_arguments(cfg, varargin);
-
-
-end
-
-function cfg = freqanalysis_cfg(varargin)
-
-import misc.process_arguments;
-
-cfg = [];
-cfg.method         = 'mtmfft';
-cfg.output         = 'pow';
-cfg.taper          = 'hanning';
-cfg.keeptrials     = 'no';
-cfg.foilim         = [8 12];
-cfg.keepindividual = 'yes';
-cfg.avgoverfreq    = 'yes';
-[~, cfg] = process_arguments(cfg, varargin);
-
-end
-
-function [neighbours, layout] =  sensor_geometry(data)
-
-tmpData = import(physioset.import.physioset, data);
-select(pset.selector.sensor_class('Class', 'eeg'), tmpData);
-tmpData = fieldtrip(tmpData);  %#ok<NASGU>
-cfgN = [];
-cfgN.method = 'distance';
-cfgN.feedback = 'no';
-[~, neighbours] = evalc('ft_prepare_neighbours(cfgN, tmpData);');
-[~, layout] = evalc('ft_prepare_layout([], tmpData);');
-
-end
-
-function [subs, signs] = higher_interaction_effects()
-
-subs = nan(4,2);
-count = 0;
-for i = 1:2
-    for j = 1:2
-        count = count + 1;
-        subs(count,:) = [i j];
-    end
-end
-signs = [1 -1 -1 1];
-
-end
-
-function [subs, signs] = simple_interaction_effects()
-
-subs = nan(4,2);
-count = 0;
-for i = 1:2
-    for j = 2:-1:1
-        count = count + 1;
-        subs(count,:) = [i j];
-    end
-end
-signs = [-1 1 -1 1];
-
-end
-
-function [data, cfg] = subsitem_analysis(cfg, data, signs, subs, itr, rerefMatrix)
-
-data = data(subs(itr,1),subs(itr,2));
-data = single_subject_freqanalysis(cfg, data{1}, rerefMatrix);   %#ok<NASGU>
-[~, data] = evalc('ft_freqgrandaverage(cfg, data{:});');
-data.powspctrm  = signs(itr)*data.powspctrm;
-
-end
-
-function data = single_subject_freqanalysis(cfg, fileList, rerefMatrix)  %#ok<INUSL>
-
-if nargin < 3, rerefMatrix = []; end
-
-myImporter = physioset.import.physioset;
-mySel      = pset.selector.sensor_class('Class', 'EEG');
-
-data = cell(size(fileList));
-for subjItr = 1:numel(fileList)
-    data{subjItr} = import(myImporter, fileList{subjItr});
-    select(mySel, data{subjItr});
-    
-    if ~isempty(rerefMatrix),
-        if isa(rerefMatrix, 'function_handle'),
-            thisRerefMatrix = rerefMatrix(data{subjItr});
-        else
-            thisRerefMatrix = rerefMatrix;
-        end
-        set_verbose(data{subjItr}, false);
-        data{subjItr} = copy(data{subjItr});
-        reref(data{subjItr}, thisRerefMatrix);
-    end    
-
-    data{subjItr} = fieldtrip(data{subjItr}, 'BadData', 'donothing');
-    
-    [~, data{subjItr}] = evalc('ft_freqanalysis(cfg, data{subjItr});');
-end
-
-end

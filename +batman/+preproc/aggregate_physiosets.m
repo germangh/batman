@@ -1,5 +1,5 @@
 function [data, condID, condNames] = ...
-    aggregate_physiosets(varargin)
+    aggregate_physiosets(regex, varargin)
 % aggregate_physiosets - Aggregate .pseth files by condition
 %
 % See: <a href="matlab:misc.md_help('batman.preproc.aggregate_physiosets')">misc.md_help(''batman.preproc.aggregate_physiosets'')</a>
@@ -7,7 +7,6 @@ function [data, condID, condNames] = ...
 % See also: batman
 
 import mperl.file.find.finddepth_regex_match;
-import mperl.join;
 import batman.*;
 import meegpipe.node.*;
 import misc.eta;
@@ -15,20 +14,14 @@ import misc.process_arguments;
 import mperl.file.spec.catfile;
 
 opt.Verbose  = true;
-opt.Subjects = [1,2,3,4,7,9,10];
-opt.DataPath   = '/data1/projects/batman/analysis/cleaning';
+opt.DataPath = '/data1/projects/batman/analysis/cleaning';
 
 [~, opt] = process_arguments(opt, varargin);
 
-if isempty(opt.Subjects),
-    subjRegex = '';
-else
-    subjRegex = ['_0+(' join('|', opt.Subjects) ')_'];
-end
-
 verboseLabel = '(ft_freqanalysis_aggregate) ';
-regex = [subjRegex '.+_cleaning.pseth$'];
-files = finddepth_regex_match(opt.DataPath, regex);
+
+% false -> do not ignore the path when matching the regex
+files = finddepth_regex_match(opt.DataPath, regex, false);
 
 [condID, condNames] = conditions();
 
