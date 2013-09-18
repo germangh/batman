@@ -8,7 +8,6 @@ classdef block_events_generator < physioset.event.generator
         DiffTh     = 0.05;
         MinDur     = 3000;
         Discard    = 1000;
-        NbBlocks   = 7;
     end
     
     methods
@@ -22,34 +21,7 @@ classdef block_events_generator < physioset.event.generator
             import plot2svg.plot2svg;
             import inkscape.svg2png;
             
-            % The counter channel is the last one
-            counter = data(end,:);
-            
-            diffCntr = filter(obj.DiffFilt, 1, counter);
-            
-            diffCntr(1:obj.Discard) = 0;
-            diffCntr(abs(diffCntr) < obj.DiffTh) = 0;
-            diffCntr = abs(diffCntr);
-            
-            blockOnset = [];
-            while numel(blockOnset) <= obj.NbBlocks && any(diffCntr > eps)
-                [~, thisOnset] = max(diffCntr);
-                blockOnset = [blockOnset; thisOnset]; %#ok<AGROW>
-                diffCntr(max(1, thisOnset-floor(obj.MinDur/2)):...
-                    min(numel(diffCntr), thisOnset + ...
-                    floor(obj.MinDur/2))) = 0;
-            end
-            
-            blockOnset = sort(blockOnset, 'ascend');
-            
-            % Split the first and the last epochs into two blocks (pupw specific)
-            blockOnset = [blockOnset(1); ...
-                blockOnset(1)+ceil(diff(blockOnset(1:2))/2); ...
-                blockOnset(2:end-1);...
-                blockOnset(end-1)+ceil(diff(blockOnset(end-1:end))/2); ...
-                blockOnset(end)];
-            
-            % Read the protocol information
+              % Read the protocol information
             prot = csvread([pupillator.root_path filesep 'protocol.csv']);
             
             subjCol  = ismember(prot(1,:), 'Subject');
@@ -73,12 +45,48 @@ classdef block_events_generator < physioset.event.generator
             
             
             seq = prot{rowIdx, seqCol};
+
+            % The counter channel is the last one
+            counter = data(end,:);
             
-            blockOnset = blockOnset(1:obj.NbBlocks);
+            diffCntr = filter(obj.DiffFilt, 1, counter);
+            
+            diffCntr(1:obj.Discard) = 0;
+            diffCntr(abs(diffCntr) < obj.DiffTh) = 0;
+            diffCntr = abs(diffCntr);
+            
+            blockOnset = [];
+            while numel(blockOnset) <= numel(seq) && any(diffCntr > eps)
+                [~, thisOnset] = max(diffCntr);
+                blockOnset = [blockOnset; thisOnset]; %#ok<AGROW>
+                diffCntr(max(1, thisOnset-floor(obj.MinDur/2)):...
+                    min(numel(diffCntr), thisOnset + ...
+                    floor(obj.MinDur/2))) = 0;
+            end
+            
+            blockOnset = sort(blockOnset, 'ascend');
+           
+            % Onset of red and blue
+            redOnset = blockOnset(counter(blockOnset) > 4.5 & ...
+                counter(blockOnset) < 5.5);
+            blueOnset = blockOnset(counter(blockOnset) > 5.5);
+            
+            blockDur = round((blueOnset - redOnset)/2);
+            
+            % How many dark blocks at the beginning
+            [~, darkBegin] = regexp(seq, '^D+');
+            darkEnd = regexp(seq, 'D+$');
+            darkEnd = numel(seq) - darkEnd + 1;
+            
+            first = redOnset - blockDur*darkBegin;
+            last  = blueOnset + blockDur*(darkEnd+1);
+            blockOnset = round(linspace(first, last, numel(seq)+1));
+            blockOnset = blockOnset(1:end-1);
+          
             [~, samplTime] = get_sampling_time(data, blockOnset);
             evArray = physioset.event.event(blockOnset);
        
-            for i = 1:obj.NbBlocks
+            for i = 1:numel(seq)
                 
                 switch seq(i)
                     case 'D'
@@ -120,6 +128,8 @@ classdef block_events_generator < physioset.event.generator
                hold on;
                h = stem(relSamplTime(blockOnset), counter(blockOnset), 'r');
                set(h, 'MarkerSize', 3, 'MarkerFaceColo', 'red');
+               xlabel('minutes (from recording onset)');
+               ylabel('counter');
                
                for i = 1:numel(blockOnset)
                    label = get(evArray(i), 'Type');
@@ -160,16 +170,14 @@ classdef block_events_generator < physioset.event.generator
             opt.DiffTh     = 0.05;
             opt.MinDur     = 3000;
             opt.Discard    = 1000;
-            opt.NbBlocks   = 7;
-            
+           
             [~, opt] = process_arguments(opt, varargin);
             
             obj.DiffFilt = opt.DiffFilt;
             obj.DiffTh     = opt.DiffTh;
             obj.MinDur     = opt.MinDur;
             obj.Discard    = opt.Discard;
-            obj.NbBlocks   = opt.NbBlocks;
-            
+          
         end
         
         
