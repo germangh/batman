@@ -8,7 +8,7 @@ classdef block_events_generator < physioset.event.generator
         DiffTh     = 0.05;
         MinDur     = 3000;
         Discard    = 1000;
-        NbBlocks   = 5;
+        NbBlocks   = 7;
     end
     
     methods
@@ -61,19 +61,34 @@ classdef block_events_generator < physioset.event.generator
                 '(?<pos>sitting|supine)'];
             tokens = regexp(dataName, regex, 'names');
             
+            
             rowIdx = ...
                 ismember(prot(:, subjCol), tokens.subj) & ...
                 ismember(prot(:, cond1Col), tokens.tod) & ...
                 ismember(prot(:, cond2Col), tokens.pos);
             
+            
             seq = prot{rowIdx, seqCol};
             
+            blockOnset = blockOnset(1:obj.NbBlocks);
+            [~, samplTime] = get_sampling_time(data, blockOnset);
             evArray = physioset.event.event(blockOnset);
+       
             for i = 1:obj.NbBlocks
-               
-                switch seq(i),
+                
+                switch seq(i)
                     case 'D'
-                        type = 'dark';
+                        if i < numel(seq) && strcmp(seq(i+1), 'R'),
+                            type = 'pre-red';    
+                        elseif i > 1 && ismember(seq(i-1), {'R','B'}),
+                            if strcmp(seq(i-1), 'R'),
+                                type = 'post-red';
+                            else
+                                type = 'post-blue';
+                            end
+                        else
+                            type = 'dark';
+                        end
                     case 'R'
                         type = 'red';
                     case 'B'
@@ -82,11 +97,13 @@ classdef block_events_generator < physioset.event.generator
                         error('Unknown sequence code %s', seq(i));
                 end
                 evArray(i) = set_type(evArray(i), type);
-                evArray(i).Value = i;   
+                evArray(i).Value = i;
                 evArray(i) = set_duration(evArray(i), 5*60*data.SamplingRate);
+                evArray(i) = set(evArray(i), 'Time', samplTime(i));
+                
             end
             
-            % Add also some meta-information 
+            % Add also some meta-information
             % This should be done in a specific "meta" node
             set_meta(data, 'Measurement', str2double(prot{rowIdx, measCol}));
             set_meta(data, 'Sex', prot{rowIdx, sexCol});
@@ -103,7 +120,7 @@ classdef block_events_generator < physioset.event.generator
             opt.DiffTh     = 0.05;
             opt.MinDur     = 3000;
             opt.Discard    = 1000;
-            opt.NbBlocks   = 5;
+            opt.NbBlocks   = 7;
             
             [~, opt] = process_arguments(opt, varargin);
             

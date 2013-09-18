@@ -1,41 +1,41 @@
 % main analysis script
-import meegpipe.node.*;
-import physioset.import.edfplus;
+
 import physioset.event.class_selector;
 import somsds.link2rec;
 import misc.get_hostname;
 import misc.regexpi_dir;
 import mperl.join;
+import pupillator.*;
 
-subjects = 1:2;
+% You cannot use OGE because multiple simultaneous calls to the ecgpuwave
+% VM screws everything up... I should investigate this issue at some point
+USE_OGE = false;
+DO_REPORT = true;
 
-%% Build the analysis pipeline
+subjects = 1:12;
 
-myGen = pupillator.block_events_generator;
-mySel = {...
-    class_selector('Type', '^dark$', 'Name', 'dark'), ...
-    class_selector('Type', '^red$', 'Name', 'red'), ...
-    class_selector('Type', '^blue$', 'Name', 'blue') ...
-    };
+% Select the relevant data files for the analysis
+regex = ['(' join('|', subjects) ')'];
+regex = [regex '.+.edf$'];
 
-
-myPipe = pipeline.new('NodeList', {...
-    physioset_import.new('Importer', edfplus), ...
-    ev_gen.new('EventGenerator', myGen), ...
-    ecg_annotate.new('EventSelector', mySel, 'VMUrl', '192.87.10.186') ...
-    }, 'Save', true, 'OGE', true, 'GenerateReport', true);
-
-
-%% Process all relevant data files
 switch lower(get_hostname),
     case 'somerenserver',
-        files = link2rec('pupw', 'file_ext', '.edf');
-    case 'outolintulocal',
-        regex = ['(' join('|', subjects) ')'];
-        regex = [regex '.+.edf$']; 
+        folder = ['/data1/projects/batman/analysis/pupillator/hrv_' ...
+            datestr(now, 'yymmdd-HHMMSS')];
+        files = link2rec('pupw', 'file_ext', '.edf', ...
+            'cond_regex', '(morning|afternoon)', ...
+            'folder', folder, ...
+            'subject', subjects);
+    case 'outolintulocal',        
         files = regexpi_dir('~/Dropbox/suomi-data', regex);
+    case 'nin271',
+        files = regexpi_dir('D:/data/pupw', regex);
     otherwise
         error('Unknown location of the pupw dataset');
 end
+
+myPipe = pipes.hrv_analysis(...
+    'OGE',              USE_OGE, ...
+    'GenerateReport',   DO_REPORT);
 
 run(myPipe, files{:});

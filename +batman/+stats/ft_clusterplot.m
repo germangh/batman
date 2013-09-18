@@ -1,6 +1,8 @@
 function ft_clusterplot(alpha, varargin)
 
 import mperl.file.spec.catfile;
+import mperl.file.find.finddepth_regex_match;
+
 
 ROOT_DIR= '/data1/projects/batman/analysis';
 
@@ -18,17 +20,24 @@ if numel(varargin) > 1,
 end
 
 file = { ...
-    catfile(ROOT_DIR, ['cluster_stats_main_effects_' varargin{1} '.mat']), ...
-    catfile(ROOT_DIR, ['cluster_stats_interaction_effects_' varargin{1} '.mat']) ...
+    ['cluster_stats_main_effects_' varargin{1} '_130916-\d+.mat'], ...
+    ['cluster_stats_interaction_effects_' varargin{1} '_130916-\d+.mat'] ...
     };
 
 for fileItr = 1:numel(file)
     
-    if ~exist(file{fileItr}, 'file'),
+    thisFile = finddepth_regex_match(ROOT_DIR, file{fileItr});
+    
+    if numel(thisFile) > 1,
+        error('ft_clusterplot:MultipleFileMatch', ...
+            'More than 1 file matches the regex %s', file{fileItr});
+    end
+    
+   if isempty(thisFile) || ~exist(thisFile{1}, 'file'),
         continue;
     end
     
-    load(file{fileItr});
+    load(thisFile{1});
     
     cfg = [];
     cfg.layout = freq_stats.layout;
