@@ -15,8 +15,12 @@ classdef block_events_generator < physioset.event.generator
         %% Consistency checks to be done
         
         %% physioset.event.generator interface
-        function evArray = generate(obj, data, varargin)
+        function evArray = generate(obj, data, rep, varargin)
             import misc.csvread;
+            import mperl.file.spec.catfile;
+            import misc.unique_filename;
+            import plot2svg.plot2svg;
+            import inkscape.svg2png;
             
             % The counter channel is the last one
             counter = data(end,:);
@@ -101,6 +105,42 @@ classdef block_events_generator < physioset.event.generator
                 evArray(i) = set_duration(evArray(i), 5*60*data.SamplingRate);
                 evArray(i) = set(evArray(i), 'Time', samplTime(i));
                 
+            end
+            
+            if ~isempty(rep),
+               % Generate a simple event generation report
+               myGallery = report.gallery.new;
+               
+               figure('Visible', 'off');
+               
+               % In minutes
+               relSamplTime = get_sampling_time(data)/60;
+               
+               plot(relSamplTime, counter, 'k-');
+               hold on;
+               h = stem(relSamplTime(blockOnset), counter(blockOnset), 'r');
+               set(h, 'MarkerSize', 3, 'MarkerFaceColo', 'red');
+               
+               for i = 1:numel(blockOnset)
+                   label = get(evArray(i), 'Type');
+                   h = text(relSamplTime(blockOnset(i)), ...
+                       counter(blockOnset(i)), [' ' label]);
+                   set(h, 'Rotation', 90);
+               end
+               
+               fileName = catfile(get_rootpath(rep), 'counter.svg');
+               fileName = unique_filename(fileName);
+               caption  = ...
+                   'Counter values and locations of the generated events';
+               evalc('plot2svg(fileName, gcf);');
+               myGallery = add_figure(myGallery, fileName, caption);
+               
+               svg2png(fileName);
+               
+               close;
+               
+               fprintf(rep, myGallery);
+               
             end
             
             % Add also some meta-information
