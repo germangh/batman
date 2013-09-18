@@ -18,7 +18,9 @@ SUBJECTS_ARS = setdiff(1:10, 6);
 
 % Group of subjects that will be split using the PVT events instead of the
 % ars+ events
-SUBJECTS_PVT = 6;
+SUBJECTS_RS_PVT = 6;
+
+SUBJECTS_PVT = 1:10;
 
 OUTPUT_DIR = '/data1/projects/batman/analysis/splitting';
 
@@ -33,6 +35,9 @@ files1 = somsds.link2rec('batman', 'file_ext', '.mff', ...
     'subject', SUBJECTS_ARS, 'folder', OUTPUT_DIR);
 
 files2 = somsds.link2rec('batman', 'file_ext', '.mff', ...
+    'subject', SUBJECTS_RS_PVT, 'folder', OUTPUT_DIR);
+
+files3 = somsds.link2rec('batman', 'file_ext', '.mff', ...
     'subject', SUBJECTS_PVT, 'folder', OUTPUT_DIR);
 
 % Process only those files that have been splitted yet
@@ -43,18 +48,25 @@ myPipe1 = batman.pipes.split_rs_ars(...
     'GenerateReport',   DO_REPORT, ...
     'OGE',              USE_OGE, ...
     'Queue',            QUEUE);
-pending1 = pending_files(myPipe1, files1);
 
-if ~isempty(pending1),
-    run(myPipe1, pending1{:});
+if ~isempty(files1)
+    run(myPipe1, files1{:});
 end
 
 myPipe2 = batman.pipes.split_rs_pvt(...
     'GenerateReport',   DO_REPORT, ...
     'OGE',              USE_OGE, ...
     'Queue',            QUEUE);
-pending2 = pending_files(myPipe2, files2);
 
-if ~isempty(pending2),  
-    run(myPipe2, pending2{:});
+if ~isempty(files2)
+    run(myPipe2, files2{:});
+end
+
+myPipe3 = batman.pipes.split_pvt(...
+    'GenerateReport',   DO_REPORT, ...
+    'OGE',              USE_OGE, ...
+    'Queue',            QUEUE);
+
+if ~isempty(files3),
+    run(myPipe3, files3{:});
 end

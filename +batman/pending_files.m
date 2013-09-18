@@ -5,6 +5,8 @@ if isempty(files),
     return;
 end
 
+pipeName = get_name(pipe);
+
 meegpipeDirs = cellfun(@(x) regexprep(x, '\.[^.]+$', '.meegpipe'), files, ...
     'UniformOutput', false);
 
@@ -13,7 +15,6 @@ alreadyDone = cellfun(@(x) exist(x, 'dir')>0, meegpipeDirs);
 fileExists = cellfun(@(x) exist(x, 'file')>0, files);
 
 inQueue = false(size(files));
-pipeName = get_name(pipe);
 
 for i = 1:numel(files)
    [~, name] = fileparts(files{i});
