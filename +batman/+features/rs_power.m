@@ -15,19 +15,10 @@ USE_OGE = true;
 DO_REPORT = true;
 
 INPUT_DIR = '/data1/projects/batman/analysis/cleaning';
-if ~strcmp(get_username, 'meegpipe')
-    INPUT_DIR = [INPUT_DIR '_' get_username];
-end
 
 OUTPUT_DIR = '/data1/projects/batman/analysis/rs';
 
-if ~strcmp(get_username, 'meegpipe')
-    OUTPUT_DIR = [OUTPUT_DIR '_' get_username];
-end
-
 QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
-
-%PAUSE_PERIOD = 3*60; % Check for new input files every PAUSE_PERIOD seconds
 
 %% Importing bits and pieces from meegpipe
 import meegpipe.node.*;

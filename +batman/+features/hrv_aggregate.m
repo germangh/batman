@@ -16,34 +16,36 @@ import mperl.join;
 switch lower(get_hostname),
     
     case 'somerenserver',
-        INPUT_DIR = '/data1/projects/batman/analysis/pupillator/hrv_130918-195232';
+        INPUT_DIR = '/data1/projects/batman/analysis/hrv_130918-210541';
         
         OUTPUT_FILE = ...
-            '/data1/projects/batman/analysis/pupillator/hrv_features';
+            ['/data1/projects/batman/analysis/hrv_features_' ...
+            datestr(now, 'yymmdd-HHMMSS') ...
+            ];
         
-    case 'nin271'
-        INPUT_DIR = 'D:\data\pupw';
-         OUTPUT_FILE = 'D:\data\pupw\hrv_features';
-        
+
     otherwise
         error('Where is the data?');
 end
 
 % How to translate the file names into info tags
-FILENAME_TRANS = 'pupw_(?<subject>\d+)_physiology_(?<condition1>[^-]+)-(?<condition2>[^-]+)_(?<extra>\d+)';
+FILENAME_TRANS = 'batman_(?<subject>\d+)_.+_(?<block>\d+)_cleaning';
 
 % List of subjects to be aggregated
 SUBJECTS = 1:12;
 
 % List of blocks to be aggregated
-BLOCKS = 1:2;
+BLOCKS = 1:14;
 
 %% Do the aggregation
 
-regex = ['0+(' join('|', SUBJECTS) ').+_(' join('|', BLOCKS) ...
-    ').edf$'];
+regex = ['0+(' join('|', SUBJECTS) ')_.+_(' join('|', BLOCKS) ...
+    ')_cleaning.pseth$'];
 files = finddepth_regex_match(INPUT_DIR, regex, true);
 
+if isempty(files),
+    error('I found no files matching the provided regex');
+end
 
 aggregate(files, 'features.txt$', [OUTPUT_FILE '.csv'], FILENAME_TRANS);
 

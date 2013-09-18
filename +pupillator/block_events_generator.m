@@ -20,6 +20,7 @@ classdef block_events_generator < physioset.event.generator
             import misc.unique_filename;
             import plot2svg.plot2svg;
             import inkscape.svg2png;
+            import mperl.join;
             
               % Read the protocol information
             prot = csvread([pupillator.root_path filesep 'protocol.csv']);
@@ -82,10 +83,20 @@ classdef block_events_generator < physioset.event.generator
             last  = blueOnset + blockDur*(darkEnd+1);
             blockOnset = round(linspace(first, last, numel(seq)+1));
             blockOnset = blockOnset(1:end-1);
+            
+            outOfRange = blockOnset < 1 | blockOnset > size(data,2);
+            if any(outOfRange),
+                warning('block_events_generator:OutOfRange', ...
+                    'Blocks with indices [%s] are out of range', ...
+                    join(',', find(outOfRange)));
+                blockOnset(outOfRange) = [];
+                seq(outOfRange) = [];
+            end
+            
           
             [~, samplTime] = get_sampling_time(data, blockOnset);
             evArray = physioset.event.event(blockOnset);
-       
+        
             for i = 1:numel(seq)
                 
                 switch seq(i)

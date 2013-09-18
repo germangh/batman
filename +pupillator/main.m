@@ -9,7 +9,7 @@ import pupillator.*;
 
 % You cannot use OGE because multiple simultaneous calls to the ecgpuwave
 % VM screws everything up... I should investigate this issue at some point
-USE_OGE = false;
+USE_OGE = true;
 DO_REPORT = true;
 
 subjects = 1:12;
