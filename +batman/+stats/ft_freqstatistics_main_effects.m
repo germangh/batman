@@ -123,14 +123,10 @@ for bandItr = 1:numel(bandNames)
             uo1, uo2 ...
             ];
         
-        if ismember(lower(opt.Scale), {'db', 'logarithmic'}),
-            for i = 1:numel(fa1),
-                fa1{i}.powspctrm = 10*log10(fa1{i}.powspctrm);
-            end
-             for i = 1:numel(fa2),
-                fa2{i}.powspctrm = 10*log10(fa2{i}.powspctrm);
-            end
-        end            
+        if ismember(lower(opt.Scale), {'db', 'logarithmic'}),     
+            fa1.powspctrm = 10*log10(fa1.powspctrm);          
+            fa2.powspctrm = 10*log10(fa2.powspctrm);         
+        end
         
         [~, ftripStats{mainEffectItr}] = ...
             evalc('ft_freqstatistics(cfgS, fa1, fa2);');

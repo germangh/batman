@@ -18,6 +18,9 @@ end
 uo = nan(1, numel(fileList));
 data = cell(size(fileList));
 for fileItr = 1:numel(fileList)
+    if ~exist(fileList{fileItr}, 'file'),
+        error('File %s does not exist!', fileList{fileItr});
+    end
     data{fileItr} = import(myImporter, fileList{fileItr});
     
     dataName = get_name(data{fileItr});
