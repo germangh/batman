@@ -1,12 +1,20 @@
-EEG features
+Feature extraction
 ======
 
 
-## Resting state features
+## Resting state EEG features
 
-Spectral features are automatically extracted from every file that have 
-been fed to the BATMAN pipeline. The extracted features and the 
-corresponding HTML report can be found under:
+Spectral features can be extracted from the output of the
+[preprocessed data files][preproc] using:
+
+[preproc]: ../+preproc/README.md
+
+````
+batman.features.rs_power
+````
+
+The extracted features and the corresponding HTML reports for each data file
+will be stored under:
 
 ````
 /data1/projects/batman/rs
@@ -14,7 +22,7 @@ corresponding HTML report can be found under:
 
 ### Aggregating all features in a single file
 
-An aggregated features file that contains all features for all files can 
+An aggregated features file that contains all features for all files can
 be generated running in MATLAB:
 
 ````matlab
@@ -34,7 +42,7 @@ features_power_linkedref.csv
 
 under `/data1/projects/batman/rs`. The first file of each pair contains
  normalized power features in different bands (normalized over the average
-power in the band from 0 to 100 Hz). The second file contains average power 
+power in the band from 0 to 100 Hz). The second file contains average power
 values in the same bands. There is a pair of files for each of the spectral
 analysis pipelines considered: one for absolute reference, one for average
 reference and one for linked reference. These files can be easily imported
@@ -55,3 +63,11 @@ batman.rs_aggregate_topos;
 which will generate the following files:
 
 
+## Heart rate variability (HRV) features
+
+````
+batman.features.hrv
+batman.features.hrv_aggregate
+````
+
+More information to come ...
