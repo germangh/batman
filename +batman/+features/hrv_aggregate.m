@@ -29,7 +29,7 @@ switch lower(get_hostname),
 end
 
 % How to translate the file names into info tags
-FILENAME_TRANS = 'batman_(?<subject>\d+)_.+_(?<block>\d+)_cleaning';
+FILENAME_TRANS = @(fName) batman.fname2condition(fName);
 
 % List of subjects to be aggregated
 SUBJECTS = 1:12;
