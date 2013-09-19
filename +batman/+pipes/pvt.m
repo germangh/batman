@@ -18,16 +18,12 @@ myImporter = physioset.import.physioset;
 thisNode = physioset_import.new('Importer', myImporter);
 nodeList = [nodeList {thisNode}];
 
-% Node: Compute ERP for the PVT stimuli. We are not actually interested in
-% the ERP but this node will produce a log file with the characteristics of
-% all the PVT events (which is what we actually want). By setting the
-% duration of the ERP to 0 we tell the node that the ERP figures should not
-% be generated. 
+% Node: Extract event features
 evSelector = batman.event_selector; 
-thisNode = erp.new(...
+featList = {'Type', 'Sample', 'Time', 'cel', 'obs', 'rsp', 'rtim', 'trl'};
+thisNode = ev_features.new(...
     'EventSelector',    evSelector, ...
-    'Duration',         0, ...
-    'Name',             'pvt-erp');
+    'Features',         featList);
 nodeList = [nodeList {thisNode}];
 
 

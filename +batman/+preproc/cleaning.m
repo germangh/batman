@@ -13,6 +13,8 @@
 import batman.get_username;
 import batman.pending_files;
 
+meegpipe.initialize;
+
 %% User parameters
 SUBJECTS = 1:100;
 
