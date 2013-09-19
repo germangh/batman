@@ -30,7 +30,7 @@ What?                                                 | Documentation
 Pre-processing                                        | [+batman/+preproc/README.md][preproc]
 Extraction of resting state power features            | [+batman/+features/README.md][features]
 Statistical analysis of effects on EEG power features | [+batman/+stats/README.md][stats]
-Extraction of heart rate variability (HRV) featuers   | [+batman/+features/README.md][features]
+Extraction of heart rate variability (HRV) features   | [+batman/+features/README.md][features]
 
 [preproc]: ./+batman/+preproc/README.md
 [features]: ./+batman/+features/README.md

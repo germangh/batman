@@ -51,9 +51,6 @@ reference and one for linked reference. These files can be easily imported
 
 ### Aggregating topographies for individual features
 
-
-__NOTE:__ This does not work yet!
-
 Run in MATLAB:
 
 ````
