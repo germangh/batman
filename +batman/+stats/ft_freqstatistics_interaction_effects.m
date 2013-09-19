@@ -26,6 +26,7 @@ opt.Subjects        = [1 2 3 4 7 9 10];
 opt.UserName        = 'meegpipe';
 opt.HashPipe        = '979af1';
 opt.UseOGE          = true;
+opt.Scale           = 'db';
 [~, opt] = process_arguments(opt, varargin);
 
 bandNames = keys(opt.Bands);
@@ -139,10 +140,18 @@ for bandItr = 1:numel(bandNames)
                     
                     thisParcData = subsitem_analysis(cfgF, ...
                         thisData(:,:,parcValue), ...
-                        signs{interEffectItr}, subs{interEffectItr}, ...
+                        subs{interEffectItr}, ...
                         subsItr, opt.RerefMatrix);
                     
-                    mat = mat + thisParcData.powspctrm;
+                    newData = thisParcData.powspctrm;
+                    
+                    if ismember(lower(opt.Scale), {'db', 'logarithmic'}),
+                        newData = 10*log10(newData);
+                    end
+                    
+                    newData = signs{interEffectItr}(subsItr)*newData;
+                    
+                    mat = mat + newData;
                     count = count + 1;
                     if opt.Verbose,
                         eta(tinit, 3*2*2*nbSubs*numel(bandNames), ...
@@ -171,10 +180,14 @@ for bandItr = 1:numel(bandNames)
     
     out{bandItr} = freq_stats;
     if ~isempty(opt.SaveToFile),
-        thisSaveFile = catfile(filePath, ...
-            [fileName '_' bandNames{bandItr} '_' ...
-            datestr(now, 'yymmdd-HHMMSS') fileExt]);
-        save(thisSaveFile, 'freq_stats');
+        thisSaveFile = catfile(filePath, [fileName '_' bandNames{bandItr}]);
+        
+        if ismember(lower(opt.Scale), {'db', 'logarithmic'}),
+            thisSaveFile = [thisSaveFile '_logarithmic'];
+        end
+        
+        thisSaveFile = [thisSaveFile '_' datestr(now, 'yymmdd-HHMMSS')];
+        save([thisSaveFile fileExt], 'freq_stats');
     end
     
 end

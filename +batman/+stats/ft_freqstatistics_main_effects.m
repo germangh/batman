@@ -21,6 +21,7 @@ opt.Verbose         = true;
 opt.SaveToFile      = ...
     '/data1/projects/batman/analysis/cluster_stats_main_effects.mat';
 opt.Bands           = batman.eeg_bands;
+opt.Scale           = 'db'; % Anything else means: use Fieltrip default scale
 % This is just the average re-referencing operator where x is the
 % physioset object to be re-rerefenced
 opt.RerefMatrix     = meegpipe.node.reref.avg_matrix;
@@ -122,6 +123,15 @@ for bandItr = 1:numel(bandNames)
             uo1, uo2 ...
             ];
         
+        if ismember(lower(opt.Scale), {'db', 'logarithmic'}),
+            for i = 1:numel(fa1),
+                fa1{i}.powspctrm = 10*log10(fa1{i}.powspctrm);
+            end
+             for i = 1:numel(fa2),
+                fa2{i}.powspctrm = 10*log10(fa2{i}.powspctrm);
+            end
+        end            
+        
         [~, ftripStats{mainEffectItr}] = ...
             evalc('ft_freqstatistics(cfgS, fa1, fa2);');
         
@@ -140,10 +150,14 @@ for bandItr = 1:numel(bandNames)
     
     out{bandItr} = freq_stats;
     if ~isempty(opt.SaveToFile),
-        thisSaveFile = catfile(filePath, ...
-            [fileName '_' bandNames{bandItr} '_' ...
-            datestr(now, 'yymmdd-HHMMSS') fileExt]);
-        save(thisSaveFile, 'freq_stats');
+        thisSaveFile = catfile(filePath, [fileName '_' bandNames{bandItr}]);
+        
+        if ismember(lower(opt.Scale), {'db', 'logarithmic'}),
+            thisSaveFile = [thisSaveFile '_logarithmic'];
+        end
+        
+        thisSaveFile = [thisSaveFile '_' datestr(now, 'yymmdd-HHMMSS')];
+        save([thisSaveFile fileExt], 'freq_stats');
     end
     
 end
