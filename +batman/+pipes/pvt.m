@@ -20,7 +20,7 @@ nodeList = [nodeList {thisNode}];
 
 % Node: Extract event features
 evSelector = batman.event_selector; 
-featList = {'Type', 'Sample', 'Time', 'cel', 'obs', 'rsp', 'rtim', 'trl'};
+featList = {'Time', 'Sample', 'cel', 'obs', 'rsp', 'rtim', 'trl'};
 thisNode = ev_features.new(...
     'EventSelector',    evSelector, ...
     'Features',         featList);

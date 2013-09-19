@@ -6,7 +6,7 @@ function trans = fname2condition(fName)
 
 import batman.block2condition;
 
-regex = 'batman_(?<subject>\d+)_.+_(?<block>\d+)_cleaning';
+regex = 'batman_(?<subject>\d+)_.+_(?<block>\d+)';
 
 meta = regexp(fName, regex, 'names');
 
