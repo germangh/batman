@@ -19,10 +19,17 @@ SUBJECTS = 1:100;
 INPUT_DIR = '/data1/projects/batman/analysis/splitting';
 OUTPUT_DIR = '/data1/projects/batman/analysis/cleaning';
 
+% The names and config hash codes of the splitting pipes that were used to
+% split the files that are to be the input of this stage of the analysis. 
+SPLIT_PIPES = {...
+    'split_rs_ars-d44fd2', ...
+    'split_rs_pvt-72218c' ...
+    };
+
 % Pipeline options
-USE_OGE = true;
-DO_REPORT = true;
-QUEUE = 'long.q@somerenserver.herseninstituut.knaw.nl';
+USE_OGE     = true;
+DO_REPORT   = true;
+QUEUE       = 'long.q@somerenserver.herseninstituut.knaw.nl';
 
 %% Import meegpipe stuff
 import somsds.link2files;
@@ -34,8 +41,8 @@ import mperl.join;
 %% Select the relevant files and start the data processing jobs
 oge.wait_for_grid('split_rs');
 
-regex = '_\d+\.pseth?$';
-files = finddepth_regex_match(INPUT_DIR, regex);
+regex = ['(' join('|', SPLIT_PIPES) ')_.+_\d+\.pseth?$'];
+files = finddepth_regex_match(INPUT_DIR, regex, false);
 
 link2files(files, OUTPUT_DIR);
 regex = '_\d+\.pseth$';
@@ -45,8 +52,7 @@ myPipe = batman.pipes.cleaning(...
     'GenerateReport',   DO_REPORT, ...
     'OGE',              USE_OGE, ...
     'Queue',            QUEUE);
-pending = pending_files(myPipe, files);
 
-if ~isempty(pending),
-    run(myPipe, pending{:});
+if ~isempty(files),
+    run(myPipe, files{:});
 end
