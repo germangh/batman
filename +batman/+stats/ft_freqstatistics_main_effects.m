@@ -118,6 +118,11 @@ for bandItr = 1:numel(bandNames)
         [fa2, uo2]  = freq_analysis(cfgF, thisData(2,:,:), opt.RerefMatrix);
         warning('on', 'session:NewSession');
         
+        if opt.Verbose,
+            eta(tinit, numel(effect)*numel(bandNames)*2, ...
+                count, 'remaintime', true);
+        end
+        
         cfgS.design = [ ...
             ones(1, numel(uo1)) 2*ones(1, numel(uo2)); ...
             uo1, uo2 ...
@@ -154,6 +159,10 @@ for bandItr = 1:numel(bandNames)
         
         thisSaveFile = [thisSaveFile '_' datestr(now, 'yymmdd-HHMMSS')];
         save([thisSaveFile fileExt], 'freq_stats');
+    end
+    
+    if opt.Verbose,
+        fprintf([verboseLabel 'Finished on %s'], datestr(now));
     end
     
 end
