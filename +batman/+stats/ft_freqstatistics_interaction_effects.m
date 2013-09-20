@@ -80,9 +80,7 @@ count = 0;
 subs  = cell(1, 2);
 signs = cell(1, 2);
 [subs{1}, signs{1}] = higher_interaction_effects();
-nbSubs = numel(subs{1});
 [subs{2}, signs{2}] = simple_interaction_effects();
-nbSubs = nbSubs + numel(subs{2});
 
 bandNames = keys(opt.Bands);
 [filePath, fileName, fileExt] = fileparts(opt.SaveToFile);
