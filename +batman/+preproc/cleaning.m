@@ -19,7 +19,8 @@ meegpipe.initialize;
 SUBJECTS = 1:100;
 
 INPUT_DIR = '/data1/projects/batman/analysis/splitting';
-OUTPUT_DIR = '/data1/projects/batman/analysis/cleaning';
+OUTPUT_DIR = ['/data1/projects/batman/analysis/cleaning_' ...
+    datestr(now, 'yymmdd-HHMMSS')];
 
 % The names and config hash codes of the splitting pipes that were used to
 % split the files that are to be the input of this stage of the analysis. 

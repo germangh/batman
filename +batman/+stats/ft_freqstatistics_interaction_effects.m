@@ -154,7 +154,8 @@ for bandItr = 1:numel(bandNames)
                     mat = mat + newData;
                     count = count + 1;
                     if opt.Verbose,
-                        eta(tinit, 3*2*2*nbSubs*numel(bandNames), ...
+                        eta(tinit, ...
+                            3*2*2*size(subs{interEffectItr},1)*numel(bandNames), ...
                             count, 'remaintime', true);
                     end
                     
@@ -188,6 +189,10 @@ for bandItr = 1:numel(bandNames)
         
         thisSaveFile = [thisSaveFile '_' datestr(now, 'yymmdd-HHMMSS')];
         save([thisSaveFile fileExt], 'freq_stats');
+    end
+    
+    if opt.Verbose,
+       fprintf([verboseLabel 'Finished on %s'], datestr(now)); 
     end
     
 end
