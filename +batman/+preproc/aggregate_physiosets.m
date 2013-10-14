@@ -14,7 +14,7 @@ import misc.process_arguments;
 import mperl.file.spec.catfile;
 
 opt.Verbose  = true;
-opt.DataPath = '/data1/projects/batman/analysis/cleaning_toberemoved';
+opt.DataPath = '/data1/projects/batman/analysis/cleaning_130919-222516';
 
 [~, opt] = process_arguments(opt, varargin);
 

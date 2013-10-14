@@ -176,6 +176,8 @@ for bandItr = 1:numel(bandNames)
     freq_stats.cond_names   = condNames;
     freq_stats.layout       = layout;
     freq_stats.data         = data;
+    freq_stats.scale        = opt.Scale;
+    freq_stats.bands        = opt.Bands;
     
     out{bandItr} = freq_stats;
     if ~isempty(opt.SaveToFile),
@@ -190,6 +192,7 @@ for bandItr = 1:numel(bandNames)
     end
     
     if opt.Verbose,
+       fprintf('\n\n');
        fprintf([verboseLabel 'Finished on %s'], datestr(now)); 
     end
     
