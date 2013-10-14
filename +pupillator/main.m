@@ -7,12 +7,10 @@ import misc.regexpi_dir;
 import mperl.join;
 import pupillator.*;
 
-% You cannot use OGE because multiple simultaneous calls to the ecgpuwave
-% VM screws everything up... I should investigate this issue at some point
-USE_OGE = true;
+USE_OGE   = true;
 DO_REPORT = true;
 
-subjects = 1:12;
+subjects  = 1:12;
 
 % Select the relevant data files for the analysis
 regex = ['(' join('|', subjects) ')'];
