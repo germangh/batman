@@ -7,7 +7,7 @@ time = get_sampling_time(data)/60;
 
 for i = 1:numel(h),    
     hAxes = findobj(h(i), 'Type', 'axes');
-    hold(hAxes);
+    hold(hAxes, 'on');
     if isempty(regexp(captions{i}, 'diameter', 'once')),
         ts = data(i,:);
     else
