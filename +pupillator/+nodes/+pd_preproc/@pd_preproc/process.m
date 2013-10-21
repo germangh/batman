@@ -15,7 +15,7 @@ dataNew = [];
 if verbose,
     
     [~, fname] = fileparts(data.DataFile);
-    fprintf([verboseLabel 'Doing nothing on ''%s''...'], fname);
+    fprintf([verboseLabel 'Pre-processing ''%s''...'], fname);
 
 end
 
@@ -140,6 +140,7 @@ for i = 1:size(data,1)
    data(i,:) = data(i,:)*(xCal*yCal)^(-0.5); 
 end
 
+restore_selection(data);
 
 if verbose, fprintf('[done]\n\n'); end
 

@@ -1,4 +1,5 @@
 function myPipe = hrv_analysis(varargin)
+% HRV_ANALYSIS - Extraction of heart rate variability features
 
 import meegpipe.node.*;
 import physioset.event.class_selector;

@@ -1,4 +1,4 @@
-% main analysis script
+% main analysis script for pupil diameter measurements
 
 import physioset.event.class_selector;
 import somsds.link2rec;
@@ -14,13 +14,14 @@ subjects  = 1:12;
 
 % Select the relevant data files for the analysis
 regex = ['(' join('|', subjects) ')'];
-regex = [regex '.+.edf$'];
+regex = [regex '.+(supine|sitting)_\d.csv$'];
 
 switch lower(get_hostname),
     case 'somerenserver',
-        folder = ['/data1/projects/batman/analysis/pupillator/hrv_' ...
+        folder = ['/data1/projects/batman/analysis/pupillator/pd_' ...
             datestr(now, 'yymmdd-HHMMSS')];
-        files = link2rec('pupw', 'file_ext', '.edf', ...
+        files = link2rec('pupw', 'modality', 'pupillometry', ...
+            'file_ext', '.csv', ...
             'cond_regex', '(morning|afternoon)', ...
             'folder', folder, ...
             'subject', subjects);
@@ -32,8 +33,11 @@ switch lower(get_hostname),
         error('Unknown location of the pupw dataset');
 end
 
-myPipe = pipes.hrv_analysis(...
+
+% HRV analysis
+myPipe = pipes.pd_analysis(...
     'OGE',              USE_OGE, ...
     'GenerateReport',   DO_REPORT);
 
 run(myPipe, files{:});
+
