@@ -8,7 +8,7 @@ import mperl.join;
 import pupillator.*;
 
 USE_OGE   = true;
-DO_REPORT = false;
+DO_REPORT = true;
 
 subjects  = 1:12;
 
@@ -34,7 +34,7 @@ end
 
 
 % HRV analysis
-myPipe = pipes.pd_analysis(...
+myPipe = pipes.pvt_analysis(...
     'OGE',              USE_OGE, ...
     'GenerateReport',   DO_REPORT);
 

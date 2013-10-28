@@ -21,8 +21,7 @@ myNode = physioset_import.new('Importer', myImporter);
 nodeList = [nodeList {myNode}];
 
 %% Note: ECG annotation using ecgpuwave + HRV feature extraction
-myNode = ecg_annotate.new(...
-    'VMUrl',            '192.87.10.186');
+myNode = ecg_annotate.new;
 nodeList = [nodeList {myNode}];
 
 

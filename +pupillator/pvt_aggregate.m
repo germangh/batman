@@ -1,6 +1,6 @@
-% pd_aggregate
+% pvt_aggregate
 %
-% Aggregation of PD features across subjects
+% Aggregation of PVT features across files
 %
 %
 % See also: pupillator
@@ -16,14 +16,14 @@ import mperl.join;
 switch lower(get_hostname),
     
     case 'somerenserver',
-        INPUT_DIR = '/data1/projects/batman/analysis/pupillator/pd_130918-195232';
+        INPUT_DIR = '/data1/projects/batman/analysis/pupillator/pvt_130918-195232';
         
         OUTPUT_FILE = ...
-            '/data1/projects/batman/analysis/pupillator/pd_features';
+            '/data1/projects/batman/analysis/pupillator/pvt_features';
         
     case 'nin271'
         INPUT_DIR = 'D:\data\pupw';
-        OUTPUT_FILE = 'D:\data\pupw\pd_features';
+        OUTPUT_FILE = 'D:\data\pupw\pvt_features';
         
     otherwise
         error('Where is the data?');
@@ -39,7 +39,7 @@ SUBJECTS = 1:12;
 BLOCKS = 1:2;
 
 % The hash code of the pipeline that was used to process the PD files
-PIPE_HASH = get_id(pupillator.pipes.pd_analysis);
+PIPE_HASH = get_id(pupillator.pipes.pvt_analysis);
 
 %% Do the aggregation
 
@@ -48,5 +48,5 @@ regex = ['0+(' join('|', SUBJECTS) ')_pupillometry.+_(' join('|', BLOCKS) ...
 files = finddepth_regex_match(INPUT_DIR, regex, true);
 
 
-aggregate2(files, ['pupillator-pd-' PIPE_HASH '.+features.txt$'], [OUTPUT_FILE '.csv'], FILENAME_TRANS);
+aggregate2(files, ['pupillator-pvt-' PIPE_HASH '.+features.txt$'], [OUTPUT_FILE '.csv'], FILENAME_TRANS);
 

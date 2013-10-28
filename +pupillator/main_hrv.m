@@ -1,4 +1,4 @@
-% main analysis script for HRV
+% main analysis script for PVT response times
 
 import physioset.event.class_selector;
 import somsds.link2rec;
@@ -18,14 +18,13 @@ regex = [regex '.+.edf$'];
 
 switch lower(get_hostname),
     case 'somerenserver',
-        folder = ['/data1/projects/batman/analysis/pupillator/hrv_' ...
+        folder = ['/data1/projects/batman/analysis/pupillator/pvt_' ...
             datestr(now, 'yymmdd-HHMMSS')];
         files = link2rec('pupw', 'file_ext', '.edf', ...
             'cond_regex', '(morning|afternoon)', ...
             'folder', folder, ...
             'subject', subjects);
-    case 'outolintulocal',        
-        files = regexpi_dir('~/Dropbox/suomi-data', regex);
+    
     case 'nin271',
         files = regexpi_dir('D:/data/pupw', regex);
     otherwise
