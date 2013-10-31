@@ -39,6 +39,7 @@ meegpipe.initialize;
 
 The table below lists all the analyses and processing tasks that have been
  perfomed on the pupillator dataset so far, roughly in chronological order.
+Some of the documents listed below may not be available yet.
 
 What?                                                 | Documentation
 ----------------------------------------------------- | -------------
