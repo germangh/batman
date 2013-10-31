@@ -5,7 +5,7 @@
 %
 % See also: pupillator
 
-import meegpipe.aggregate;
+import meegpipe.aggregate2;
 import mperl.file.find.finddepth_regex_match;
 import pupillator.*;
 import misc.get_hostname;
@@ -16,7 +16,7 @@ import mperl.join;
 switch lower(get_hostname),
     
     case 'somerenserver',
-        INPUT_DIR = '/data1/projects/batman/analysis/pupillator/hrv_130918-195232';
+        INPUT_DIR = '/data1/projects/batman/analysis/pupillator/hrv_131029-124134';
         
         OUTPUT_FILE = ...
             '/data1/projects/batman/analysis/pupillator/hrv_features';
@@ -30,7 +30,7 @@ switch lower(get_hostname),
 end
 
 % How to translate the file names into info tags
-FILENAME_TRANS = 'pupw_(?<subject>\d+)_physiology_(?<condition1>[^-]+)-(?<condition2>[^-]+)_(?<extra>\d+)';
+FILENAME_TRANS = 'pupw_(?<subject>\d+)_physiology_(?<condition1>[^-]+)-(?<condition2>[^-]+)_(?<meas>\d+)';
 
 % List of subjects to be aggregated
 SUBJECTS = 1:12;
@@ -45,5 +45,5 @@ regex = ['0+(' join('|', SUBJECTS) ').+_(' join('|', BLOCKS) ...
 files = finddepth_regex_match(INPUT_DIR, regex, true);
 
 
-aggregate(files, 'features.txt$', [OUTPUT_FILE '.csv'], FILENAME_TRANS);
+aggregate2(files, 'features.txt$', [OUTPUT_FILE '.csv'], FILENAME_TRANS);
 

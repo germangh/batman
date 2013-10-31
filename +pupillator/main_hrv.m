@@ -9,16 +9,21 @@ import pupillator.*;
 
 USE_OGE   = true;
 DO_REPORT = true;
+QUEUE     = 'short.q';
 
 subjects  = 1:12;
+cond1     = {'morning', 'afternoon'};
+cond2     = {'supine', 'sitting'};
 
 % Select the relevant data files for the analysis
-regex = ['(' join('|', subjects) ')'];
-regex = [regex '.+.edf$'];
+regexSubj  = ['(' join('|', subjects) ')'];
+regexCond1 = ['(' join('|', cond1) ')'];
+regexCond2 = ['(' join('|', cond2) ')'];
+regex = [regexSubj '_physiology_' regexCond1 '-' regexCond2 '.+.edf$'];
 
 switch lower(get_hostname),
-    case 'somerenserver',
-        folder = ['/data1/projects/batman/analysis/pupillator/pvt_' ...
+    case {'somerenserver', 'nin389'},
+        folder = ['/data1/projects/batman/analysis/pupillator/hrv_' ...
             datestr(now, 'yymmdd-HHMMSS')];
         files = link2rec('pupw', 'file_ext', '.edf', ...
             'cond_regex', '(morning|afternoon)', ...
@@ -35,7 +40,8 @@ end
 % HRV analysis
 myPipe = pipes.hrv_analysis(...
     'OGE',              USE_OGE, ...
-    'GenerateReport',   DO_REPORT);
+    'GenerateReport',   DO_REPORT, ...
+    'Queue',            QUEUE);
 
 run(myPipe, files{:});
 

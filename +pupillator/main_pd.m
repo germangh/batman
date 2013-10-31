@@ -9,6 +9,7 @@ import pupillator.*;
 
 USE_OGE   = true;
 DO_REPORT = false;
+QUEUE     = 'short.q';
 
 subjects  = 1:12;
 
@@ -17,7 +18,7 @@ regex = ['(' join('|', subjects) ')'];
 regex = [regex '.+(supine|sitting)_\d.csv$'];
 
 switch lower(get_hostname),
-    case 'somerenserver',
+    case {'somerenserver', 'nin389'},
         folder = ['/data1/projects/batman/analysis/pupillator/pd_' ...
             datestr(now, 'yymmdd-HHMMSS')];
         files = link2rec('pupw', 'modality', 'pupillometry', ...
@@ -36,7 +37,8 @@ end
 % HRV analysis
 myPipe = pipes.pd_analysis(...
     'OGE',              USE_OGE, ...
-    'GenerateReport',   DO_REPORT);
+    'GenerateReport',   DO_REPORT, ...
+    'Queue',            QUEUE);
 
 run(myPipe, files{:});
 

@@ -6,7 +6,7 @@ Subject,Sex,Sequence,Condition1,Condition2,Measurement
 0002,F,DDRDBDD,afternoon,supine,1
 0002,F,DRDBDDD,afternoon,sitting,1
 0002,F,DDDRDBD,morning,sitting,2
-0002,F,DDDRDBD,morning,supine,2
+0002,F,DRDBDDD,morning,supine,2
 0003,M,DDRDBDD,morning,sitting,1
 0003,M,DRDBDDD,morning,supine,1
 0003,M,DRDBDDD,afternoon,supine,2
