@@ -1,3 +1,4 @@
+function pvt_aggregate(inputDir, outputFile)
 % pvt_aggregate
 %
 % Aggregation of PVT features across files
@@ -29,6 +30,15 @@ switch lower(get_hostname),
         error('Where is the data?');
 end
 
+if nargin < 1 || isempty(inputDir),
+    inputDir = INPUT_DIR;
+end
+
+if nargin < 2 || isempty(outputFile),
+    outputFile = OUTPUT_FILE;
+end
+    
+
 % How to translate the file names into info tags
 FILENAME_TRANS = 'pupw_(?<subject>\d+)_pupillometry_(?<condition1>[^-]+)-(?<condition2>[^-]+)_(?<extra>\d+)';
 
@@ -45,8 +55,11 @@ PIPE_HASH = get_id(pupillator.pipes.pvt_analysis);
 
 regex = ['0+(' join('|', SUBJECTS) ')_pupillometry.+_(' join('|', BLOCKS) ...
     ').csv$'];
-files = finddepth_regex_match(INPUT_DIR, regex, true);
+files = finddepth_regex_match(inputDir, regex, true);
 
 
-aggregate2(files, ['pupillator-pvt-' PIPE_HASH '.+features.txt$'], [OUTPUT_FILE '.csv'], FILENAME_TRANS);
+aggregate2(files, ['pupillator-pvt-' PIPE_HASH '.+features.txt$'], [outputFile '.csv'], FILENAME_TRANS);
+
+
+end
 

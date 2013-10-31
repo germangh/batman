@@ -25,7 +25,7 @@ A description of the experimental protocol will be here at some point.
 
 The `pupillator` package depends on [meegpipe][meegpipe]. If you are 
 working at the `somerengrid` then you only need to run this code in order 
-make `meegpipe`'s functionality available:
+to make `meegpipe`'s functionality available:
 
 ````matlab
 close all; clear all; clear classes;
@@ -33,12 +33,12 @@ restoredefaultpath;
 addpath(genpath('/data1/toolbox/meegpipe'));
 meegpipe.initialize;
 ````
-
+[meegpipe]: http://github.com/meegpipe/meegpipe
 
 ## What have we done with the pupillator dataset?
 
 The table below lists all the analyses and processing tasks that have been
- perfomed on the pupillator dataset so far, roughtly in chronological order.
+ perfomed on the pupillator dataset so far, roughly in chronological order.
 
 What?                                                 | Documentation
 ----------------------------------------------------- | -------------
