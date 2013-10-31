@@ -1,4 +1,4 @@
-% main analysis script for pupil diameter measurements
+% main analysis script for PVT feature extraction
 
 import physioset.event.class_selector;
 import somsds.link2rec;
