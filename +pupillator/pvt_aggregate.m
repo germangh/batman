@@ -16,8 +16,8 @@ import mperl.join;
 
 switch lower(get_hostname),
     
-    case 'somerenserver',
-        INPUT_DIR = '/data1/projects/batman/analysis/pupillator/pvt_131029-124523';
+    case {'somerenserver', 'nin389'},
+        INPUT_DIR = '/data1/projects/batman/analysis/pupillator/pvt_131031-111747';
         
         OUTPUT_FILE = ...
             '/data1/projects/batman/analysis/pupillator/pvt_features';
@@ -40,7 +40,7 @@ end
     
 
 % How to translate the file names into info tags
-FILENAME_TRANS = 'pupw_(?<subject>\d+)_pupillometry_(?<condition1>[^-]+)-(?<condition2>[^-]+)_(?<extra>\d+)';
+FILENAME_TRANS = 'pupw_(?<subject>\d+)_pupillometry_(?<condition1>[^-]+)-(?<condition2>[^-]+)_(?<meas>\d+)';
 
 % List of subjects to be aggregated
 SUBJECTS = 1:12;

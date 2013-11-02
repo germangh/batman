@@ -2,8 +2,8 @@ BATMAN: pupillator analyses
 ======
 
 The `pupillator` package contains all the instructions and code necessary
-to reproduce the data analyses performed on the pupillator dataset. The 
-pupillator project is a sub-project within [STW][stw]-funded project 
+to reproduce the data analyses performed on the pupillator dataset. The
+pupillator project is a sub-project within [STW][stw]-funded project
 [BATMAN][batman].
 
 In the documentation that follows we will assume a Linux-like OS, and that
@@ -23,8 +23,8 @@ A description of the experimental protocol will be here at some point.
 
 ## Pre-requisites
 
-The `pupillator` package depends on [meegpipe][meegpipe]. If you are 
-working at the `somerengrid` then you only need to run this code in order 
+The `pupillator` package depends on [meegpipe][meegpipe]. If you are
+working at the `somerengrid` then you only need to run this code in order
 to make `meegpipe`'s functionality available:
 
 ````matlab
@@ -46,9 +46,9 @@ What?                                                 | Documentation
 Heart Rate Variability (HRV) feature extraction       | [HRV.md][hrv]
 Feature extraction from PVT task reaction times       | [PVT.md][pvt]
 Pupil diameter (PD) feature extraction                | [PD.md][pd]
-Merging PVT, HRV and PD features in a single table    | [modeling.md][modeling]
+Merging PVT, HRV and PD features in a single table    | [merging.md][merging]
 
 [hrv]: ./HRV.md
 [pvt]: ./PVT.md
 [pd]: ./PD.md
-[modeling]: ./modeling.md
+[merging]: ./merging.md

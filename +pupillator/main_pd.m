@@ -9,7 +9,7 @@ import pupillator.*;
 
 USE_OGE   = true;
 DO_REPORT = false;
-QUEUE     = 'short.q';
+QUEUE     = 'short.q@somerenserver.herseninstituut.knaw.nl';
 
 subjects  = 1:12;
 

@@ -15,8 +15,8 @@ import mperl.join;
 
 switch lower(get_hostname),
     
-    case 'somerenserver',
-        INPUT_DIR = '/data1/projects/batman/analysis/pupillator/pd_131029-123855';
+    case {'somerenserver', 'nin389'},
+        INPUT_DIR = '/data1/projects/batman/analysis/pupillator/pd_131101-180844';
         
         OUTPUT_FILE = ...
             '/data1/projects/batman/analysis/pupillator/pd_features';
