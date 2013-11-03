@@ -57,12 +57,6 @@ regex = ['0+(' join('|', SUBJECTS) ')_pupillometry.+_(' join('|', BLOCKS) ...
     ').csv$'];
 files = finddepth_regex_match(inputDir, regex, true);
 
-if isempty(files),
-    warning('pvt_aggregate:NoMatchingFiles', ...
-        'No matching files were found: nothing done');
-    return;
-end
-
 aggregate2(files, ['pupillator-pvt-' PIPE_HASH '.+features.txt$'], [outputFile '.csv'], FILENAME_TRANS);
 
 

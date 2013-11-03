@@ -15,7 +15,8 @@ function [condID, condName] = block2condition(subj, blockID)
 
 import misc.dlmread;
 import mperl.file.spec.catfile;
-import batman.*;
+import batman.conditions;
+import batman.protocol;
 import mperl.join;
 
 if nargin < 2 || numel(blockID) ~= 1,
