@@ -23,7 +23,7 @@ nodeList = [nodeList {myNode}];
 
 
 
-%%  NODE: Extract baseline sub-blocks
+%% Extract baseline, pvt, rs, and arsq sub-blocks
 
 % This will select the first PVT event during the PVT sub-block
 mySel    = batman.preproc.pvt_selector;
@@ -32,19 +32,19 @@ sbTypes = keys(sub_block_duration);
 
 
 for sbTypeItr = 1:numel(sbTypes)
-    
+
     thisSbType = sbTypes{sbTypeItr};
     naming   = @(d, ev, idx) block_naming_policy(d, ev, idx, thisSbType);
-    offset   = sub_block_offset(thisSbType); 
-    duration = sub_block_duration(thisSbType); 
-    
+    offset   = sub_block_offset(thisSbType);
+    duration = sub_block_duration(thisSbType);
+
     thisNode = meegpipe.node.split.new(...
         'EventSelector',        mySel, ...
         'Offset',               offset, ...
         'Duration',             duration, ...
         'SplitNamingPolicy',    naming, ...
         'Name',                 thisSbType);
-    
+
     nodeList = [nodeList {thisNode}]; %#ok<AGROW>
 end
 
