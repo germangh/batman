@@ -35,8 +35,8 @@ end
 % How to translate the file names into info tags
 FILENAME_TRANS = @(fName) batman.split_files.fname2meta(fName);
 
-% The hash code of the pipeline that was used to process the PD files
-PIPE_HASH = '121556';%get_id(pupillator.pipes.pd_analysis);
+% The hash code of the pipeline that was used to generate the temp features
+PIPE_HASH = '121556';%get_id(batman.pipes.temp_in_epochs);
 
 %% Do the aggregation
 
