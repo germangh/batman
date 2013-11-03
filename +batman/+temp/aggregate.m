@@ -15,7 +15,7 @@ import mperl.file.spec.catfile;
 switch lower(get_hostname),
     
     case {'somerenserver', 'nin389'},
-        INPUT_DIR = '/data1/projects/batman/analysis/temp_XXXXXX-XXXXXX';
+        INPUT_DIR = '/data1/projects/batman/analysis/temp_131103-155813';
         
         OUTPUT_FILE = ...
             '/data1/projects/batman/analysis/temp_features';

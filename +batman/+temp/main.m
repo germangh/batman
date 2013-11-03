@@ -35,7 +35,7 @@ end
 % Pipeline options
 USE_OGE     = true;
 DO_REPORT   = true;
-QUEUE       = 'short.q@somerenserver.herseninstituut.knaw.nl';
+QUEUE       = 'short.q';
 
 % The hash code of the pipeline that was used to split the raw data files
 PIPE_HASH = get_id(batman.pipes.split_files);
