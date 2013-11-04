@@ -58,6 +58,10 @@ nodeList = [nodeList {myNode}];
 % processes a baseline sub-block (which lasts 9 mins) then it generates 9
 % events of type __TempEpoch, with their Value property set to 1, 2, ...,9.
 %
+% For more information on events, event generators and event selectors, see:
+%
+% https://github.com/meegpipe/meegpipe/tree/master/%2Bphysioset/%2Bevent
+%
 % Each selector below will produce a row of the features table
 selector = cell(9, 1);
 for i = 1:9
