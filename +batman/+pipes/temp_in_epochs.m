@@ -33,8 +33,10 @@ nodeList = [nodeList {myNode}];
 
 %% NODE: Event generation (specification of data epochs)
 
-% We want to extract average temp values in correlative epochs of 1 min of
-% and 50 seconds of overlap between correlative epochs
+% We want to extract average temp values in correlative epochs of 1 min and
+% without any overlap between correlative epochs. Note that we could have
+% defined overlapping epochs by setting the Period property to a value
+% smaller that the value of Duration.
 myEvGen = physioset.event.periodic_generator(...
     'Period',   60, ... % A new event (epoch) every 10 seconds
     'Duration', 60, ... % Each epoch lasts for 60 seconds
@@ -48,15 +50,22 @@ nodeList = [nodeList {myNode}];
 
 % * Average temp value in every data epoch at all sensor locations
 
-% At most there are 9 epochs within a subblock (in the baseline block)
-% Each selector will produce a row of the features table
+% At most there are 9 epochs within a subblock (in the baseline block). We
+% thus use 9 selectors, each of which will select events with a given
+% Value. The trick here is that the periodic_generator event generator that
+% we used above set the value property of each generated event to their
+% index in the array of all generated events. So if the ev_gen node above
+% processes a baseline sub-block (which lasts 9 mins) then it generates 9
+% events of type __TempEpoch, with their Value property set to 1, 2, ...,9.
+%
+% Each selector below will produce a row of the features table
 selector = cell(9, 1);
 for i = 1:9
     selector{i} = event_selector(value_selector(i));
 end
 
 % List of extracted features for each epoch
-% epoch_idx, chan_1, chan_2, chan_3, ..., chan_12
+% epoch_idx, epoch_onset_abs_time, ..., chan_1, chan_2, ..., chan_12
 featList  = cell(16, 1);
 
 featNames = cell(16, 1);
