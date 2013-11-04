@@ -70,6 +70,9 @@ featNames = {...
     };
 
 
+% Each of the 21 nodes created below will select one of the 21 experimental
+% blocks. Then it will extract the list of features above for that block
+% only.
 for nodeItr = 1:21   
     
     mySel = {...

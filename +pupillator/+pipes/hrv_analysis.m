@@ -52,6 +52,8 @@ blockNames = {...
 mySel = cellfun(@(x) physioset.event.class_selector('Type', ['^' x '$'], 'Name', ...
     regexprep(x, '^block_', '')), blockNames, 'UniformOutput', false);
 
+% Annotate the ECG lead (detect R-peaks) and compute the HRV features
+% separtely for each experimental block
 myNode = ecg_annotate.new('EventSelector',   mySel);
 nodeList = [nodeList {myNode}];
 

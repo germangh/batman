@@ -21,12 +21,7 @@ nodeList = [nodeList {myNode}];
 myNode = pd_preproc.new;
 nodeList = [nodeList {myNode}];
 
-% Extract basic PD features:
-%
-% * Normalized pupil diameter: average pupil diameter divided by average 
-%   pupil diameter during the pre-red block
-%
-
+% Extract PD features:
 featList = {...
     @(feats, ev, sel) strrep(get(ev{1}, 'Type'), 'block_', ''), ...
     @(feats, ev, sel) get(ev{1}, 'Value'), ...
@@ -43,8 +38,8 @@ featNames = {...
     'pd_raw' ...
     };
 
-
-% One node for each block
+% Each of these nodes will select one of the 21 blocks. Then it will
+% extract the PD features for that block only.
 for nodeItr = 1:21   
     
     mySel = {...
