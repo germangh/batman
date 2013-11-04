@@ -1,4 +1,4 @@
-% main analysis script for pupil diameter measurements
+% MAIN - Pre-processing and feature extraction for PD measurements
 
 import physioset.event.class_selector;
 import somsds.link2rec;
@@ -7,14 +7,14 @@ import misc.regexpi_dir;
 import mperl.join;
 import pupillator.*;
 
+%% User parameters
 USE_OGE   = true;
 DO_REPORT = false;
-QUEUE     = 'short.q@somerenserver.herseninstituut.knaw.nl';
+QUEUE     = 'short.q';
+SUBJECTS  = 1:12;
 
-subjects  = 1:12;
-
-% Select the relevant data files for the analysis
-regex = ['(' join('|', subjects) ')'];
+%% Link (or find the location of) the relevant .edf files
+regex = ['(' join('|', SUBJECTS) ')'];
 regex = [regex '.+(supine|sitting)_\d.csv$'];
 
 switch lower(get_hostname),
@@ -25,7 +25,7 @@ switch lower(get_hostname),
             'file_ext', '.csv', ...
             'cond_regex', '(morning|afternoon)', ...
             'folder', folder, ...
-            'subject', subjects);
+            'subject', SUBJECTS);
    
     case 'nin271',
         files = regexpi_dir('D:/data/pupw', regex);
@@ -33,8 +33,7 @@ switch lower(get_hostname),
         error('Unknown location of the pupw dataset');
 end
 
-
-% HRV analysis
+%% Process all files with the pd_analysis pipeline
 myPipe = pipes.pd_analysis(...
     'OGE',              USE_OGE, ...
     'GenerateReport',   DO_REPORT, ...

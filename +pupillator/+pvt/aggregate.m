@@ -1,4 +1,4 @@
-function pvt_aggregate(inputDir, outputFile)
+function aggregate(inputDir, outputFile)
 % pvt_aggregate
 %
 % Aggregation of PVT features across files
@@ -11,36 +11,35 @@ import mperl.file.find.finddepth_regex_match;
 import pupillator.*;
 import misc.get_hostname;
 import mperl.join;
+import mperl.file.spec.catfile;
+import mperl.file.spec.catdir;
+
+if nargin < 1, inputDir = []; end
+if nargin < 2, outputFile = []; end
 
 %% Aggregation parameters
-
 switch lower(get_hostname),
-    
     case {'somerenserver', 'nin389'},
-        INPUT_DIR = '/data1/projects/batman/analysis/pupillator/pvt_131102-150507';
-        
-        OUTPUT_FILE = ...
-            '/data1/projects/batman/analysis/pupillator/pvt_features';
-        
+        BASE_PATH = '/data1/projects/batman/analysis/pupillator';          
     case 'nin271'
-        INPUT_DIR = 'D:\data\pupw';
-        OUTPUT_FILE = 'D:\data\pupw\pvt_features';
-        
+        BASE_PATH = 'D:\data\pupw';
     otherwise
         error('Where is the data?');
 end
 
-if nargin < 1 || isempty(inputDir),
-    inputDir = INPUT_DIR;
+if isempty(outputFile),
+    outputFile = catfile(BASE_PATH, 'pvt_features');
 end
 
-if nargin < 2 || isempty(outputFile),
-    outputFile = OUTPUT_FILE;
+if isempty(inputDir),
+    inputDir = dir(BASE_PATH, 'pvt_\d\d\d\d\d\d-\d\d\d\d\d\d$');   
+    inputDir = sort(inputDir);
+    inputDir = catdir(BASE_PATH, inputDir{end});
 end
-    
 
 % How to translate the file names into info tags
-FILENAME_TRANS = 'pupw_(?<subject>\d+)_pupillometry_(?<condition1>[^-]+)-(?<condition2>[^-]+)_(?<meas>\d+)';
+FILENAME_TRANS = ['pupw_(?<subject>\d+)_pupillometry_' ...
+    '(?<condition1>[^-]+)-(?<condition2>[^-]+)_(?<meas>\d+)'];
 
 % List of subjects to be aggregated
 SUBJECTS = 1:12;

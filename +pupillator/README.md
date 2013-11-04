@@ -43,12 +43,14 @@ Some of the documents listed below may not be available yet.
 
 What?                                                 | Documentation
 ----------------------------------------------------- | -------------
-Heart Rate Variability (HRV) feature extraction       | [HRV.md][hrv]
-Feature extraction from PVT task reaction times       | [PVT.md][pvt]
-Pupil diameter (PD) feature extraction                | [PD.md][pd]
+Heart Rate Variability (HRV) feature extraction       | [+hrv][hrv]
+Feature extraction from PVT task reaction times       | [+pvt][pvt]
+Pupil diameter (PD) feature extraction                | [+pd][pd]
 Merging PVT, HRV and PD features in a single table    | [merging.md][merging]
 
-[hrv]: ./HRV.md
-[pvt]: ./PVT.md
-[pd]: ./PD.md
+[hrv]: ./+hrv/README.md
+[pvt]: ./+pvt/README.md
+[pd]: ./+pd/README.md
 [merging]: ./merging.md
+
+
