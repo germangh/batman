@@ -34,11 +34,8 @@ USE_OGE     = true;
 DO_REPORT   = true;
 QUEUE       = 'short.q';
 
-% The hash code of the pipeline that was used to split the raw data files
-PIPE_HASH = get_id(batman.pipes.split_files);
-
 %% Select the relevant files and start the data processing jobs
-regex = ['-' PIPE_HASH '_.+_\d+\.pseth?$'];
+regex = 'split_files-.+_\d+\.pseth?$';
 files = finddepth_regex_match(INPUT_DIR, regex, false);
 
 link2files(files, OUTPUT_DIR);

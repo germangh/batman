@@ -43,15 +43,12 @@ end
 % How to translate the file names into info tags
 FILENAME_TRANS = @(fName) batman.split_files.fname2meta(fName);
 
-% The hash code of the pipeline that was used to generate the temp features
-PIPE_HASH = '121556';%get_id(batman.pipes.temp_in_epochs);
-
 %% Do the aggregation
 
 regex = 'batman_0+\d+_eeg_all_.+_\d+\.pseth$';
 files = dir(inputDir, regex);
 files = catfile(inputDir, files);
 
-aggregate2(files, ['temp_in_epochs-' PIPE_HASH '.+features.txt$'], ...
+aggregate2(files, ['temp_in_epochs-.+features.txt$'], ...
     [outputFile '.csv'], FILENAME_TRANS);
 

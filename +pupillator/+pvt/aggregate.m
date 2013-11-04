@@ -48,8 +48,6 @@ SUBJECTS = 1:12;
 % List of blocks to be aggregated
 BLOCKS = 1:2;
 
-% The hash code of the pipeline that was used to process the PD files
-PIPE_HASH = get_id(pupillator.pipes.pvt_analysis);
 
 %% Do the aggregation
 
@@ -57,7 +55,7 @@ regex = ['0+(' join('|', SUBJECTS) ')_pupillometry.+_(' join('|', BLOCKS) ...
     ').csv$'];
 files = finddepth_regex_match(inputDir, regex, true);
 
-aggregate2(files, ['pupillator-pvt-' PIPE_HASH '.+features.txt$'], [outputFile '.csv'], FILENAME_TRANS);
+aggregate2(files, 'pupillator-pvt-.+features.txt$', [outputFile '.csv'], FILENAME_TRANS);
 
 
 end

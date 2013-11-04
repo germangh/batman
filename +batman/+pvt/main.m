@@ -1,8 +1,4 @@
-% pvt
-%
-% Extraction of PVT features (response times)
-%
-% See also: batman
+% MAIN - PVT feature extraction
 
 import batman.*;
 
@@ -27,14 +23,14 @@ import mperl.file.find.finddepth_regex_match;
 import mperl.join;
 
 %% Select the relevant files and start the data processing jobs
-regex = 'split_pvt-829f87_.+_\d+\.pseth?$';
+regex = 'split_pvt-.+_\d+\.pseth?$';
 files = finddepth_regex_match(INPUT_DIR, regex, false);
 
 link2files(files, OUTPUT_DIR);
 regex = '_\d+\.pseth$';
 files = finddepth_regex_match(OUTPUT_DIR, regex);
 
-myPipe = batman.pipes.pvt(...
+myPipe = batman.pipes.pvt_analysis(...
     'GenerateReport',   DO_REPORT, ...
     'OGE',              USE_OGE, ...
     'Queue',            QUEUE);

@@ -9,7 +9,7 @@ import mperl.join;
 fName = catfile(root_path, 'data', 'protocol.csv');
 [prot, blockID2] = dlmread(fName, ',');
 
-blockID  = blockID2(3:end);
+blockID  = blockID2;%blockID2(3:end);
 subjID2  = prot(:,1);
 
 [isMember, loc] = ismember(subjID, subjID2);
@@ -17,7 +17,7 @@ subjID2  = prot(:,1);
 subjID(~isMember) = [];
 loc(~isMember) = [];
 
-prot = prot(loc, 3:end);
+prot = prot(loc, :);%3:end);
 
 condID = cell(numel(subjID), numel(blockID));
 for i = 1:size(condID,1)

@@ -1,8 +1,5 @@
 classdef event_selector < physioset.event.selector
-    % event_selector - The event selector
-    %
-    % See: <a href="matlab:misc.md_help('ssmd_auob.event_selector')">misc.md_help(''ssmd_auob.event_selector'')</a>
-    
+% EVENT_SELECTOR - Selects PVT events
    
     properties
         StimType   = 'stm+';  % Type of the stimulus onset event

@@ -18,9 +18,11 @@ DO_REPORT = true;
 
 % What grid engine queue should the jobs be sent to?
 % 
-% If you want to ensure that the jobs are sent to a specific host use a
-% queue like short.q@somerenserver.herseninstituut.knaw.nl
-QUEUE     = 'short.q';
+% VERY IMPORTANT: The execution host MUST have the HRV toolkit installed.
+% At this point, the only node in somerengrid that fulfils this requirement
+% is somerenserver. Thus, use only @somerenserver.herseninstituut.knaw.nl
+% queue.
+QUEUE     = 'short.q@somerenserver.herseninstituut.knaw.nl';
 
 % The list of subjects that should be considered for the feat. extraction
 SUBJECTS  = 1:12;

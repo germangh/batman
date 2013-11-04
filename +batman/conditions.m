@@ -9,8 +9,8 @@ fName = catfile(root_path, 'data', 'conditions.csv');
 [condSpecs, varNames, condID] = dlmread(fName, ',', 0, 1);
 
 % Remove the dpg=2 conditions, these were not obtained for all subjects
-condID(condSpecs(:,3) > 1) = [];
-condSpecs(condSpecs(:,3) > 1,:) = [];
+%condID(condSpecs(:,3) > 1) = [];
+%condSpecs(condSpecs(:,3) > 1,:) = [];
 
 varNames = varNames(2:end);
 

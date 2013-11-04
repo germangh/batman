@@ -11,7 +11,7 @@ import misc.dir;
 
 %% Splitting parameters
 
-SUBJECTS = 1:10;
+SUBJECTS = 7;%1:10;
 
 
 switch lower(get_hostname),
