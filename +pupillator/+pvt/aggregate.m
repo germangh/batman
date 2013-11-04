@@ -13,6 +13,7 @@ import misc.get_hostname;
 import mperl.join;
 import mperl.file.spec.catfile;
 import mperl.file.spec.catdir;
+import misc.dir;
 
 if nargin < 1, inputDir = []; end
 if nargin < 2, outputFile = []; end

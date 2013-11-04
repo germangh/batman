@@ -1,5 +1,5 @@
 function myPipe = hrv_analysis(varargin)
-% hrv_analysis - HRV feature extraction pipeline
+% HRV_ANALYSIS - HRV feature extraction pipeline
 %
 % See also: batman.pipes
 

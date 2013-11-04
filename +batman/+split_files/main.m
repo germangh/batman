@@ -22,6 +22,9 @@ switch lower(get_hostname),
     case 'outolintulan'
         OUTPUT_DIR = '/Volumes/DATA/datasets/batman';
         
+    case 'nin271',
+        OUTPUT_DIR = 'D:/data/batman/splitting';
+        
     otherwise
         
         error('No idea where the data is in host %s', get_hostname);
@@ -40,6 +43,9 @@ switch lower(get_hostname),
     case {'somerenserver', 'nin389'}
         files = link2rec('batman', 'file_ext', '.mff', 'subject', SUBJECTS, ...
             'folder', OUTPUT_DIR);
+        
+    case 'nin271',
+        files = dir('D:/data/batman/raw', '\.mff$', false, false, true);
         
     case 'outolintulan'
         files = dir(OUTPUT_DIR, '\.mff$', false, false, true);

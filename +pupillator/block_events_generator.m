@@ -147,8 +147,18 @@ classdef block_events_generator < physioset.event.generator
             
             % Add also some meta-information
             % This should be done in a specific "meta" node
-            set_meta(data, 'Measurement', str2double(prot{rowIdx, measCol}));
-            set_meta(data, 'Sex', prot{rowIdx, sexCol});
+            measDay = str2double(prot{rowIdx, measCol});
+            sex     = prot{rowIdx, sexCol};
+            set_meta(data, 'Measurement', measDay);
+            set_meta(data, 'Sex', sex);
+            
+            % Add the meta-information also to the blocks, to be able to
+            % extract it easily in the feature extraction stage
+            for i = 1:numel(evArray), 
+               evArray(i) = set_meta(evArray(i), 'Measurement', measDay);
+               evArray(i) = set_meta(evArray(i), 'Sex', sex);
+            end
+                
             
         end
         

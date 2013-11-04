@@ -1,5 +1,5 @@
 function aggregate(inputDir, outputFile)
-% AGGREGATE - Aggregate HRV features across subjects/conditions
+% AGGREGATE - Aggregate HRV features across subjects/blocks
 %
 % aggregate(inputDir, outputFile)
 %
@@ -17,7 +17,6 @@ import misc.get_hostname;
 import mperl.join;
 import mperl.file.spec.catfile;
 import mperl.file.spec.catdir;
-import misc.dir;
 
 if nargin < 1, inputDir = []; end
 if nargin < 2, outputFile = []; end
@@ -25,9 +24,9 @@ if nargin < 2, outputFile = []; end
 %% Aggregation parameters
 switch lower(get_hostname),
     case {'somerenserver', 'nin389'},
-        BASE_PATH = '/data1/projects/batman/analysis/pupillator';          
+        BASE_PATH = '/data1/projects/batman/analysis';          
     case 'nin271'
-        BASE_PATH = 'D:\data\pupw';
+        BASE_PATH = 'D:\data\batman';
     otherwise
         error('Where is the data?');
 end
@@ -43,24 +42,17 @@ if isempty(inputDir),
 end
 
 % How to translate the file names into info tags
-FILENAME_TRANS = ['pupw_(?<subject>\d+)_physiology_(?<condition1>[^-]+)' ...
-    '-(?<condition2>[^-]+)_(?<meas>\d+)'];
+FILENAME_TRANS = @(fName) batman.fname2condition(fName);
 
-% List of subjects to be aggregated
-SUBJECTS = 1:12;
-
-% List of blocks to be aggregated
-BLOCKS = 1:2;
+% The hash code of the pipeline that was used to generate the HRV features
+PIPE_HASH = get_id(batman.pipes.hrv_analysis);
 
 %% Do the aggregation
+regex = 'batman_0+\d+_eeg_all_.+_\d+\.pseth$';
+files = dir(inputDir, regex);
+files = catfile(inputDir, files);
 
-% First we find the list of files that were processed with the hrv_analysis
-% pipeline. This is necessary to determine the location of the relevant
-% .meegpipe directories (within which the features.txt files are located).
-regex = ['0+(' join('|', SUBJECTS) ').+_(' join('|', BLOCKS) ...
-    ').edf$'];
-files = finddepth_regex_match(inputDir, regex, true);
-
-aggregate2(files, 'features.txt$', [outputFile '.csv'], FILENAME_TRANS);
+aggregate2(files, ['batman-hrv-' PIPE_HASH '.+features.txt$'], ...
+    [outputFile '.csv'], FILENAME_TRANS);
 
 end

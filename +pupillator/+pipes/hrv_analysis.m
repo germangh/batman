@@ -10,7 +10,9 @@ DO_REPORT = true;
 nodeList = {};
 
 % Data importer
-myNode = physioset_import.new('Importer', physioset.import.edfplus);
+myImporter = physioset.import.edfplus(...
+    'MetaMapper', @(data) pupillator.meta_mapper(data)); 
+myNode = physioset_import.new('Importer', myImporter);
 nodeList = [nodeList {myNode}];
 
 % Generate events marking the boundaries between experimental conditions
