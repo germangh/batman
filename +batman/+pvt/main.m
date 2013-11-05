@@ -13,7 +13,7 @@ INPUT_DIR = '/data1/projects/batman/analysis/splitting';
 OUTPUT_DIR = ['/data1/projects/batman/analysis/pvt_' ...
     datestr(now, 'yymmdd-HHMMSS')];
 
-QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
+QUEUE = 'short.q';
 
 %% Import meegpipe stuff
 import somsds.link2files;

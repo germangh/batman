@@ -17,6 +17,7 @@ import misc.get_hostname;
 import mperl.join;
 import mperl.file.spec.catfile;
 import mperl.file.spec.catdir;
+import misc.dir;
 
 if nargin < 1, inputDir = []; end
 if nargin < 2, outputFile = []; end
@@ -44,15 +45,12 @@ end
 % How to translate the file names into info tags
 FILENAME_TRANS = @(fName) batman.fname2condition(fName);
 
-% The hash code of the pipeline that was used to generate the HRV features
-PIPE_HASH = get_id(batman.pipes.hrv_analysis);
-
 %% Do the aggregation
 regex = 'batman_0+\d+_eeg_all_.+_\d+\.pseth$';
 files = dir(inputDir, regex);
 files = catfile(inputDir, files);
 
-aggregate2(files, ['batman-hrv-' PIPE_HASH '.+features.txt$'], ...
+aggregate2(files, 'batman-hrv-.+features.txt$', ...
     [outputFile '.csv'], FILENAME_TRANS);
 
 end
