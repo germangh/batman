@@ -9,18 +9,23 @@ DO_REPORT = true;
 
 nodeList = {};
 
-% Data importer
+%% Node: Data importer
 myImporter = physioset.import.edfplus(...
     'MetaMapper', @(data) pupillator.meta_mapper(data)); 
 myNode = physioset_import.new('Importer', myImporter);
 nodeList = [nodeList {myNode}];
 
-% Generate events marking the boundaries between experimental conditions
+%% Node: QRS detection
+myNode = qrs_detect.new;
+nodeList = [nodeList {myNode}];
+
+%% Node: Generate events marking the experimental conditions boundaries
 myEventGenerator = pupillator.block_events_generator;
 myNode = ev_gen.new('EventGenerator', myEventGenerator);
 nodeList = [nodeList {myNode}];
 
-% Get HRV features for each block
+%% Node: ECG annotation
+
 blockNames = {...
     'block_dark-pre-7', ...
     'block_dark-pre-pvt-6', ...
@@ -55,7 +60,7 @@ mySel = cellfun(@(x) physioset.event.class_selector('Type', ['^' x '$'], 'Name',
     regexprep(x, '^block_', '')), blockNames, 'UniformOutput', false);
 
 % Annotate the ECG lead (detect R-peaks) and compute the HRV features
-% separtely for each experimental block
+% separately for each experimental block
 myNode = ecg_annotate.new('EventSelector',   mySel);
 nodeList = [nodeList {myNode}];
 

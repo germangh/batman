@@ -17,9 +17,9 @@ nodeList = {};
 %% Node: data import
 myImporter = physioset.import.physioset('Precision', 'double');
 myNode = physioset_import.new('Importer', myImporter);
-
 nodeList = [nodeList {myNode}];
 
+%% Node: QRS detection
 myNode = qrs_detect.new;
 nodeList = [nodeList {myNode}];
 
