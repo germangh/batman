@@ -23,11 +23,11 @@ import mperl.file.find.finddepth_regex_match;
 import mperl.join;
 
 %% Select the relevant files and start the data processing jobs
-regex = 'split_pvt-.+_\d+\.pseth?$';
+regex = '_pvt_\d+\.pseth?$';
 files = finddepth_regex_match(INPUT_DIR, regex, false);
 
 link2files(files, OUTPUT_DIR);
-regex = '_\d+\.pseth$';
+regex = '_pvt_\d+\.pseth$';
 files = finddepth_regex_match(OUTPUT_DIR, regex);
 
 myPipe = batman.pipes.pvt_analysis(...

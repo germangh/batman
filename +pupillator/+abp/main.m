@@ -17,11 +17,6 @@ USE_OGE   = true;
 DO_REPORT = true;
 
 % What grid engine queue should the jobs be sent to?
-% 
-% VERY IMPORTANT: The execution host MUST have the HRV toolkit installed.
-% At this point, the only node in somerengrid that fulfils this requirement
-% is somerenserver. Thus, use only @somerenserver.herseninstituut.knaw.nl
-% queues.
 QUEUE     = 'all.q@somerenserver.herseninstituut.knaw.nl';
 
 % The list of subjects that should be considered for the feat. extraction
@@ -30,7 +25,6 @@ SUBJECTS  = 1:12;
 % The lists of conditions that should be considered
 cond1     = {'morning', 'afternoon'};
 cond2     = {'supine', 'sitting'};
-
 
 %% Link (or find the location of) the relevant .edf files
 regexSubj  = ['(' join('|', SUBJECTS) ')'];
@@ -44,7 +38,7 @@ switch lower(get_hostname),
         folder = ['/data1/projects/batman/analysis/pupillator/abp_' ...
             datestr(now, 'yymmdd-HHMMSS')];
         files = link2rec('pupw', 'file_ext', '.edf', ...
-            'cond_regex', '(morning|afternoon)', ...
+            'file_regex', regex, ...
             'folder', folder, ...
             'subject', SUBJECTS);
     

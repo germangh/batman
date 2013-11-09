@@ -21,9 +21,24 @@ myNode = physioset_import.new('Importer', myImporter);
 
 nodeList = [nodeList {myNode}];
 
-%% Note: ECG annotation using ecgpuwave + HRV feature extraction
-mySel = sensor_label('Portapres');
-myNode = abp.new('DataSelector', mySel);
+%% Calibrate the ABP channel
+myNode = operator.new(...
+    'Operator',         @(x) pupillator.calibrate_abp(x), ...
+    'DataSelector',     pset.selector.sensor_label('Portapres'), ...
+    'Name',             'abp-calib');
+nodeList = [nodeList {myNode}];
+
+%% ABP onset detection
+myNode = abp_beat_detect.new(...
+    'DataSelector',     pset.selector.sensor_label('Portapres')...
+    );
+nodeList = [nodeList {myNode}];
+
+
+%% Extract ABP features
+myNode = abp_features.new(...
+    'DataSelector',     pset.selector.sensor_label('Portapres') ...
+    );
 nodeList = [nodeList {myNode}];
 
 

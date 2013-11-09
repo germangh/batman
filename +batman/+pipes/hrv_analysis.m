@@ -20,6 +20,9 @@ myNode = physioset_import.new('Importer', myImporter);
 
 nodeList = [nodeList {myNode}];
 
+myNode = qrs_detect.new;
+nodeList = [nodeList {myNode}];
+
 %% Note: ECG annotation using ecgpuwave + HRV feature extraction
 myNode = ecg_annotate.new;
 nodeList = [nodeList {myNode}];
