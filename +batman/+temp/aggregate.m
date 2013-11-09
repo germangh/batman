@@ -49,6 +49,6 @@ regex = 'batman_0+\d+_eeg_all_.+_\d+\.pseth$';
 files = dir(inputDir, regex);
 files = catfile(inputDir, files);
 
-aggregate2(files, ['temp_in_epochs-.+features.txt$'], ...
+aggregate2(files, 'temp_in_epochs-.+features.txt$', ...
     [outputFile '.csv'], FILENAME_TRANS);
 

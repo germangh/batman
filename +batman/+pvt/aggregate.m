@@ -39,7 +39,7 @@ if isempty(inputDir),
 end
 
 % How to translate the file names into info tags
-FILENAME_TRANS = @(fName) batman.fname2condition(fName);
+FILENAME_TRANS = @(fName) batman.split_files.fname2meta(fName);
 
 %% Do the aggregation
 regex = 'batman_0+\d+_eeg_all_.+_\d+\.pseth$';

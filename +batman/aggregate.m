@@ -8,7 +8,7 @@ batman.hrv.aggregate;
 
 currDir = pwd;
 cd(ANALYSIS_DIR);
-system('./merge_features.R');
+system('./merge_batman_features.R');
 cd(currDir);
 
 % These are raw (non-averaged) PVT features. This means that there is a ste
