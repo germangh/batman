@@ -9,7 +9,7 @@ import pupillator.*;
 
 %% User parameters
 USE_OGE   = true;
-DO_REPORT = false;
+DO_REPORT = true;
 QUEUE     = 'short.q';
 SUBJECTS  = 1:12;
 

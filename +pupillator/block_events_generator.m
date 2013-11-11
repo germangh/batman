@@ -101,11 +101,15 @@ classdef block_events_generator < physioset.event.generator
             relOnsets(:,3) = oneMin+threeMins;
             samplIdx = repmat(blockOnset(:), 1, 3) + relOnsets;
             samplIdx = sort(samplIdx(:));
-            samplIdx = [samplIdx; samplIdx(end)+oneMin];
-            
+            samplIdx = [samplIdx; samplIdx(end)+oneMin];           
        
             [~, samplTime] = get_sampling_time(data, samplIdx);
-            evArray = pupillator.block_events(samplIdx, samplTime, seq);
+            
+            isPVTBlock = false(1,21);
+            isPVTBlock(2:3:20) = true;
+            
+            evArray = pupillator.block_events(samplIdx, samplTime, seq, ...
+                isPVTBlock);
             
             if ~isempty(rep),
                % Generate a simple event generation report
