@@ -9,14 +9,14 @@ import mperl.join;
 import pupillator.*;
 
 %% User parameters
-USE_OGE   = true;
+USE_OGE   = false;
 DO_REPORT = true;
 QUEUE     = 'short.q';
-SUBJECTS  = 1:50;
+SUBJECTS  = 9;
 
 %% Link (or find the location of) the relevant .edf files
-folder = ['/data1/projects/batman/analysis/pupillator/pd_ontj_' ...
-    datestr(now, 'yymmdd-HHMMSS')];
+folder = '/data1/projects/batman/analysis/pupillator/pd_ontj_131112-002008';
+    %datestr(now, 'yymmdd-HHMMSS')];
 files = link2rec('ontj', 'modality', 'pupillometry', ...
     'file_ext', '.csv', ...
     'folder', folder, ...

@@ -1,7 +1,7 @@
-function aggregate(inputDir, outputFile)
-% aggregate
+function aggregate_ontj(inputDir, outputFile)
+% aggregate_ontj
 %
-% Aggregation of PVT features across files
+% Aggregation of PVT features across files for the ontj recording
 %
 %
 % See also: pupillator
@@ -29,33 +29,31 @@ switch lower(get_hostname),
 end
 
 if isempty(outputFile),
-    outputFile = catfile(BASE_PATH, 'pvt_features');
+    outputFile = catfile(BASE_PATH, 'pvt_ontj_features');
 end
 
 if isempty(inputDir),
-    inputDir = dir(BASE_PATH, 'pvt_\d\d\d\d\d\d-\d\d\d\d\d\d$');   
+    inputDir = dir(BASE_PATH, 'pvt_ontj_\d\d\d\d\d\d-\d\d\d\d\d\d$');   
     inputDir = sort(inputDir);
     inputDir = catdir(BASE_PATH, inputDir{end});
 end
 
 % How to translate the file names into info tags
-FILENAME_TRANS = ['pupw_(?<subject>\d+)_pupillometry_' ...
-    '(?<condition1>[^-]+)-(?<condition2>[^-]+)_(?<meas>\d+)'];
+FILENAME_TRANS = 'ontj_(?<subject>\d+)_pupillometry_';
 
 % List of subjects to be aggregated
-SUBJECTS = 1:12;
-
-% List of blocks to be aggregated
-BLOCKS = 1:2;
-
+SUBJECTS = 1:50;
 
 %% Do the aggregation
 
-regex = ['0+(' join('|', SUBJECTS) ')_pupillometry.+_(' join('|', BLOCKS) ...
-    ').csv$'];
+regex = ['0+(' join('|', SUBJECTS) ')_pupillometry.+\.csv$'];
 files = finddepth_regex_match(inputDir, regex, true);
 
-aggregate2(files, 'pupillator-pvt-.+features.txt$', [outputFile '.csv'], FILENAME_TRANS);
+aggregate2(files, 'pupillator-pvt-ontj.+node-\d\d-block-\d+/features.txt$', ...
+    [outputFile '.csv'], FILENAME_TRANS);
+
+aggregate2(files, 'pupillator-pvt-ontj.+node-02-ev_features/features.txt$', ...
+    [outputFile '_raw.csv'], FILENAME_TRANS);
 
 
 end

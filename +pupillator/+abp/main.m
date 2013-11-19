@@ -11,7 +11,7 @@ import pupillator.*;
 %% User configuration
 
 % Should the processing be done in parallel (on the grid)?
-USE_OGE   = false;
+USE_OGE   = true;
 
 % Should full HTML reports be generated?
 DO_REPORT = true;
