@@ -12,9 +12,10 @@ import meegpipe.node.*;
 import misc.eta;
 import misc.process_arguments;
 import mperl.file.spec.catfile;
+import misc.find_latest_dir;
 
 opt.Verbose  = true;
-opt.DataPath = '/data1/projects/batman/analysis/cleaning_130919-222516';
+opt.DataPath = find_latest_dir('/data1/projects/batman/analysis/cleaning');
 
 [~, opt] = process_arguments(opt, varargin);
 

@@ -21,10 +21,7 @@ opt.Bands           = batman.eeg_bands;
 % This is just the average re-referencing operator where x is the
 % physioset object to be re-rerefenced
 opt.RerefMatrix     = meegpipe.node.reref.avg_matrix;
-opt.Regex           = '_meegpipe_.+_cleaning.pseth$';
 opt.Subjects        = [1 2 3 4 7 9 10];
-opt.UserName        = 'meegpipe';
-opt.HashPipe        = '979af1';
 opt.UseOGE          = true;
 opt.Scale           = 'db';
 [~, opt] = process_arguments(opt, varargin);
@@ -34,7 +31,7 @@ bandNames = keys(opt.Bands);
 if numel(bandNames) > 1 && opt.UseOGE && oge.has_oge,
     % Run using the grid engine
     [~, varargin] = split_arguments('Bands', varargin);
-    varargin = cellfun(@(x) any2str(x, Inf), varargin);
+    varargin = cellfun(@(x) any2str(x, Inf), varargin, 'UniformOutput', false);
     varargin = join(',', varargin);
     for i = 1:numel(bandNames),
        jobName = ['ieff-' bandNames{i}];       
@@ -61,8 +58,7 @@ else
     subjRegex = ['_0+(' join('|', opt.Subjects) ')_'];
 end
 
-regex = sprintf('%s_%s_.+%s.+_cleaning.pseth$', ...
-    opt.HashPipe, opt.UserName, subjRegex);
+regex = sprintf('%s.+_cleaning.pseth$', subjRegex);
 
 % Aggregate conditions' data files
 [data, condID, condNames] = aggregate_physiosets(regex, ...

@@ -32,6 +32,15 @@ ft_clusterplot
 
 [ftrip]: http://fieldtrip.fcdonders.nl/
 
+If you want to run the analysis above on the grid then you should run instead:
+
+````matlab
+import batman.stats;
+ft_freqstatistics_main_effects('UseOGE', true);
+ft_freqstatistics_interaction_effects('UseOGE', true);
+ft_freqstatistics_clusterplot
+````
+
 
 ### Main effects
 

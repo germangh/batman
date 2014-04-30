@@ -25,11 +25,8 @@ opt.Scale           = ''; % Anything else means: use Fieltrip default scale
 % This is just the average re-referencing operator where x is the
 % physioset object to be re-rerefenced
 opt.RerefMatrix     = meegpipe.node.reref.avg_matrix;
-opt.Regex           = '_cleaning.pseth$';
 opt.Subjects        = [1 2 3 4 7 9 10];
-opt.UserName        = 'gherrero';
-opt.HashPipe        = 'cd1e8b';
-opt.UseOGE          = true;
+opt.UseOGE          = false;
 [~, opt] = process_arguments(opt, varargin);
 
 bandNames = keys(opt.Bands);
@@ -37,7 +34,7 @@ bandNames = keys(opt.Bands);
 if numel(bandNames) > 1 && opt.UseOGE && oge.has_oge,
     % Run using the grid engine
     [~, varargin] = split_arguments('Bands', varargin);
-    varargin = cellfun(@(x) any2str(x, Inf), varargin);
+    varargin = cellfun(@(x) any2str(x, Inf), varargin, 'UniformOutput', false);
     varargin = join(',', varargin);
     for i = 1:numel(bandNames),
         jobName = ['smeff-' bandNames{i}];
@@ -64,8 +61,7 @@ else
     subjRegex = ['_0+(' join('|', opt.Subjects) ')_'];
 end
 
-regex = sprintf('%s_%s_.+%s.+_cleaning.pseth$', ...
-    opt.HashPipe, opt.UserName, subjRegex);
+regex = sprintf('%s.+_cleaning-pipe.pseth$', subjRegex);
 
 % Aggregate conditions' data files
 [data, condID, condNames] = aggregate_physiosets(regex, ...
