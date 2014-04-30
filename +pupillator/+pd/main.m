@@ -18,7 +18,9 @@ regex = ['(' join('|', SUBJECTS) ')'];
 regex = [regex '.+(supine|sitting)_\d.csv$'];
 
 switch lower(get_hostname),
-    case {'somerenserver', 'nin389'},
+    case 'nin271',
+        files = regexpi_dir('D:/data/pupw', regex);
+    otherwise
         folder = ['/data1/projects/batman/analysis/pupillator/pd_' ...
             datestr(now, 'yymmdd-HHMMSS')];
         files = link2rec('pupw', 'modality', 'pupillometry', ...
@@ -26,11 +28,6 @@ switch lower(get_hostname),
             'cond_regex', '(morning|afternoon)', ...
             'folder', folder, ...
             'subject', SUBJECTS);
-   
-    case 'nin271',
-        files = regexpi_dir('D:/data/pupw', regex);
-    otherwise
-        error('Unknown location of the pupw dataset');
 end
 
 %% Process all files with the pd_analysis pipeline
