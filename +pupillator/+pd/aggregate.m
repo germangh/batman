@@ -25,13 +25,11 @@ if nargin < 1, inputDir = []; end
 if nargin < 2, outputFile = []; end
 
 %% Aggregation parameters
-switch lower(get_hostname),
-    case {'somerenserver', 'nin389'},
-        BASE_PATH = '/data1/projects/batman/analysis/pupillator';          
+switch lower(get_hostname),  
     case 'nin271'
         BASE_PATH = 'D:\data\pupw';
     otherwise
-        error('Where is the data?');
+        BASE_PATH = '/data1/projects/batman/analysis/pupillator';
 end
 
 if isempty(outputFile),
@@ -63,8 +61,14 @@ regex = ['0+(' join('|', SUBJECTS) ')_pupillometry.+_(' join('|', BLOCKS) ...
     ').csv$'];
 files = finddepth_regex_match(inputDir, regex, true);
 
-aggregate2(files, 'pupillator-pd-.+features.txt$', ...
-    [outputFile '.csv'], FILENAME_TRANS);
+outputFileBak = [outputFile '_backup_' datestr(now, 'yymmddHHMMSS') '.csv'];
+outputFile = [outputFile, '.csv'];
+
+if exist(outputFile, 'file'),
+    copyfile(outputFile, outputFileBak);
+end
+
+aggregate2(files, 'pupillator-pd-.+features.txt$', outputFile, FILENAME_TRANS);
 
 
 end

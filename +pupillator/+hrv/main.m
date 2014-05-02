@@ -17,7 +17,7 @@ USE_OGE   = true;
 DO_REPORT = true;
 
 % What grid engine queue should the jobs be sent to?
-% 
+%
 % VERY IMPORTANT: The execution host MUST have the HRV toolkit installed.
 % At this point, the only node in somerengrid that fulfils this requirement
 % is somerenserver. Thus, use only @somerenserver.herseninstituut.knaw.nl
@@ -40,18 +40,15 @@ regex = [regexSubj '_physiology_' regexCond1 '-' regexCond2 '.+.edf$'];
 
 switch lower(get_hostname),
     
-    case {'somerenserver', 'nin389'},        
+    case 'nin271',
+        files = regexpi_dir('D:/data/pupw', regex);
+    otherwise
         folder = ['/data1/projects/batman/analysis/pupillator/hrv_' ...
             datestr(now, 'yymmdd-HHMMSS')];
         files = link2rec('pupw', 'file_ext', '.edf', ...
             'cond_regex', '(morning|afternoon)', ...
             'folder', folder, ...
             'subject', SUBJECTS);
-    
-    case 'nin271',
-        files = regexpi_dir('D:/data/pupw', regex);
-    otherwise
-        error('Where is the pupw dataset in host %s?', get_hostname);
         
 end
 

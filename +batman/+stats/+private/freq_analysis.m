@@ -39,13 +39,10 @@ for fileItr = 1:numel(fileList)
         reref(data{fileItr}, thisRerefMatrix);
     end    
     
-    data{fileItr} = fieldtrip(data{fileItr}, 'BadDataPolicy', 'reject');
-    
-    % Fieldtrip does not like to have discontinuous times. That is why we
-    % create this fake sampling times
-    deltat = 1/data{fileItr}.fsample;
-    data{fileItr}.time{1} = data{fileItr}.time{1}(1):deltat:(...
-        data{fileItr}.time{1}+deltat*(numel(data{fileItr}.time{1})-1));
+    % IMPORTANT: All epochs must have the same duration! So do not use a
+    % reject bad data policy here. We set bad data to zero instead.
+    data{fileItr} = fieldtrip(data{fileItr}, 'BadDataPolicy', 'flatten');    
+ 
     [~, data{fileItr}] = evalc('ft_freqanalysis(cfg, data{fileItr});');
 end
 

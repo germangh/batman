@@ -20,12 +20,10 @@ if nargin < 2, outputFile = []; end
 
 %% Aggregation parameters
 switch lower(get_hostname),
-    case {'somerenserver', 'nin389'},
-        BASE_PATH = '/data1/projects/batman/analysis/pupillator';          
     case 'nin271'
         BASE_PATH = 'D:\data\pupw';
     otherwise
-        error('Where is the data?');
+        BASE_PATH = '/data1/projects/batman/analysis/pupillator';
 end
 
 if isempty(outputFile),
@@ -33,7 +31,7 @@ if isempty(outputFile),
 end
 
 if isempty(inputDir),
-    inputDir = dir(BASE_PATH, 'pvt_\d\d\d\d\d\d-\d\d\d\d\d\d$');   
+    inputDir = dir(BASE_PATH, 'pvt_\d\d\d\d\d\d-\d\d\d\d\d\d$');
     inputDir = sort(inputDir);
     inputDir = catdir(BASE_PATH, inputDir{end});
 end

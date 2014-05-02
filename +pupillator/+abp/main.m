@@ -33,19 +33,15 @@ regexCond2 = ['(' join('|', cond2) ')'];
 regex = [regexSubj '_physiology_' regexCond1 '-' regexCond2 '.+.edf$'];
 
 switch lower(get_hostname),
-    
-    case {'somerenserver', 'nin389'},        
+    case 'nin271',
+        files = regexpi_dir('D:/data/pupw', regex);
+    otherwise
         folder = ['/data1/projects/batman/analysis/pupillator/abp_' ...
             datestr(now, 'yymmdd-HHMMSS')];
         files = link2rec('pupw', 'file_ext', '.edf', ...
             'file_regex', regex, ...
             'folder', folder, ...
             'subject', SUBJECTS);
-    
-    case 'nin271',
-        files = regexpi_dir('D:/data/pupw', regex);
-    otherwise
-        error('Where is the pupw dataset in host %s?', get_hostname);
         
 end
 

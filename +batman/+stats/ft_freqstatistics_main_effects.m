@@ -16,6 +16,7 @@ import oge.qsub;
 import misc.split_arguments;
 import misc.any2str;
 import batman.stats.private.*;
+import misc.varargin2str;
 
 opt.Verbose         = true;
 opt.SaveToFile      = ...
@@ -26,7 +27,10 @@ opt.Scale           = 'db'; % Anything else means: use Fieltrip default scale
 % This is just the average re-referencing operator where x is the
 % physioset object to be re-rerefenced
 opt.RerefMatrix     = meegpipe.node.reref.avg_matrix;
-opt.Subjects        = [1 2 3 4 7 9 10];
+
+% We cannot have missing conditions for a subject or the Fieldtrip
+% functions will break. That is why I discard subject 3
+opt.Subjects        = [1 2 4 7 9 10];
 opt.UseOGE          = false;
 [~, opt] = process_arguments(opt, varargin);
 
@@ -35,8 +39,7 @@ bandNames = keys(opt.Bands);
 if numel(bandNames) > 1 && opt.UseOGE && oge.has_oge,
     % Run using the grid engine
     [~, varargin] = split_arguments('Bands', varargin);
-    varargin = cellfun(@(x) any2str(x, Inf), varargin, 'UniformOutput', false);
-    varargin = join(',', varargin);
+    varargin = varargin2str(varargin);
     for i = 1:numel(bandNames),
        jobName = ['meff-' bandNames{i}];       
        cmd = sprintf([...
@@ -113,12 +116,8 @@ for bandItr = 1:numel(bandNames)
         end
 
         [fa2, uo2]  = freq_analysis(cfgF, thisData(2,:,:), opt.RerefMatrix);
-        warning('on', 'session:NewSession');
         
-        if opt.Verbose,
-            eta(tinit, numel(effect)*numel(bandNames)*2, ...
-                count, 'remaintime', true);
-        end
+        warning('on', 'session:NewSession');
         
         cfgS.design = [ ...
             ones(1, numel(uo1)) 2*ones(1, numel(uo2)); ...
@@ -135,7 +134,10 @@ for bandItr = 1:numel(bandNames)
         
         count = count + 1;
         
-        
+        if opt.Verbose,
+            eta(tinit, numel(effect)*numel(bandNames)*2, ...
+                count, 'remaintime', true);
+        end
     end
     
     freq_stats = [];
@@ -161,7 +163,7 @@ for bandItr = 1:numel(bandNames)
     end
     
     if opt.Verbose,
-        fprintf([verboseLabel 'Finished on %s'], datestr(now));
+        fprintf([verboseLabel 'Finished on %s\n\n'], datestr(now));
     end
     
 end
