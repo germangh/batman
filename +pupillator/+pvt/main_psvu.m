@@ -4,7 +4,7 @@
 %% Analysis parameters
 
 % Should the analysis run in the background as parallel open grid engine jobs?
-USE_OGE = false;
+USE_OGE = true;
 
 % Should full HTML reports be generated?
 DO_REPORT = true;
@@ -18,6 +18,8 @@ SUBJECTS = 1:100;
 
 % The directory where the analysis results will be stored
 OUTPUT_DIR = ['/data1/projects/psvu/analysis/pvt/' datestr(now, 'yymmdd-HHMMSS')];
+
+mkdir(OUTPUT_DIR);
 
 %% Create symbolic links
 
