@@ -117,12 +117,12 @@ featDescriptors = { ...
 % - Pick the events in block i
 % - Compute the relevant features using the picked events
 %
-% Each of the 24 nodes created below will select one of the 24 experimental
-% blocks. Then it will extract the list of features above for that block
-% only.
+% Each of the 5 nodes created below will select one of the 5 experimental
+% (sub-)blocks that contain PVT events. Then it will extract the list of
+% features above for that (sub-)block only.
 import physioset.event.value_selector;
 import pset.selector.event_selector;
-for blockItr = 1:24   
+for blockItr = 2:3:15  
     
     % This is a "data selector" object that will make the node select only
     % that portion of your data that corresponds to the relevant block
