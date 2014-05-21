@@ -1,6 +1,7 @@
-% rs_aggregate
-%bat
-% Aggregation of spectral features across subjects and experimental blocks
+function file = rs_power_aggregate(inputDir)
+% RS_POWER_AGGREGATE - Aggregate RS spectral power features across files
+%
+% file = batman.features
 %
 %
 % See also: batman
@@ -53,4 +54,6 @@ for i = 1:numel(spectraPipes)
         [OUTPUT_FILE{2} '_' spectraPipes{i} '.csv'], ...
         FILENAME_TRANS);
     
+end
+
 end
