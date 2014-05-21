@@ -11,6 +11,8 @@ import batman.*;
 import mperl.join;
 import mperl.file.spec.catfile;
 
+error('This doesnt work yet!');
+
 %% Aggregation parameters
 
 INPUT_DIR = '/data1/projects/batman/analysis/rs';

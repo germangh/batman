@@ -1,4 +1,4 @@
-% rs_power
+% MAIN
 %
 % Extraction of EEG power features from RS epochs
 %
@@ -16,7 +16,7 @@ DO_REPORT = true;
 
 INPUT_DIR = '/data1/projects/batman/analysis/cleaning';
 
-OUTPUT_DIR = '/data1/projects/batman/analysis/rs';
+OUTPUT_DIR = '/data1/projects/batman/analysis/spectral_analysis';
 
 QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
 
