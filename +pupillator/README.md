@@ -66,6 +66,11 @@ cd /data1/projects/psvu/scripts/batman
 ./merge_psvu_features.R
 ````
 
+The merged data table would then be stored under:
+
+````
+/data1/projects/psvu/analysis/psvu_features.csv
+````
 
 
 
