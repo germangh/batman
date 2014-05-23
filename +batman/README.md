@@ -29,8 +29,14 @@ pvt.main
 pvt.aggregate
 ````
 All feature types can be merged together into a single table using the
- relevant 
+ relevant `merge_[RECID]_features.R` script, where `[RECID]` is the 
+recording ID. For instance, to merge all features from the `batman` 
+recording you should open shell window and run:
 
+````
+cd /data1/projects/batman/scripts/batman
+./merge_batman_features.R
+````
 
 ## Analyses performed
 
