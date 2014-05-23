@@ -8,7 +8,7 @@ import mperl.file.find.finddepth_regex_match;
 import mperl.join;
 import misc.get_hostname;
 
-INPUT_DIR = misc.find_latest_dir('/data1/projects/batman/analysis/cleaning');
+INPUT_DIR = '/data1/projects/batman/analysis/split_files';
 OUTPUT_DIR = ['/data1/projects/batman/analysis/abp/' ...
     datestr(now, 'yymmdd-HHMMSS')];
 

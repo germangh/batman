@@ -8,7 +8,7 @@ USE_OGE = true;
 
 DO_REPORT = true;
 
-INPUT_DIR = misc.find_latest_dir('/data1/projects/batman/analysis/cleaning');
+INPUT_DIR = '/data1/projects/batman/analysis/split_files';
 
 OUTPUT_DIR = ['/data1/projects/batman/analysis/pvt/' datestr(now, 'yymmdd-HHMMSS')];
 
