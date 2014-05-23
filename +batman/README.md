@@ -40,6 +40,6 @@ cd /data1/projects/batman/scripts/batman
 
 ## Analyses performed
 
-Analysis                                              | Code
+Analysis                                              | Code package
 ----------------------------------------------------- | -------------
-Statistical analysis of effects on EEG power features | [./+stats](./+stats)
+Statistical analysis of effects on EEG power features | [+stats](./+stats)
