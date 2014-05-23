@@ -12,5 +12,5 @@ This is the case if you are trying to reproduce the data analyses at
 the `somerengrid` (our lab's private computing grid).
 
 [somsds]: https://germangh.com/somsds
-[batman]: http://www.neurosipe.nl/project.php?id=23&sess=6eccc41939665cfccccd8c94d8e0216f
+[batman]: http://www.slaapencognitie.nl/stwbatman
 [stw]: http://www.stw.nl/en/
