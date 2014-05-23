@@ -16,7 +16,7 @@ if nargin < 1, inputDir = []; end
 if nargin < 2, outputFile = []; end
 
 %% Aggregation parameters
-BASE_PATH = '/data1/projects/batman/analysis/spectral_analysis';
+BASE_PATH = '/data1/projects/batman/analysis/rs_eeg';
 
 if isempty(outputFile),
     outputFile = catfile(BASE_PATH, 'rs_features');

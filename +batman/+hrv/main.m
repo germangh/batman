@@ -8,26 +8,8 @@ import mperl.file.find.finddepth_regex_match;
 import mperl.join;
 import misc.get_hostname;
 
-switch lower(get_hostname),
-    
-    case {'somerenserver', 'nin389'},
-        INPUT_DIR = '/data1/projects/batman/analysis/splitting';
-        OUTPUT_DIR = ['/data1/projects/batman/analysis/hrv_' ...
-            datestr(now, 'yymmdd-HHMMSS')];
-        
-    case 'nin271',
-        INPUT_DIR = 'D:/data/batman/splitting';
-        OUTPUT_DIR = ['D:/data/batman/hrv_' datestr(now, 'yymmdd-HHMMSS')];
-        
-    case 'outolintulan'
-        INPUT_DIR = '/Volumes/DATA/datasets/batman';
-        OUTPUT_DIR = '/Volumes/DATA/datasets/batman/hrv';
-        
-    otherwise
-        
-        error('No idea where the data is in host %s', get_hostname);
-        
-end
+INPUT_DIR = misc.find_latest_dir('/data1/projects/batman/cleaning');
+OUTPUT_DIR = ['/data1/projects/batman/analysis/hrv/' datestr(now, 'yymmdd-HHMMSS')];
 
 % Pipeline options
 USE_OGE     = true;
@@ -50,6 +32,5 @@ myPipe = batman.pipes.hrv_analysis(...
     'GenerateReport',   DO_REPORT, ...
     'Parallelize',      USE_OGE, ...
     'Queue',            QUEUE);
-
 
 run(myPipe, files{:});

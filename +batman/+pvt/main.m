@@ -8,10 +8,9 @@ USE_OGE = true;
 
 DO_REPORT = true;
 
-INPUT_DIR = '/data1/projects/batman/analysis/splitting';
+INPUT_DIR = misc.find_latest_dir('/data1/projects/batman/analysis/cleaning');
 
-OUTPUT_DIR = ['/data1/projects/batman/analysis/pvt_' ...
-    datestr(now, 'yymmdd-HHMMSS')];
+OUTPUT_DIR = ['/data1/projects/batman/analysis/pvt/' datestr(now, 'yymmdd-HHMMSS')];
 
 QUEUE = 'short.q';
 

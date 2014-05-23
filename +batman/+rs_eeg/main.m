@@ -14,9 +14,9 @@ USE_OGE = true;
 
 DO_REPORT = true;
 
-INPUT_DIR = '/data1/projects/batman/analysis/cleaning';
+INPUT_DIR = misc.find_latest_dir('/data1/projects/batman/analysis/cleaning');
 
-OUTPUT_DIR = '/data1/projects/batman/analysis/spectral_analysis';
+OUTPUT_DIR = ['/data1/projects/batman/analysis/rs_eeg/' datestr(now, 'yymmdd-HHMMSS')] ;
 
 QUEUE = 'short.q@somerenserver.herseninstituut.knaw.nl';
 

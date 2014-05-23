@@ -19,6 +19,18 @@ Heart Rate Variability (HRV)                          | [+hrv](./+hrv)
 PVT reaction times                                    | [+pvt](./+pvt)
 Resting state spectral power                          | [+rs_eeg](./+rs_eeg)
 
+Typically, all features are extracted for all files by running the
+relevant `main` script. Then all features are aggregated into a single 
+feature table using the relevant `aggregate` script. That is, to extract 
+and aggregate all `pvt` features simply run:
+
+````matlab
+pvt.main
+pvt.aggregate
+````
+All feature types can be merged together into a single table using the
+ relevant 
+
 
 ## Analyses performed
 
