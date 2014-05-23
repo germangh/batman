@@ -2,7 +2,9 @@ batman
 ======
 
 This repository contains the code and instructions necessary to reproduce
-the data analyses of the [STW][stw]-funded project [BATMAN][batman].
+the data analyses of the [STW][stw]-funded project [BATMAN][batman]. The 
+BATMAN project also involves several side projects, e.g. the `psvu` and 
+`ontj` studies. 
 
 In the documentation that follows we will assume a Linux-like OS, and that
 the BATMAN dataset is managed by [somsds][somsds] data management system.
@@ -12,26 +14,3 @@ the `somerengrid` (our lab's private computing grid).
 [somsds]: https://germangh.com/somsds
 [batman]: http://www.neurosipe.nl/project.php?id=23&sess=6eccc41939665cfccccd8c94d8e0216f
 [stw]: http://www.stw.nl/en/
-
-
-## The BATMAN dataset
-
-A description of the experimental protocol will be here at some point.
-
-
-
-## What have we done with the BATMAN dataset?
-
-The table below lists all the analyses and processing tasks that have been
- perfomed on the BATMAN dataset so far, roughtly in chronological order.
-
-What?                                                 | Documentation
------------------------------------------------------ | -------------
-Pre-processing                                        | [+batman/+preproc/README.md][preproc]
-Extraction of resting state power features            | [+batman/+features/README.md][features]
-Statistical analysis of effects on EEG power features | [+batman/+stats/README.md][stats]
-Extraction of heart rate variability (HRV) features   | [+batman/+features/README.md][features]
-
-[preproc]: ./+batman/+preproc/README.md
-[features]: ./+batman/+features/README.md
-[stats]: ./+batman/+stats/README.md
