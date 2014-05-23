@@ -25,8 +25,8 @@ feature table using the relevant `aggregate` script. That is, to extract
 and aggregate all `pvt` features simply run:
 
 ````matlab
-pvt.main
-pvt.aggregate
+batman.pvt.main
+batman.pvt.aggregate
 ````
 All feature types can be merged together into a single table using the
  relevant `merge_[RECID]_features.R` script, where `[RECID]` is the 
