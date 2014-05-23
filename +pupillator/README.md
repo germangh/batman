@@ -16,9 +16,9 @@ the `somerengrid` (our lab's private computing grid).
 [stw]: http://www.stw.nl/en/
 
 
-## The PUPILLATOR dataset
+## Experimental datasets
 
-A description of the experimental protocol will be here at some point.
+A description of the experimental protocol(s) will be here at some point.
 
 
 ## Pre-requisites
@@ -30,27 +30,42 @@ to make `meegpipe`'s functionality available:
 ````matlab
 close all; clear all; clear classes;
 restoredefaultpath;
+addpath(genpath('/data1/toolbox/matlab'));
 addpath(genpath('/data1/toolbox/meegpipe'));
 meegpipe.initialize;
 ````
 [meegpipe]: http://github.com/meegpipe/meegpipe
 
-## What have we done with the pupillator dataset?
 
-The table below lists all the analyses and processing tasks that have been
- perfomed on the pupillator dataset so far, roughly in chronological order.
-Some of the documents listed below may not be available yet.
+## What features can we extract from a pupillator recording?
+
+The table below lists all the features that we have extracted from the 
+pupillator recordings.
+
 
 What?                                                 | Documentation
 ----------------------------------------------------- | -------------
-Heart Rate Variability (HRV) feature extraction       | [+hrv][hrv]
-Feature extraction from PVT task reaction times       | [+pvt][pvt]
-Pupil diameter (PD) feature extraction                | [+pd][pd]
-Merging PVT, HRV and PD features in a single table    | [merging.md][merging]
+Heart Rate Variability (HRV) features                 | [+hrv][hrv]
+PVT task reaction times                               | [+pvt][pvt]
+Pupil diameter (PD) features                          | [+pd][pd]
 
 [hrv]: ./+hrv/README.md
 [pvt]: ./+pvt/README.md
 [pd]: ./+pd/README.md
-[merging]: ./merging.md
+
+## Merging all features into a single table
+
+To merge all relevant features into a single data table (in `.csv`) format
+you can use the corresponding `merge_[RECID]_features.R` script, where 
+`[RECID]` is the recording ID (usually a 4-letters code). For instance, 
+to merge all features extracted from the `psvu` recording,  open a shell 
+window and type:
+
+````
+cd /data1/projects/psvu/scripts/batman
+./merge_psvu_features.R
+````
+
+
 
 
