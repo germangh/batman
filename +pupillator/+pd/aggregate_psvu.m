@@ -36,7 +36,7 @@ if isempty(inputDir),
 end
 
 % How to translate the file names into info tags
-FILENAME_TRANS = 'psvu_(?<subject>\d+)_pupillometry_.+';
+FILENAME_TRANS = 'psvu_(?<subject>\d+)_pupillometry_session(?<session>\d+)';
 
 % List of subjects to be aggregated
 SUBJECTS = 1:100;
