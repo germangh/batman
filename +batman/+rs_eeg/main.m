@@ -7,6 +7,8 @@
 
 import batman.*;
 
+addpath(genpath('/data1/toolbox/eeglab'));
+meegpipe.initialize;
 
 %% Analysis parameters
 

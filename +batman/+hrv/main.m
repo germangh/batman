@@ -8,6 +8,9 @@ import mperl.file.find.finddepth_regex_match;
 import mperl.join;
 import misc.get_hostname;
 
+addpath(genpath('/data1/toolbox/eeglab'));
+meegpipe.initialize;
+
 INPUT_DIR = '/data1/projects/batman/analysis/split_files';
 OUTPUT_DIR = ['/data1/projects/batman/analysis/hrv/' datestr(now, 'yymmdd-HHMMSS')];
 

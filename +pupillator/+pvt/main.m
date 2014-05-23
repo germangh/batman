@@ -6,6 +6,9 @@ import misc.regexpi_dir;
 import mperl.join;
 import pupillator.*;
 
+addpath(genpath('/data1/toolbox/eeglab'));
+meegpipe.initialize;
+
 %% User parameters
 USE_OGE   = true;
 DO_REPORT = true;
