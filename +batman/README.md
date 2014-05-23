@@ -40,6 +40,6 @@ cd /data1/projects/batman/scripts/batman
 
 ## Analyses performed
 
-Analysis                                              | Documentation
+Analysis                                              | Code
 ----------------------------------------------------- | -------------
-Statistical analysis of effects on EEG power features | [./+stats/README.md][stats]
+Statistical analysis of effects on EEG power features | [./+stats](./+stats)
