@@ -69,6 +69,8 @@ for i = 1:numel(firstSample)
                 (data(j,:) <= 0.75*medVal | data(j,:) >= 1.25*medVal)) = ...
                 true;
             
+            if all(data2interp), continue; end
+            
             if data2interp(1),
                 nearFirst = find(~data2interp, 1, 'first');
                 data(j, 1) = data(j, nearFirst);

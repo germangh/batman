@@ -11,7 +11,7 @@ import pupillator.*;
 %% Analysis parameters
 
 % Should the analysis run in the background as parallel open grid engine jobs?
-USE_OGE = false;
+USE_OGE = true;
 
 % Should full HTML reports be generated?
 DO_REPORT = true;
@@ -37,7 +37,7 @@ mkdir(OUTPUT_DIR);
 % is available from the OS command line. 
 files = somsds.link2rec('ptwo', ...         % The recording ID
     'modality', 'pupillometry', ...         % The data modality of the requested files
-    'condition', {'rbrb', 'brbr'}, ...     
+    'condition', {'brbr', 'rbrb'}, ...     
     'folder',   OUTPUT_DIR,     ...         % Where should be the links generated?
     'subject',  SUBJECTS);
 

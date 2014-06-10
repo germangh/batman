@@ -1,17 +1,10 @@
-% MAIN_PTWO - Pre-processing and feature extraction for PD measurements
+% MAIN_PSVU - Extraction of PVT event features from the psvu recordings
 
-
-import physioset.event.class_selector;
-import somsds.link2rec;
-import misc.get_hostname;
-import misc.regexpi_dir;
-import mperl.join;
-import pupillator.*;
 
 %% Analysis parameters
 
 % Should the analysis run in the background as parallel open grid engine jobs?
-USE_OGE = false;
+USE_OGE = true;
 
 % Should full HTML reports be generated?
 DO_REPORT = true;
@@ -24,7 +17,7 @@ QUEUE = 'short.q';
 SUBJECTS = 1:100;
 
 % The directory where the analysis results will be stored
-OUTPUT_DIR = ['/data1/projects/ptwo/analysis/pd/' datestr(now, 'yymmdd-HHMMSS')];
+OUTPUT_DIR = ['/data1/projects/ptwo/analysis/pvt/' datestr(now, 'yymmdd-HHMMSS')];
 
 mkdir(OUTPUT_DIR);
 
@@ -36,9 +29,9 @@ mkdir(OUTPUT_DIR);
 % The command below is just a wrapper over the script somsds_link2rec which
 % is available from the OS command line. 
 files = somsds.link2rec('ptwo', ...         % The recording ID
-    'modality', 'pupillometry', ...         % The data modality of the requested files
-    'condition', 'rbrb', 'brbr'}, ...     
-    'folder',   OUTPUT_DIR,     ...         % Where should be the links generated?
+    'modality', 'pupillometry', ...  % The data modality of the requested files
+    'condition', {'brbr', 'rbrb'}, ...
+    'folder',   OUTPUT_DIR,     ...  % Where should be the links generated?
     'subject',  SUBJECTS);
 
 % Notice that in the command above we generate the links to the relevant
@@ -48,11 +41,17 @@ files = somsds.link2rec('ptwo', ...         % The recording ID
 % links to the files) that you want to analyzed are placed in the directory
 % where you want the analysis results to be stored.
 
-%% Process all files with the pd_analysis pipeline
-myPipe = pipes.pd_analysis_ptwo(...
+%% Process all pupillometry files using the pvt_analysis_psvu pipeline
+
+% Type edit pupillator.pipes.pvt_analysis_psvu for details on the pipeline
+% definition
+myPipe = pupillator.pipes.pvt_analysis_ptwo(...
     'OGE',              USE_OGE, ...
     'GenerateReport',   DO_REPORT, ...
-    'Queue',            QUEUE);
-
+    'Queue',            QUEUE, ...
+    'MaxPVT',           990, ... % Reaction times above this will be ignored
+    'MinPVT',           100, ... % Reaction times below this will be ignored
+    'Lapse',            355);    % Reaction times above this are lapses
 run(myPipe, files{:});
-
+    
+    
