@@ -33,6 +33,14 @@ end
 % How to translate the file names into info tags
 FILENAME_TRANS = @(fName) batman.split_files.fname2meta(fName);
 
+
+%% Discover missing/broken jobs and inform the user
+failedJobs = misc.find_failed_jobs(inputDir);
+if ~isempty(failedJobs),
+    warning('There are incomplete or failed meegpipe jobs. See list below.');
+    fprintf(mperl.join('\n', failedJobs));
+end
+
 %% Do the aggregation
 regex = 'batman_0+\d+_eeg_all_.+_\d+\.pseth$';
 files = dir(inputDir, regex);

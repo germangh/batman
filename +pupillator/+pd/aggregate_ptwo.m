@@ -41,6 +41,19 @@ FILENAME_TRANS = 'ptwo_(?<subject>\d+)_pupillometry_(?<protocol>brbr|rbrb)';
 % List of subjects to be aggregated
 SUBJECTS = 1:100;
 
+
+%% Discover missing/broken jobs and inform the user
+failedJobs = misc.find_failed_jobs(inputDir);
+if ~isempty(failedJobs),
+    warning('There are incomplete or failed meegpipe jobs. See list below.');
+    fprintf(mperl.join('\n', failedJobs));
+    answer = input('Do you want to continue [y/n]?');
+    if ~strcmp(answer, 'y'),
+        return;
+    end
+end
+
+
 %% Do the aggregation
 
 regex = ['0+(' join('|', SUBJECTS) ')_pupillometry.+\.csv'];
