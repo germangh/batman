@@ -1,5 +1,7 @@
 % MAIN_PTWO - Pre-processing and feature extraction for PD measurements
 
+close all;
+clear all;
 
 import physioset.event.class_selector;
 import somsds.link2rec;
@@ -30,6 +32,7 @@ mkdir(OUTPUT_DIR);
 
 %% Create symbolic links
 
+if strcmp(misc.get_hostname, 'somerenserver.herseninstituut.knaw.nl'),
 % We assume that you are working at somerengrid and that the relevant data
 % files have been imported into the somsds data management system
 
@@ -47,6 +50,16 @@ files = somsds.link2rec('ptwo', ...         % The recording ID
 % directory /path/to/a. That is, you must make sure that the files (or
 % links to the files) that you want to analyzed are placed in the directory
 % where you want the analysis results to be stored.
+else
+    % If we are not working at somerenserver then simply assume that all
+    % data files are located within the current working directory. You have
+    % to put them there yourself!
+    warning('main_ptwo:ignoringOutputDir', ...
+        'Ignoring OUTPUT_DIR: everything will happen under directory %s', ...
+        pwd);
+    filesRegex = mperl.join('|', SUBJECTS);
+    files = misc.dir(pwd, ['ptwo_0*(' filesRegex ')_pupillometry_(rbrb|brbr)\.csv']);
+end
 
 %% Process all files with the pd_analysis pipeline
 myPipe = pipes.pd_analysis_ptwo(...

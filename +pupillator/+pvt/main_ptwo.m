@@ -1,5 +1,7 @@
-% MAIN_PSVU - Extraction of PVT event features from the psvu recordings
+% MAIN_PTWO - Extraction of PVT event features from the ptwo recordings
 
+%clear all;
+%close all;
 
 %% Analysis parameters
 
@@ -21,8 +23,9 @@ OUTPUT_DIR = ['/data1/projects/ptwo/analysis/pvt/' datestr(now, 'yymmdd-HHMMSS')
 
 mkdir(OUTPUT_DIR);
 
-%% Create symbolic links
+%% Get the data
 
+if strcmp(misc.get_hostname, 'somerenserver.herseninstituut.knaw.nl'),
 % We assume that you are working at somerengrid and that the relevant data
 % files have been imported into the somsds data management system
 
@@ -40,6 +43,19 @@ files = somsds.link2rec('ptwo', ...         % The recording ID
 % directory /path/to/a. That is, you must make sure that the files (or
 % links to the files) that you want to analyzed are placed in the directory
 % where you want the analysis results to be stored.
+
+else
+    % If we are not working at somerenserver then simply assume that all
+    % data files are located within the current working directory. You have
+    % to put them there yourself!
+    warning('main_ptwo:ignoringOutputDir', ...
+        'Ignoring OUTPUT_DIR: everything will happen under directory %s', ...
+        pwd);
+    filesRegex = mperl.join('|', SUBJECTS);
+    files = misc.dir(pwd, ['ptwo_0*(' filesRegex ')_pupillometry_(rbrb|brbr)\.csv']);
+end
+
+
 
 %% Process all pupillometry files using the pvt_analysis_psvu pipeline
 
